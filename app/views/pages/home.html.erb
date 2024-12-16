@@ -1,10 +1,16 @@
-  <%= image_tag "prance2.jpg", alt: "sexy_lady",   style: "width: 100%; height: auto;" %>
+<div class="image-container">
+  <%= image_tag "home.JPG", alt: "home",   style: "width: 100%; height: auto;" %>
+  <div class="overlay-text">
+    <h3 style="margin-bottom: 0">Simplify your lessons, amplify your impact.</h3>
+    <h4 style="font-size: 12px">Manage bookings, share progress, and grow your dance community.</h4>
+  </div>
+</div>
 <div class="container w-100 my-5 mt-0">
   <div class="row">
     <div class="column">
       <%# <div class="banner" style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url(<%= image_path "alisa.png" %>
       <br>
-      <p class="d-flex justify-content-center my-3 fs-3 text-custom""><strong>Upcoming classes!</strong></p>
+      <p class="d-flex justify-content-center my-3 fs-3 text-custom"><strong>Upcoming classes!</strong></p>
       <%# iterating through some events %>
       <%= render 'shared/event_card_iteration', events: @events %>
     </div>

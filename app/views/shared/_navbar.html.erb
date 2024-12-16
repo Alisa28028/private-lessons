@@ -1,6 +1,9 @@
 <nav class="pl-nav pl-top-nav">
   <%= link_to "#" do %>
-    <%= inline_svg "pl_logo.svg", class: "pl-logo" %>
+    <div class="logo-container">
+      <%= image_tag "PL_logo.png", class: "pl-logo" %>
+      <p class="logo-text">PRIVATE LESSONS</p>
+    </div>
   <% end %>
   <% if user_signed_in? %>
     <section class="pl-nav-content">

@@ -3,14 +3,14 @@
     <div class="d-flex flex-column justify-content-between">
       <div class="d-flex flex-row justify-content-between p-2">
         <div class="d-flex flex-column">
-          <h2><%= event.title %></h2>
+          <h2><%= event.title.upcase %></h2>
           <p class="justify-content-end date-text"><%= event.start_date.strftime("%B %d, %Y") %></p>
         </div>
         <!-- NEW Conditional for EVENT FULL or BOOKABLE -->
         <div class="d-flex flex-column text-end">
           <p class="text-custom d-flex justify-content-end"><strong><%= event.location.address %></strong></p>
           <% if event.capacity - event.bookings.count <= 0 %>
-            <p class="opacity-50 attendee-number text-danger"><strong>EVENT FULL!</strong></p>
+            <p class="opacity-50 attendee-number text-danger"><strong>EVENT FULL!!</strong></p>
           <% else %>
             <p class="opacity-50 attendee-number text-end text-danger">Spots left: <%= event.capacity - event.bookings.count %></p>
           <% end %>
