@@ -1,19 +1,14 @@
+<%# used in index page %>
 <% unless event.user == current_user && controller_name == 'users' %>
   <div class="card-product m-1 mb-3">
     <div class="d-flex flex-column justify-content-between">
       <div class="d-flex flex-row justify-content-between p-2">
         <div class="d-flex flex-column">
           <h2><%= event.title.upcase %></h2>
-          <p class="justify-content-end date-text"><%= event.start_date.strftime("%B %d, %Y") %></p>
         </div>
         <!-- NEW Conditional for EVENT FULL or BOOKABLE -->
         <div class="d-flex flex-column text-end">
           <p class="text-custom d-flex justify-content-end"><strong><%= event.location.address %></strong></p>
-          <% if event.capacity - event.bookings.count <= 0 %>
-            <p class="opacity-50 attendee-number text-danger"><strong>EVENT FULL!!</strong></p>
-          <% else %>
-            <p class="opacity-50 attendee-number text-end text-danger">Spots left: <%= event.capacity - event.bookings.count %></p>
-          <% end %>
         </div>
         <!-- END of NEW Conditional for EVENT FULL or BOOKABLE -->
       </div>
@@ -22,30 +17,43 @@
           <% if event.photos.attached? %>
             <%= cl_image_tag event.photos.first.key %>
           <% else %>
-            <%= image_tag "sexy_lady.jpg" %>
+            <% if current_user.photo.attached? %>
+              <%= cl_image_tag(current_user.photo.key, class: "pl-avatar") %>
+            <% end %>
           <% end %>
         </div>
         <div class="card-product-infos">
-          <p><%= event.description %></p>
+          <div class="d-flex flex-column">
+            <p><%= event.start_date.strftime("%B %d, %Y") %></p>
+            <p><%= event.start_date.strftime("%H:%M") %>~<%= event.end_date.strftime("%H:%M") %></p>
+          </div>
+          <% if event.capacity - event.bookings.count <= 0 %>
+            <p class="opacity-50 attendee-number text-danger"><strong>EVENT FULL!</strong></p>
+          <% else %>
+            <% remaining_spots = event.capacity - event.bookings.count %>
+            <% if remaining_spots <= 10 %>
+              <p class="opacity-50 attendee-number text-end text-danger"> <%= event.capacity - event.bookings.count %> Spots left</p>
+            <% end %>
+          <% end %>
           <!-- Conditional Buttons inside the card -->
           <!-- This first if only shows Buttons if it's the show page -->
-          <% if @event %>
+          <% if event %>
             <div class="d-flex justify-content-end align-items-center">
-              <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
-                <% if @event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
-                  <button type="button" style="font-size: small" class="btn btn-light-purple ml-2 mb-0 mr-0">
-                    <strong>Attending!</strong>
-                  </button>
-                <% elsif event.capacity - event.bookings.count <= 0 %>
-                  <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
-                    Join Wait List
-                  </button>
-                <% else %>
-                  <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
-                    Book this Class
-                  </button>
-                <% end %>
-              <% end %> <!-- End of check for event creator -->
+              <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
+              <% if event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
+                <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
+                  Attending!
+                </p>
+              <% elsif event.capacity - event.bookings.count <= 0 %>
+                <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
+                  Join Wait List
+                </button>
+              <% else %>
+                <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                  Book this Class
+                </button>
+              <% end %>
+              <%# <% end %> <!-- End of check for event creator -->
             </div>
           <% end %>
         </div>
