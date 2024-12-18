@@ -26,11 +26,7 @@ class EventsController < ApplicationController
 
   def show
     @user = current_user # teacher user organizing this event (= teacher)
-    @event = Event.find_by(id: params[:id]) # Returns nil if not found
-    if @event.nil?
-      redirect_to events_path, alert: "Event not found." # Or render a custom error page
-      return
-    end
+    @event = Event.find(params[:id]) # event I identify through show url id
     @bookings = Booking.where(event_id: @event) # bookings list for this event
     @new_booking = Booking.new # instance to allow new booking
   end
