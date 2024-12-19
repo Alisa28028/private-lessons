@@ -41,15 +41,22 @@
   }
 
   .pl-btn-login {
-    background-color: $pl-secondary;
-    color: $pl-black;
+    background-color: white;
+    color: rgb(55, 24, 75);
     font-size: .8rem;
     text-decoration: none;
     padding: .3rem .5rem;
-    border-radius: 5px;
+    border-radius: 3px;
     margin: 0 15px 0 20px;
+    font-family: roboto;
+
   }
 
+  .pl-btn-login:hover {
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+
+}
 }
 
 .pl-bottom-nav {
@@ -78,7 +85,22 @@
 .pl-logo {
   fill: $pl-white;
   height: 36px;
-  font-family: $logo-font;
+  filter: saturate(40%)drop-shadow(1px 1px 5px rgba(30, 4, 52, 0.5));
+  margin-right: 8px;
+}
+
+.logo-text {
+  font-family: roboto;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0;
+  text-shadow: 1px 1px 5px rgba(123, 106, 136, 0.733);
+}
+
+.logo-container {
+  display: flex;
+  align-items: bottom;
 }
 
 .st0 {
