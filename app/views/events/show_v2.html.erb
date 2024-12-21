@@ -1,5 +1,5 @@
 <div class="container w-100 mt-5 bg-white">
-    <!-- Here lies the new event showpage! -->
+  <!-- Here lies the new event showpage! -->
   <div class="row px-3">
     <div class="column mt-3">
       <div class="d-flex justify-content-between">
@@ -27,24 +27,24 @@
       <p><strong>Location: </strong><%= @event.location.name %>, <%= @event.location.address %></p>
       <textarea class="border"style="width: 100%; height: 140px; border-radius: 4px; padding: 8px", name="d" id=""><%= @event.description %></textarea>
       <% if @event %>
-          <div class="d-flex justify-content-end align-items-center">
-            <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
-              <% if @event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
-                <button type="button" style="font-size: small" class="btn btn-light-purple ml-2 mb-0 mr-0">
-                  <strong>Attending!</strong>
-                </button>
-              <% elsif @event.capacity - @event.bookings.count <= 0 %>
-                <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
-                  Join Wait List
-                </button>
-              <% else %>
-                <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
-                  Book this Class
-                </button>
-              <% end %>
-            <% end %> <!-- End of check for event creator -->
-          </div>
-        <% end %>
+        <div class="d-flex justify-content-end align-items-center">
+          <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
+            <% if @event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
+              <button type="button" style="font-size: small" class="btn btn-light-purple ml-2 mb-0 mr-0">
+                <strong>Attending!</strong>
+              </button>
+            <% elsif @event.capacity - @event.bookings.count <= 0 %>
+              <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
+                Join Wait List
+              </button>
+            <% else %>
+              <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                Book this Class
+              </button>
+            <% end %>
+          <% end %> <!-- End of check for event creator -->
+        </div>
+      <% end %>
       <% if user_signed_in? %>
         <% if current_user == @event.user %>
           <div class="event-buttons mt-1 d-flex justify-content-between">
@@ -142,11 +142,9 @@
       <!-- END of Waiting List Modal -->
       <hr class="mt-4">
       <%# Iterating through attending users % %>
-
       <div class="d-flex flex-column w-100">
-      <h2 class="text-custom"><strong>Attendees</strong></h2>
+        <h2 class="text-custom"><strong>Attendees</strong></h2>
         <% @bookings.take(10).each do |booking| %>
-
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center" >
               <%= link_to user_path(booking.user) do %>
@@ -162,10 +160,8 @@
           </div>
         <% end %>
         <div class="d-flex justify-content-between">
-
           <% if @bookings.count >= 4 %>
             <p class="mt-2">...plus <strong><%= @bookings.count - 10 %></strong> more</p>
-
             <a href="", data-bs-toggle="modal", data-bs-target="#attendeesModal", class="mt-2"><strong>See all</strong></a>
           <% end %>
           <%# END of Iterating through attending users % %>

@@ -216,3 +216,9 @@
     </div>
   </div>
 </div>
+<!-- ICON TO DELETE EVENT -->
+<div>
+  <%= button_to event_path(@event), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" do %>
+    <i class="fa-regular fa-trash-can"></i>
+  <% end %>
+</div>
