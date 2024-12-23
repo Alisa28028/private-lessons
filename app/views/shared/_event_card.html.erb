@@ -176,11 +176,8 @@
             </div>
             <!-- ICON TO DELETE EVENT -->
             <div>
-              <%= link_to "Delete",
-              event_path(event),
-              data: {turbo_method: :delete, turbo_confirm: "Are you sure?"},
-              class: "py-0 px-1 z-up" do %>
-                <i class="fa-regular fa-copy"></i>
+              <%= button_to event_path(event), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" do %>
+                <i class="fa-regular fa-trash-can"></i>
               <% end %>
             </div>
           </div>

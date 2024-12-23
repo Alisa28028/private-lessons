@@ -66,12 +66,18 @@ class EventsController < ApplicationController
   def update
     @event = Event.find(params[:id])
     @location = Location.find_by(name: params[:location_name])
-    @location ||= Location.create(name: params[:location_name])
+    @location ||= Location.create(name: params[:location_name]) if params[:location_name].present?
+    if @location
     @event.location = @location
+    else
+      flash.now[:alert] = "Please provide location."
+      render 'edit', status: :unprocessable_entity and return
+    end
+
     if @event.update(event_params)
       redirect_to event_path(@event)
     else
-      render 'new', status: :unprocessable_entity
+      render 'edit', status: :unprocessable_entity
     end
   end
 
@@ -102,6 +108,6 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :capacity, :price_cents, :start_date, :end_date, :video, :description, photos: [])
+    params.require(:event).permit(:title, :capacity, :price_cents, :location_id, :start_date, :end_date, :video, :description, photos: [])
   end
 end
