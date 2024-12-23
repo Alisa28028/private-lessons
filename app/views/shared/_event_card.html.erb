@@ -128,6 +128,9 @@
   <!-- EVENT CREATOR LAYOUT (DASHBOARD CARD) -->
   <!---------------------------------------------->
   <div class="card-product m-1 mb-3 p-2">
+    <!-- when i add this link back im losing my buttons T_T-->
+    <%= link_to "", event_path(event), class: "card-link z-down" %>
+    <!---------------------------------------------->
     <div class="d-flex flex-column justify-content-between h-100">
       <div class="d-flex justify-content-between">
         <!-- EVENT TITLE -->
@@ -161,7 +164,7 @@
             </div>
             <p class="d-flex text-dark" style="font-size:14px"><%= event.location.address %></p>
           </div>
-          <div class="d-flex flex-col align-items-end">
+          <div class="d-flex flex-col align-items-end z-up">
             <!-- ICON TO EDIT EVENT -->
             <div>
               <%= link_to edit_event_path(event), class: "py-0 px-1 z-up" do %>
@@ -176,14 +179,13 @@
             </div>
             <!-- ICON TO DELETE EVENT -->
             <div>
-              <%= button_to event_path(event), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" do %>
+              <%= button_to event_path(event), method: :delete, data: { turbo_confirm: "Are you sure?" }, style: "border: none; background: none; padding: 0; color: #543A70;",class: "py-0 px-1 z-up" do %>
                 <i class="fa-regular fa-trash-can"></i>
               <% end %>
             </div>
           </div>
         </div>
         <!---------------------------------------------->
-        <!-- Link to show page (this links to the specific event) -->
       </div>
     </div>
   </div>

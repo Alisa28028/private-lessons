@@ -82,12 +82,16 @@
               });
             </script>
           </div>
-          <div>
-            <%= link_to edit_event_path(@event), class: "btn btn-outline-primary btn-sm" do %>
+          <div class="d-flex flex-end" style="margin-left: 3px;">
+            <%= link_to edit_event_path(@event), class: "btn btn-outline-primary btn-sm me-1" do %>
               <i class="fa-regular fa-pen-to-square"></i>
             <% end %>
-            <%= link_to duplicate_event_path(@event), class: "btn btn-outline-primary btn-sm" do %>
+            <%= link_to duplicate_event_path(@event), class: "btn btn-outline-primary btn-sm me-1" do %>
               <i class="fa-regular fa-copy"></i>
+            <% end %>
+            <!-- ICON TO DELETE EVENT -->
+            <%= button_to event_path(@event), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn btn-outline-primary btn-sm" do %>
+              <i class="fa-regular fa-trash-can"></i>
             <% end %>
           </div>
         </div>
@@ -215,10 +219,4 @@
       </div>
     </div>
   </div>
-</div>
-<!-- ICON TO DELETE EVENT -->
-<div>
-  <%= button_to event_path(@event), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" do %>
-    <i class="fa-regular fa-trash-can"></i>
-  <% end %>
 </div>
