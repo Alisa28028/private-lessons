@@ -10,7 +10,13 @@
     <div class="column">
       <%# <div class="banner" style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url(<%= image_path "alisa.png" %>
       <br>
-      <p class="d-flex justify-content-center my-3 fs-3 text-custom"><strong>Upcoming classes!</strong></p>
+      <%# <p class="d-flex justify-content-center my-3 fs-3 text-custom"><strong>Upcoming classes!</strong></p> %>
+      <div class="d-flex justify-content-around mb-4">
+        <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0">Upcoming classes</button>
+        <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0">All posts
+          <i class="fa-solid fa-film"></i>
+        </button>
+      </div>
       <%# iterating through some events %>
       <%= render 'shared/event_card_iteration', events: @events %>
     </div>
