@@ -2,7 +2,7 @@
 <!-- card only appears if the user is not the event creator -->
 <% unless event.user == current_user && controller_name == 'users' %>
   <div class="card-product m-1 mb-3">
-    <%= link_to "", event_path(event), class: "card-link z-down" %>
+    <%= link_to event_path(event), class: "card-link" %>
     <div class="d-flex flex-column justify-content-between">
       <div class="d-flex flex-row justify-content-between p-2">
         <!-- EVENT TITLE -->
@@ -129,7 +129,7 @@
   <!---------------------------------------------->
   <div class="card-product m-1 mb-3 p-2">
     <!-- when i add this link back im losing my buttons T_T-->
-    <%= link_to "", event_path(event), class: "card-link z-down" %>
+    <%# <%= link_to "", event_path(event), class: "card-link z-down" %>
     <!---------------------------------------------->
     <div class="d-flex flex-column justify-content-between h-100">
       <div class="d-flex justify-content-between">
@@ -147,10 +147,14 @@
       <div class="card-product-info-grid mb-2">
         <div>
           <% if event.photos.attached? %>
-            <%= cl_image_tag event.photos.first.key %>
+            <%= link_to event_path(event) do %>
+              <%= cl_image_tag event.photos.first.key %>
+            <% end %>
           <% else %>
             <% if event.user.photo.attached? %>
-              <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+              <%= link_to event_path(event) do %>
+                <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+              <% end %>
             <% end %>
           <% end %>
         </div>
