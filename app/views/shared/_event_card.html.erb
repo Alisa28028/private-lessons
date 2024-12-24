@@ -2,7 +2,7 @@
 <!-- card only appears if the user is not the event creator -->
 <% unless event.user == current_user && controller_name == 'users' %>
   <div class="card-product m-1 mb-3">
-    <%= link_to "", event_path(event), class: "card-link z-down" %>
+    <%= link_to event_path(event), class: "card-link" %>
     <div class="d-flex flex-column justify-content-between">
       <div class="d-flex flex-row justify-content-between p-2">
         <!-- EVENT TITLE -->
@@ -128,6 +128,9 @@
   <!-- EVENT CREATOR LAYOUT (DASHBOARD CARD) -->
   <!---------------------------------------------->
   <div class="card-product m-1 mb-3 p-2">
+    <!-- when i add this link back im losing my buttons T_T-->
+    <%# <%= link_to "", event_path(event), class: "card-link z-down" %>
+    <!---------------------------------------------->
     <div class="d-flex flex-column justify-content-between h-100">
       <div class="d-flex justify-content-between">
         <!-- EVENT TITLE -->
@@ -144,10 +147,14 @@
       <div class="card-product-info-grid mb-2">
         <div>
           <% if event.photos.attached? %>
-            <%= cl_image_tag event.photos.first.key %>
+            <%= link_to event_path(event) do %>
+              <%= cl_image_tag event.photos.first.key %>
+            <% end %>
           <% else %>
             <% if event.user.photo.attached? %>
-              <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+              <%= link_to event_path(event) do %>
+                <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+              <% end %>
             <% end %>
           <% end %>
         </div>
@@ -161,7 +168,7 @@
             </div>
             <p class="d-flex text-dark" style="font-size:14px"><%= event.location.address %></p>
           </div>
-          <div class="d-flex flex-col align-items-end">
+          <div class="d-flex flex-col align-items-end z-up">
             <!-- ICON TO EDIT EVENT -->
             <div>
               <%= link_to edit_event_path(event), class: "py-0 px-1 z-up" do %>
@@ -174,10 +181,15 @@
                 <i class="fa-regular fa-copy"></i>
               <% end %>
             </div>
+            <!-- ICON TO DELETE EVENT -->
+            <div>
+              <%= button_to event_path(event), method: :delete, data: { turbo_confirm: "Are you sure?" }, style: "border: none; background: none; padding: 0; color: #543A70;",class: "py-0 px-1 z-up" do %>
+                <i class="fa-regular fa-trash-can"></i>
+              <% end %>
+            </div>
           </div>
         </div>
         <!---------------------------------------------->
-        <!-- Link to show page (this links to the specific event) -->
       </div>
     </div>
   </div>

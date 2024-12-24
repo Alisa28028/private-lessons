@@ -11,7 +11,7 @@ class Event < ApplicationRecord
   validates :end_date, presence: true
   validates :price_cents, presence: true
   validates :capacity, presence: true
-  validates :location, presence: true
+  validates :location, presence: { message: "must be selected or entered" }
   has_many :bookings, dependent: :destroy
   has_many :users, through: :bookings
   has_many_attached :photos
