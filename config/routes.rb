@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :events, only: [:new, :create, :index, :show, :edit, :update, :destroy] do
     member do
       get :duplicate
+      post :create_from_event
     end
     resources :bookings, only: [:create]
 
@@ -21,7 +22,7 @@ Rails.application.routes.draw do
     resources :payments, only: [:new]
   end
 
-  resources :posts, only: :create do
+  resources :posts, only: [:new, :create, :index, :show] do
     resources :comments, only: :create
   end
 

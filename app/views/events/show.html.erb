@@ -21,6 +21,11 @@
       <%= image_tag "sexy_lady.jpg", style: "width: 100%; height: 100%; object-fit: cover; display: block;", alt: "Default Photo"  %>
     <% end %>
   </div>
+  <% if @event.videos.attached? %>
+    <%= video_tag(url_for(@event.videos.first), controls: true, type: "video/mp4") %>
+  <% else %>
+    <p>No video attached.</p>
+  <% end %>
   <div class="row mt-2">
     <h4 class="text-custom">Taught by:
       <%= link_to user_path(@event.user), class: "text-custom" do %>
@@ -81,6 +86,11 @@
                 alert('URL copied to clipboard!');
               });
             </script>
+          </div>
+          <%= link_to new_post_path, class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
+            <i class="fa-regular fa-square-plus"></i> create post
+          <% end %>
+          <div>
           </div>
           <div class="d-flex flex-end" style="margin-left: 3px;">
             <%= link_to edit_event_path(@event), class: "btn btn-outline-primary btn-sm me-1" do %>

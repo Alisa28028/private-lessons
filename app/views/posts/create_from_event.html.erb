@@ -1,0 +1,10 @@
+<h1>Posts#create</h1>
+<p>Find me in app/views/posts/create.html.erb</p>
+<%= form_with(model: @post, local: true) do |form| %>
+  <%= form.text_field :title %>
+  <%= form.text_area :description %>
+  <%= form.check_box :is_video %>
+  <%= form.file_field :photos, multiple: true %>
+  <%= form.file_field :video %>
+  <%= form.submit 'Create Post' %>
+<% end %>

@@ -1,6 +1,6 @@
 <div class="container d-flex justify-content-center bg-white w-100" style="margin-bottom: 5px;">
   <div data-controller="datepicker" class="col-12">
-    <%= simple_form_for @event do |f| %>
+    <%= simple_form_for @event, html: { multipart: true } do |f| %>
       <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
       <!-- Manually adding datetime-local input for start_date -->
       <div class="form-group">
@@ -26,6 +26,9 @@
       <!-- Add picture or video upload -->
       <div class="form-group mb-8">
         <%= f.input :photos, as: :file, input_html: { multiple: true } %>
+      </div>
+      <div class="form-group mb-8">
+        <%= f.input :videos, as: :file, input_html: { multiple: true } %>
       </div>
       <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
     <% end %>
