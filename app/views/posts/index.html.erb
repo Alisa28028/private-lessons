@@ -4,6 +4,7 @@
       <div class="column">
         <% @posts.each do |post| %>
           <p><%= post.title %></p>
+          <p><%= post.event ? post.event.title : "No event associated" %></p>
           <div style="width: 350px">
             <% if post.videos.attached? %>
               <%= video_tag(url_for(post.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto;") %>
