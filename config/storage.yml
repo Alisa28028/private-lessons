@@ -35,4 +35,8 @@ local:
 
 cloudinary:
   service: Cloudinary
+  cloud_name: <%= URI.parse(ENV['CLOUDINARY_URL']).host %>
+  api_key: <%= URI.parse(ENV['CLOUDINARY_URL']).user %>
+  api_secret: <%= URI.parse(ENV['CLOUDINARY_URL']).password %>
   folder: <%= Rails.env %>
+  secure: true

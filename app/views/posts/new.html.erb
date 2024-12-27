@@ -1,0 +1,21 @@
+<div class="mt-6"></div>
+<p>hellooo?</p>
+<div class="container d-flex justify-content-center bg-white w-100" style="margin-bottom: 5px;">
+  <%= simple_form_for @post, html: { multipart: true } do |f| %>
+    <%= f.input :title, label: false, input_html: { placeholder: "Title..." } %>
+    <%= f.input :description, label: false, input_html: { placeholder: "Description..." } %>
+    <%= f.input :videos, as: :file, input_html: { multiple: true } %><!-- File input for video -->
+    <%= f.submit 'Create Post' %>
+  <% end %>
+</div>
+</div>
+<div class="container" style="padding-bottom: 500px;">
+  <% if @post.errors.any? %>
+    <div class="errors">
+      <ul>
+        <% @post.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
