@@ -14,6 +14,7 @@ before_action :set_event, only: [:new, :create, :show, :create_from_event, :dest
   def new
     if @event
       @post = @event.posts.new
+      @post.videos.attach(@event.videos.first.download) if @event.videos.attached?
     else
       @post = Post.new
     end
@@ -27,6 +28,12 @@ before_action :set_event, only: [:new, :create, :show, :create_from_event, :dest
     end
 
     @post.user = current_user
+
+  # Check if a video is uploaded or associated with the post
+  # Attach videos if provided (this applies to both post creation from event and from scratch)
+    if params[:post][:videos]
+    @post.videos.attach(params[:post][:videos])
+    end
 
     if @post.save
       redirect_to @post, notice: 'Post was successfully created.'
