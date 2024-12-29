@@ -10,27 +10,41 @@ Rails.application.routes.draw do
   resources :events, only: [:new, :create, :index, :show, :edit, :update, :destroy] do
     member do
       get :duplicate
-      post :create_from_event
     end
     resources :bookings, only: [:create]
-
+    #  Nested posts for events, including edit and update
+    resources :posts, only: [:new, :create, :edit, :update, :index, :show] do
+      collection do
+        get :create_from_event #Allows creating posts from events
+      end
+        resources :comments, only: :create
+    end
   end
 
+   # Non-nested posts resource for standalone posts
+   resources :posts, only: [:new, :create, :index, :show] do
+    collection do
+      post :save
+    end
+  end
+    # User routes (show, edit, update)
   resources :users, only: [:show, :edit, :update]
 
-  resources :bookings, only: [:index, :destroy] do
-    resources :payments, only: [:new]
+    # booking routes
+    resources :bookings, only: [:index, :destroy] do
+      resources :payments, only: [:new]
   end
 
-  resources :posts, only: [:new, :create, :index, :show] do
-    resources :comments, only: :create
-  end
-
+  # Dashboard route for users
   get "/dashboard", to: "users#dashboard", as: :dashboard
 
+  # Search route for events
   get "/search", to: "events#search", as: :search
+
+  # Fake payment route
   get "/events/:event_id/fake", to: "payments#fake", as: :fake
 
+   # Mount StripeEvent engine for handling webhooks
   mount StripeEvent::Engine, at: '/stripe-webhooks'
 
   # Defines the root path route ("/")
