@@ -87,7 +87,7 @@
               });
             </script>
           </div>
-          <%= link_to new_event_post_path(event_id: @event.id), class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
+          <%= link_to new_event_post_path(@event), class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
             <i class="fa-regular fa-square-plus"></i> create post
           <% end %>
           <div>

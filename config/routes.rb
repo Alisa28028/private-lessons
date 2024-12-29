@@ -15,15 +15,18 @@ Rails.application.routes.draw do
     #  Nested posts for events, including edit and update
     resources :posts, only: [:new, :create, :edit, :update, :index, :show] do
       collection do
-        post :create_from_event #Allows creating posts from events
+        get :create_from_event #Allows creating posts from events
       end
         resources :comments, only: :create
     end
   end
 
    # Non-nested posts resource for standalone posts
-   resources :posts, only: [:new, :create, :index, :show]
-
+   resources :posts, only: [:new, :create, :index, :show] do
+    collection do
+      post :save
+    end
+  end
     # User routes (show, edit, update)
   resources :users, only: [:show, :edit, :update]
 

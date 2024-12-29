@@ -1,7 +1,10 @@
 class PostsController < ApplicationController
+before_action :set_event, only: [:new, :create, :show, :create_from_event, :destroy]
+
   def index
     @user = current_user
     @posts = Post.all
+    @event = Event.find_by(id: params[:event_id])
   end
 
   def show
@@ -9,52 +12,57 @@ class PostsController < ApplicationController
   end
 
   def new
-    @post = if @event
-      @event.posts.build # A new post for this event
+    if @event
+      @post = @event.posts.new
     else
-      Post.new #Blank post
+      @post = Post.new
+    end
   end
 
   def create
-    @post = if @event
-      @event.posts.build(post_params)
+    if @event
+      @post = @event.posts.new(post_params)
     else
-      Post.new(post_params)
+      @post = Post.new(post_params)
     end
 
+    @post.user = current_user
+
     if @post.save
-      redirect_to event_post_path(@event, @post), notice: 'Post was successfully created.'
+      redirect_to @post, notice: 'Post was successfully created.'
     else
       render :new
     end
   end
 
-    # @post = Post.new(post_params)
-    # @post.user = current_user
-
-    # if @post.save
-    #   redirect_to @post, notice: 'Post successfully created.'
-    # else
-    #   render :new, status: :unprocessable_entity
-    # end
-  end
-
 
   def create_from_event
-    @event = Event.find(params[:event_id])
-    @post = Post.new(post_params)
-    @post.user = current_user
 
-    # Setting the title, description and video from the event
-    @post.title = @event.title
-    @post.description = @event.description
-    @post.videos.attach(@event.video) if @event.video.attached?
+    @post = @event.posts.new(
+      title: @event.title,
+      description: @event.description,
+      user: current_user
+    )
+
+    @event.videos.each do |video|
+      @post.videos.attach(video)
+    end
     if @post.save
       redirect_to @post, notice: 'Post created from event successfully.'
     else
       render :new, status: :unprocessable_entity
     end
   end
+
+  def save
+    @post = Post.find_or_initialize_by(id: params[:id])
+    if @post.update(post_params)
+      redirect_to @post, notice: 'post was successfully saved.'
+    else
+      render :edit
+    end
+  end
+
 
   def destroy
     @post = Post.find(params[:id])
@@ -64,7 +72,11 @@ class PostsController < ApplicationController
 
   private
 
+  def set_event
+    @event = Event.find_by(id: params[:event_id])
+  end
+
   def post_params
-    params.require(:post).permit(:title, :description, :is_video, photos: [], videos: [])
+    params.require(:post).permit(:title, :description, :event_id, :is_video, photos: [], videos: [])
   end
 end

@@ -1,0 +1,32 @@
+<div class="mt-6 ms-3">
+  <%= simple_form_for @post, url: (@event ? event_posts_path(@event) : posts_path) do |f| %>
+    <% if @event %>
+      <!-- Pre-fill form with event details if @event is present -->
+      <div class="form-group">
+        <%= f.input :title, input_html: { class: "form-control", value: @event.title } %>
+      </div>
+      <div class="form-group">
+        <%= f.input :description, input_html: { class: "form-control", value: @event.description } %>
+      </div>
+      <!-- Common form fields -->
+      <% if @event.videos.attached? %>
+        <%= video_tag(url_for(@event.videos.first), controls: true, type: "video/mp4") %>
+      <% else %>
+        <div class="form-group mb-4">
+          <%= f.input :video, as: :file, label: "Add Video", input_html: { class: "form-control" } %>
+        </div>
+      <% end %>
+    <% else %>
+      <!-- blank form for creating a post-->
+      <div class="form-group">
+        <%= f.input :title, label: true, input_html: { class: "form-control" } %>
+      </div>
+      <div class="form-group">
+        <%= f.input :description, label: true, input_html: { class: "form-control" } %>
+      </div>
+    <% end %>
+    <div class="form-group">
+      <%= f.submit "Create Post", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>
