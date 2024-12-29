@@ -1,17 +1,19 @@
 <div class="container shadow-sm p-3 my-5 bg-body-tertiary rounded my-5 col-sm-10 col-md-8 col-lg-6 custom-form-container">
-  <%= render "create_from_event" %>
-</div>
-<%# -------------------------- %>
-<div class="mt-6"></div>
-<p>hellooo?</p>
-<div class="container d-flex justify-content-center bg-white w-100" style="margin-bottom: 5px;">
-  <%= simple_form_for @post, html: { multipart: true } do |f| %>
-    <%= f.input :title, label: false, input_html: { placeholder: "Title..." } %>
-    <%= f.input :description, label: false, input_html: { placeholder: "Description..." } %>
-    <%= f.input :videos, as: :file, input_html: { multiple: true } %><!-- File input for video -->
-    <%= f.submit 'Create Post' %>
+  <% if @post.event.present? %>
+    <%= render "create_from_event" %>
+  <% else %>
+    <%# -----------Form for creating post from scratch --------------- %>
+    <div class="mt-6"></div>
+    <p>hellooo?</p>
+    <div class="container d-flex justify-content-center bg-white w-100" style="margin-bottom: 5px;">
+      <%= simple_form_for @post, html: { multipart: true } do |f| %>
+        <%= f.input :title, label: false, input_html: { placeholder: "Title..." } %>
+        <%= f.input :description, label: false, input_html: { placeholder: "Description..." } %>
+        <%= f.input :videos, as: :file, input_html: { multiple: true } %><!-- File input for video -->
+        <%= f.submit 'Create Post' %>
+      <% end %>
+    </div>
   <% end %>
-</div>
 </div>
 <div class="container" style="padding-bottom: 500px;">
   <% if @post.errors.any? %>

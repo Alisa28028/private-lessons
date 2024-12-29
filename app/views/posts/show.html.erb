@@ -5,6 +5,8 @@
 <!-- Video Display-->
 <% if @post.event.videos.attached? %>
   <%= video_tag(url_for(@post.event.videos.first), controls: true, type: "video/mp4") %>
+<% elsif @post.videos.attached? %>
+  <%= video_tag(url_for(@post.videos.first), controls: true, type: "video/mp4") %>
 <% else %>
   <p>No video attached.</p>
 <% end %>
