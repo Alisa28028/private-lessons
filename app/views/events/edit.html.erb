@@ -1,4 +1,4 @@
-<div class="container d-flex justify-content-center mt-6">
+<div class="container d-flex justify-content-center mt-6 mb-6">
   <div data-controller="datepicker">
     <!-- Displaying validations for errors -->
     <% if @event.errors.any? %>
@@ -41,6 +41,9 @@
         <!-- Add picture or video upload -->
         <div class="form-group mb-8">
           <%= f.input :photos, as: :file, input_html: { multiple: true } %>
+        </div>
+        <div class="form-group mb-8">
+          <%= f.input :videos, as: :file, input_html: { multiple: true } %>
         </div>
         <%=
   if params[:duplicate] # On the edit page for a specific event

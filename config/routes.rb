@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :events, only: [:new, :create, :index, :show, :edit, :update, :destroy] do
     member do
       get :duplicate
+      post :add_video
     end
     resources :bookings, only: [:create]
     #  Nested posts for events, including edit and update
