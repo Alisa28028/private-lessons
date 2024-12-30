@@ -1,5 +1,7 @@
 class EventsController < ApplicationController
 
+  before_action :set_event, only: [:edit, :update, :add_video]
+
   def index
     @user = current_user
     @users = User.all
@@ -43,6 +45,20 @@ class EventsController < ApplicationController
       else
         render 'new', status: :unprocessable_entity
       end
+  end
+
+  def add_video
+    if params[:event][:videos].present?
+      params[:event][:videos].each do |file|
+        @event.videos.attach(file)
+      end
+    end
+    if @event.save
+      redirect_to @event, notice: 'Video(s) successfully added.'
+    else
+      flash.now[:alert] = "There was an error adding the videos"
+      render :edit
+    end
   end
 
   def destroy
