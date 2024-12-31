@@ -140,7 +140,7 @@
           <% if event.capacity - event.bookings.count <= 0 %>
             <p class="attendee-number text-dark fs-6"><strong><%= event.capacity %>/<%= event.capacity %></strong></p>
           <% else %>
-            <p class="attendee-number text-dark fs-6"><%= event.capacity - event.bookings.count %>/<%= event.capacity %></p>
+            <p class="attendee-number text-dark fs-6"><%= event.bookings.count %>/<%= event.capacity %></p>
           <% end %>
         </div>
       </div>
