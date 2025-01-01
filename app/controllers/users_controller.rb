@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit]
+  before_action :set_user, only: [:show, :edit, :classes, :teacher_posts, :student_posts]
   def dashboard
     require 'time'
     @bookings = current_user.bookings
@@ -26,6 +26,29 @@ class UsersController < ApplicationController
 
   def edit
 
+  end
+
+  def classes
+    # Fecth the classes for the teacher
+    @events = @user.events
+    render partial: 'classes', locals: { events: @events }
+  end
+
+  def teacher_posts
+    # Fetch posts by the teacher
+    @posts = @user.posts
+    if posts.nil? || @posts.empty?
+      flash[:notice] = "No posts yet"
+    end
+    render partial: 'teacher_posts', locals: { posts: @posts }
+    # render turbo_stream: turbo_stream.replace('posts', partial: 'posts', locals: { posts: @posts })
+  end
+
+  def student_posts
+    # Fetch all posts from events related to the event creator
+    @student_posts = @user.events.includes(:posts).flat_map(&:posts)
+    render partial: 'student_posts', locals: { posts: @posts }
+    # render turbo_stream: turbo_stream.replace('posts', partial: 'posts', locals: { posts: @posts })
   end
 
   def update

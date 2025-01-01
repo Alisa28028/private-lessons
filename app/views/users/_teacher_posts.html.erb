@@ -1,0 +1,10 @@
+<h4>Teacher's Posts</h4>
+<ul>
+  <% if @posts.present? %>
+    <%= @posts.each do |post| %>
+      <li><%= post.title %></li>
+    <% end %>
+  <% else %>
+    <li>No posts yet</li>
+  <% end %>
+</ul>
