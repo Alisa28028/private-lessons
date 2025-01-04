@@ -1,0 +1,24 @@
+<div class="teacher-posts">
+  <h2>Teacher's posts</h2>
+  <div class="mt-6">
+    <div class="container w-100 my-5 bg-white">
+      <div class="row">
+        <div class="column">
+          <% @posts.each do |post| %>
+            <p><%= post.user.name %></p>
+            <p><%= post.title %></p>
+            <p><%= post.event ? post.event.title : "No event associated" %></p>
+            <div style="width: 350px">
+              <% if post.videos.attached? %>
+                <%= video_tag(url_for(post.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto;") %>
+              <% elsif post.event && post.event.videos.attached? %>
+                <%= video_tag(url_for(post.event.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto;") %>
+              <% else %>
+                <p>No video attached.</p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>

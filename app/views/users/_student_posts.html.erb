@@ -1,0 +1,21 @@
+<div class="student-posts">
+  <h2>Student Posts</h2>
+  <% @student_posts.each do |post| %>
+    <div class="post">
+      <p>Post title:<%= post.title %></p>
+      <p>Event:<%= post.event.title %></p>
+      <p>Teacher:<%= post.event.user.name %></p>
+      <p>author:<%= post.user.name %></p>
+      <p><%= post.event ? post.event.title : "No event associated" %></p>
+      <div style="width: 350px">
+        <% if post.videos.attached? %>
+          <%= video_tag(url_for(post.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto;") %>
+        <% elsif post.event && post.event.videos.attached? %>
+          <%= video_tag(url_for(post.event.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto;") %>
+        <% else %>
+          <p>No video attached.</p>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

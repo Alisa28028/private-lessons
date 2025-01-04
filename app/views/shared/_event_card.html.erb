@@ -1,6 +1,6 @@
 <%# used in home page %>
 <!-- card only appears if the user is not the event creator -->
-<% unless event.user == current_user && controller_name == 'users' %>
+<% unless event.nil? && event.user == current_user && controller_name == 'users' %>
   <div class="card-product m-1 mb-3">
     <%= link_to event_path(event), class: "card-link" %>
     <div class="d-flex flex-column justify-content-between">
@@ -45,7 +45,7 @@
             <% end %>
             <!-- Conditional Buttons inside the card -->
             <!---------------------------------------------->
-            <% if event %>
+            <% if current_user %>
               <div style="position: relative; display: inline-flex;">
                 <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
                 <!-- ATTENDING  -->

@@ -1,40 +1,47 @@
-<div class="container my-5 w-100 bg-white mt-0">
-  <div class="row">
-    <div class="column mt-4">
-      <br>
-      <%= image_tag(@user.photo, width: "200px") %>
-      <h2 class="mt-5"><strong><%= @user.name %></strong></h2>
-      <p><%= @user.description %>
-      </p>
-      <% if @user == current_user %>
-        <div class="d-flex justify-content-between mt-4">
-          <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom" %>
-          <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom" %>
+<div data-controller="teacher" data-teacher-user-id="<%= @user.id %>">
+  <div class="container my-5 w-100 bg-white mt-3">
+    <div class="row">
+      <div class="column mt-4">
+        <br>
+        <div class="d-flex flex-row align-items-start">
+          <%= image_tag(@user.photo, width: "200px", class: "avatar-large") %>
+          <div class="d-flex flex-column justify-content-start ms-2">
+            <div class="mb-0"  style="font-size: 18px;"><strong><%= @user.name %></strong></div>
+            <%= @user.description %>
+          </div>
         </div>
-        <hr>
-        <p class="d-flex justify-content-center my-4 fs-3 text-custom"><strong>Your upcoming classes!</strong></p>
-        <div class="d-flex justify-content-between">
-          <p class="mb-2 fs-6 text-custom" style="padding-left:4px;"><strong>Classes I'm Teaching:</strong></p>
-          <a href="#past-events" class="d-flex justify-content-end align-items-end fw-bold me-2 mb-2" style="font-size: smaller"> <span class="border border-custom p-1">Past Events</span></a>
-        </div>
-        <%= render "shared/event_card_iteration", events: @events.where("start_date >= ?", Date.today) %>
-        <p class="mb-2 mt-5 fs-6 text-custom" style="padding-left:4px;"><strong>Classes I'm Attending:</strong></p>
-        <% if @bookings.any? %>
-          <%= render "shared/event_card_my_iteration", bookings: @bookings %>
-        <% else %>
-          <span>No classes booked!</span>
+        <% if @user == current_user %>
+          <div class="d-flex justify-content-between mt-4">
+            <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom" %>
+            <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom" %>
+          </div>
         <% end %>
-        <p class="d-flex justify-content-center mt-3 fs-3 text-custom" id="past-events"><strong>Past Events</strong></p>
-        <%= render "shared/event_card_iteration", events: @events.where("start_date < ?", Date.today) %>
-      <% else %>
-        <hr>
-        <p class="d-flex justify-content-center my-4 fs-3 text-custom"><strong><%= @user.name %>'s upcoming classes!</strong></p>
-        <a href="#past-events" class="d-flex justify-content-end align-items-end fw-bold me-2" style="font-size: smaller"> <span class="border border-custom p-1">Past Events</span></a>
-        <%= render "shared/event_card_iteration", events: @events.where("start_date >= ?", Date.today) %>
-        <p class="d-flex justify-content-center mt-3 fs-3 text-custom" id="past-events"><strong>Past Events</strong></p>
-        <%= render "shared/event_card_iteration", events: @events.where("start_date < ?", Date.today) %>
-      <% end %>
-      <br>
+      </div>
     </div>
+  </div>
+  <!-- Icons section for switchign content -->
+  <div class="icon-section mt-0 ms-4 me-4">
+    <div class="d-flex justify-content-between">
+      <%= link_to "#", data: { turbo_frame: "teacher_content", action: "click->teacher#loadEvents" } do %>
+        <i class="icon-classes"></i>
+        <p>Classes</p>
+      <% end %>
+      <%= link_to "#", data: { turbo_frame: "teacher_content", action: "click->teacher#loadPosts" } do %>
+        <i class="icon-posts"></i>
+        <p>Posts</p>
+      <% end %>
+      <%= link_to "#", data: { turbo_frame: "student_content", action: "click->teacher#loadStudentPosts" } do %>
+        <i class="icon-student-posts"></i>
+        <p>Student Posts</p>
+      <% end %>
+    </div>
+  </div>
+  <!-- Dynamic Content Section (This section will update based on the clicked icon) -->
+  <div class="teacher-content mt-4 mb-6" data-teacher-target="content">
+    <%= turbo_frame_tag "teacher_content" do %>
+      <div id="teacher-events">
+        <%= render 'users/classes', events: @events %>
+      </div>
+    <% end %>
   </div>
 </div>
