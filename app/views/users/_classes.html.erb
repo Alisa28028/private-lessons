@@ -1,6 +1,18 @@
-<h4>Classes</h4>
-<ul>
-  <% @events.each do |class_item| %>
-    <li><%= class_item.title %></li>
+<div class="teacher-events">
+  <% events.each do |event| %>
+    <div class="event ms-4 me-4">
+      <hr>
+      <%# <p class="d-flex justify-content-center mt-3 fs-3 text-custom" id="past-events"><strong>Past Events</strong></p>
+          <%= render "shared/event_card_iteration", events: @events.where("start_date < ?", Date.today) %>
+      <%# <% else %>
+      <hr>
+      <p class="d-flex justify-content-center my-4 fs-3 text-custom"><strong><%= @user.name %>'s upcoming classes!</strong></p>
+      <a href="#past-events" class="d-flex justify-content-end align-items-end fw-bold me-2" style="font-size: smaller"> <span class="border border-custom p-1">Past Events</span></a>
+      <%= render "shared/event_card_iteration", events: @events.where("start_date >= ?", Date.today) %>
+      <p class="d-flex justify-content-center mt-3 fs-3 text-custom" id="past-events"><strong>Past Events</strong></p>
+      <%= render "shared/event_card_iteration", events: @events.where("start_date < ?", Date.today) %>
+      <h3><%= event.title %></h3>
+      <p><%= event.description %></p>
+    </div>
   <% end %>
-</ul>
+</div>

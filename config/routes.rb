@@ -29,7 +29,13 @@ Rails.application.routes.draw do
     end
   end
     # User routes (show, edit, update)
-  resources :users, only: [:show, :edit, :update]
+  resources :users, only: [:show, :edit, :update] do
+    member do
+      get :classes
+      get :teacher_posts
+      get :student_posts
+    end
+  end
 
     # booking routes
     resources :bookings, only: [:index, :destroy] do
