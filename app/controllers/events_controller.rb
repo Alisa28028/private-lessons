@@ -1,12 +1,13 @@
 class EventsController < ApplicationController
 
-  before_action :set_event, only: [:edit, :update, :add_video]
+  before_action :set_event, only: [:edit, :show, :update, :add_video]
 
   def index
     @user = current_user
     @users = User.all
     @events = Event.all
-    @event_bookings = Booking.where(events_id: @events)
+    # @event_bookings = Booking.where(event_id: @events)
+    @event_bookings = Booking.where(event_id: @events.pluck(:id))
     @bookings = @user.bookings
   end
 
@@ -28,7 +29,7 @@ class EventsController < ApplicationController
 
   def show
     @user = current_user # teacher user organizing this event (= teacher)
-    @event = Event.find(params[:id]) # event I identify through show url id
+    # @event = Event.find(params[:id]) # event I identify through show url id
     @bookings = Booking.where(event_id: @event) # bookings list for this event
     @new_booking = Booking.new # instance to allow new booking
   end
