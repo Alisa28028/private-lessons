@@ -1,196 +1,189 @@
-<%# used in home page %>
-<!-- card only appears if the user is not the event creator -->
-<% unless event.nil? && event.user == current_user && controller_name == 'users' %>
-  <div class="card-product m-1 mb-3">
-    <%= link_to event_path(event), class: "card-link" %>
-    <div class="d-flex flex-column justify-content-between">
-      <div class="d-flex flex-row justify-content-between p-2">
-        <!-- EVENT TITLE -->
-        <div class="d-flex flex-column">
-          <h2><%= event.title.upcase %></h2>
-        </div>
-        <!-- EVENT LOCATION -->
-        <div class="d-flex flex-column text-end">
-          <p class="text-custom d-flex justify-content-end"><strong><%= event.location.address %></strong></p>
-        </div>
-      </div>
-      <div class="card-product-info-grid mb-2">
-        <!-- EVENT PHOTO -->
-        <div>
-          <% if event.photos.attached? %>
-            <%= cl_image_tag event.photos.first.key %>
-          <% else %>
-            <% if event.user.photo.attached? %>
-              <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
-            <% end %>
-          <% end %>
-        </div>
-        <div class="card-product-infos d-flex flex-row">
-          <!-- EVENT DATE AND TIME / INSTRUCTOR-->
-          <div class="d-flex flex-column">
-            <p><%= event.start_date.strftime("%B %d, %Y") %></p>
-            <p><%= event.start_date.strftime("%H:%M") %>~<%= event.end_date.strftime("%H:%M") %></p>
-            <p><%= event.user.name %></p>
+<%# Home page cards %>
+<% @events.each do |event| %>
+  <%# check if the currenrt user is the event creator %>
+  <% if event.user != current_user %> <!-----Non creator users (show booking and wait list buttons-------->
+    <%# <% if event.id.present? %>
+    <div class="card-product m-1 mb-3">
+      <%= link_to event_path(event), class: "card-link" do %>
+        <div class="d-flex flex-column justify-content-between">
+          <div class="d-flex flex-row justify-content-between p-2">
+            <!-- EVENT TITLE -->
+            <div class="d-flex flex-column">
+              <h2><%= event.title.upcase %></h2>
+            </div>
+            <!-- EVENT LOCATION -->
+            <div class="d-flex flex-column text-end">
+              <p class="text-custom d-flex justify-content-end"><strong><%= event.location.address %></strong></p>
+            </div>
           </div>
-          <!-- EVENT IS FULL CONDITIONAL -->
-          <div class="d-flex flex-column justify-content-end">
-            <% if event.capacity - event.bookings.count <= 0 %>
-              <p class="attendee-number text-end text-danger mb-2"><strong>EVENT FULL!</strong></p>
-            <% else %>
-              <!-- REMAINING SPOTS -->
-              <% remaining_spots = event.capacity - event.bookings.count %>
-              <% if remaining_spots <= 10 %>
-                <p class="attendee-number text-end text-danger d-flex align-items-end mb-2"> <%= event.capacity - event.bookings.count %> Spots left</p>
-              <% end %>
-            <% end %>
-            <!-- Conditional Buttons inside the card -->
-            <!---------------------------------------------->
-            <% if current_user %>
-              <div style="position: relative; display: inline-flex;">
-                <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
-                <!-- ATTENDING  -->
-                <!-- Checking if current user is already attending the event -->
-                <% if event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
-                  <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
-                    Attending!
-                  </p>
-                  <!-- JOIN WAIT LIST  -->
-                  <!-- if not attending, check if the event is full. If yes, JOIN WAIT LIST -->
-                <% elsif event.capacity - event.bookings.count <= 0 %>
-                  <div class="" style=" position: relative;">
-                    <button type="button" style="font-size: small; z-index: 10;" class="btn btn-custom ml-2 mb-0 mr-0 " data-bs-toggle="modal" data-bs-target="#waitinglistModal<%= event.id %> ">
-                      Join Wait List
-                    </button>
-                  </div>
-                  <!-- BOOK THIS CLASS  -->
-                  <!-- If not attending and not full "BOOK THIS CLASS" -->
-                <% else %>
-                  <div class="d-flex justify-content-end align-items-center" style=" position: relative;">
-                    <button type="button" style="font-size: small; z-index: 10;" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal<%= event.id %> ">
-                      Book Class!
-                    </button>
-                  </div>
+          <div class="card-product-info-grid mb-2">
+            <!-- EVENT PHOTO -->
+            <div>
+              <% if event.photos.attached? %>
+                <%= cl_image_tag event.photos.first.key %>
+              <% else %>
+                <% if event.user.photo.attached? %>
+                  <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
                 <% end %>
-                <!-- End of check for event creator -->
+              <% end %>
+            </div>
+            <div class="card-product-infos d-flex flex-row">
+              <!-- EVENT DATE AND TIME / INSTRUCTOR-->
+              <div class="d-flex flex-column">
+                <p><%= event.start_date.strftime("%B %d, %Y") %></p>
+                <p><%= event.start_date.strftime("%H:%M") %>~<%= event.end_date.strftime("%H:%M") %></p>
+                <p><%= event.user.name %></p>
               </div>
-            <% end %>
-          </div>
-        </div>
-        <!-- END of Conditional Buttons inside the card -->
-        <!---------------------------------------------->
-        <!-- Booking Modal for the Event -->
-        <div class="modal fade" id="bookingModal<%= event.id %>" tabindex="-1" aria-labelledby="bookingModalLabel<%= event.id %>" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="bookingModalLabel<%= event.id %>">Book "<%= event.title %>" Class on <%= event.start_date.strftime("%Y/%m/%d (%a)") %> at <%= event.start_date.strftime("%H:%M") %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <p>Are you sure you want to book this class?</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <%= link_to fake_path(event), class: "btn btn-primary" do %>
-                  Book Now
+              <!-- EVENT IS FULL CONDITIONAL -->
+              <div class="d-flex flex-column justify-content-end">
+                <% if event.capacity - event.bookings.count <= 0 %>
+                  <p class="attendee-number text-end text-danger mb-2"><strong>EVENT FULL!</strong></p>
+                <% else %>
+                  <!-- REMAINING SPOTS -->
+                  <% remaining_spots = event.capacity - event.bookings.count %>
+                  <% if remaining_spots <= 10 %>
+                    <p class="attendee-number text-end text-danger d-flex align-items-end mb-2"> <%= event.capacity - event.bookings.count %> Spots left</p>
+                  <% end %>
+                <% end %>
+                <!-- Conditional Buttons inside the card -->
+                <!---------------------------------------------->
+                <% if current_user %>
+                  <div style="position: relative; display: inline-flex;">
+                    <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
+                    <!-- ATTENDING  -->
+                    <!-- Checking if current user is already attending the event -->
+                    <% if event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
+                      <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
+                        Attending!
+                      </p>
+                      <!-- JOIN WAIT LIST  -->
+                      <!-- if not attending, check if the event is full. If yes, JOIN WAIT LIST -->
+                    <% elsif event.capacity - event.bookings.count <= 0 %>
+                      <button type="button" style="font-size: small;" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal<%= event.id %> ">
+                        Join Wait List
+                      </button>
+                    <% else %>
+                      <button type="button" style="font-size: small;" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal<%= event.id %> ">
+                        Book Class!
+                      </button>
+                    <% end %>
+                  </div>
                 <% end %>
               </div>
             </div>
           </div>
         </div>
-        <!-- Wait list Modal for the Event -->
-        <div class="modal fade" id="waitinglistModal<%= event.id %>" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= event.title.capitalize %></strong> Wait List</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <% end %>
+    </div>
+  <% else %> <!-- For event creators (show edit, duplicate, delete buttons) -->
+    <!-- EVENT CREATOR LAYOUT (DASHBOARD CARD) -->
+    <div class="card-product m-1 mb-3 p-2">
+      <%# <%= link_to event_path(event), class: "card-link" do %>
+        <div class="d-flex flex-column justify-content-between h-100">
+          <div class="d-flex justify-content-between">
+            <!-- EVENT TITLE -->
+            <h5 class="fs-5 fw-bold"><%= event.title.upcase %></h5>
+            <div class="d-flex gap-2">
+              <i class="fa-solid fa-person fa-sm mt-2"></i>
+              <% if event.capacity - event.bookings.count <= 0 %>
+                <p class="attendee-number text-dark fs-6"><strong><%= event.capacity %>/<%= event.capacity %></strong></p>
+              <% else %>
+                <p class="attendee-number text-dark fs-6"><%= event.bookings.count %>/<%= event.capacity %></p>
+              <% end %>
+            </div>
+          </div>
+          <div class="card-product-info-grid mb-2">
+            <div>
+              <% if event.photos.attached? %>
+                <%= link_to event_path(event) do %>
+                  <%= cl_image_tag event.photos.first.key %>
+                <% end %>
+              <% else %>
+                <% if event.user.photo.attached? %>
+                  <%= link_to event_path(event) do %>
+                    <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </div>
+            <div class="d-flex justify-content-between ms-3">
+              <div>
+                <p class="justify-content-end date-text"><%= event.start_date.strftime("%Y/%m/%d (%a)") %></p>
+                <div class="d-flex align-items-center gap-1">
+                  <p class="justify-content-end date-text text-custom"><%= event.start_date.strftime("%H:%M") %></p>
+                  <span class="text-custom">~</span>
+                  <p class="justify-content-end date-text text-custom"><%= event.end_date.strftime("%H:%M") %></p>
+                </div>
+                <p class="d-flex text-dark" style="font-size:14px"><%= event.location.address %></p>
               </div>
-              <div class="d-flex justify-content-between">
-                <div class="modal-body">
-                  <%= simple_form_for [event, Booking.new] do |f| %>
-                    <%= f.submit "Join Wait List", class: "btn btn-custom my-3" %>
+              <div class="d-flex flex-col align-items-end z-up">
+                <!-- ICON TO EDIT EVENT -->
+                <div>
+                  <%= link_to edit_event_path(event), class: "py-0 px-1 z-up" do %>
+                    <i class="fa-regular fa-pen-to-square"></i>
                   <% end %>
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <!-- ICON TO DUPLICATE EVENT -->
+                <div>
+                  <%= link_to duplicate_event_path(event), class: "py-0 px-1 z-up" do %>
+                    <i class="fa-regular fa-copy"></i>
+                  <% end %>
+                </div>
+                <!-- ICON TO DELETE EVENT -->
+                <div>
+                  <%= button_to event_path(event), method: :delete, data: { turbo_confirm: "Are you sure?" }, style: "border: none; background: none; padding: 0; color: #543A70;", class: "py-0 px-1 z-up" do %>
+                    <i class="fa-regular fa-trash-can"></i>
+                  <% end %>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <!---------------------------------------------->
+      </div>
+    <% end %>
+  <% end %>
+  <!-- END of Conditional Buttons inside the card -->
+  <!---------------------------------------------->
+  <!-- Booking Modal for the Event -->
+  <div class="modal fade" id="bookingModal<%= event.id %>" tabindex="-1" aria-labelledby="bookingModalLabel<%= event.id %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bookingModalLabel<%= event.id %>">Book "<%= event.title %>" Class on <%= event.start_date.strftime("%Y/%m/%d (%a)") %> at <%= event.start_date.strftime("%H:%M") %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to book this class?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <%= link_to fake_path(event), class: "btn btn-primary" do %>
+            Book Now
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Wait list Modal for the Event -->
+  <div class="modal fade" id="waitinglistModal<%= event.id %>" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= event.title.capitalize %></strong> Wait List</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="modal-body">
+            <%= simple_form_for [event, Booking.new] do |f| %>
+              <%= f.submit "Join Wait List", class: "btn btn-custom my-3" %>
+            <% end %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <!---------------------------------------------->
-<% else %>
-  <!-- EVENT CREATOR LAYOUT (DASHBOARD CARD) -->
   <!---------------------------------------------->
-  <div class="card-product m-1 mb-3 p-2">
-    <!-- when i add this link back im losing my buttons T_T-->
-    <%# <%= link_to "", event_path(event), class: "card-link z-down" %>
-    <!---------------------------------------------->
-    <div class="d-flex flex-column justify-content-between h-100">
-      <div class="d-flex justify-content-between">
-        <!-- EVENT TITLE -->
-        <h5 class="fs-5 fw-bold"><%= event.title.upcase %></h5>
-        <div class="d-flex gap-2">
-          <i class="fa-solid fa-person fa-sm mt-2"></i>
-          <% if event.capacity - event.bookings.count <= 0 %>
-            <p class="attendee-number text-dark fs-6"><strong><%= event.capacity %>/<%= event.capacity %></strong></p>
-          <% else %>
-            <p class="attendee-number text-dark fs-6"><%= event.bookings.count %>/<%= event.capacity %></p>
-          <% end %>
-        </div>
-      </div>
-      <div class="card-product-info-grid mb-2">
-        <div>
-          <% if event.photos.attached? %>
-            <%= link_to event_path(event) do %>
-              <%= cl_image_tag event.photos.first.key %>
-            <% end %>
-          <% else %>
-            <% if event.user.photo.attached? %>
-              <%= link_to event_path(event) do %>
-                <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
-              <% end %>
-            <% end %>
-          <% end %>
-        </div>
-        <div class="d-flex justify-content-between ms-3">
-          <div>
-            <p class="justify-content-end date-text"><%= event.start_date.strftime("%Y/%m/%d (%a)") %></p>
-            <div class="d-flex align-items-center gap-1">
-              <p class="justify-content-end date-text text-custom"><%= event.start_date.strftime("%H:%M") %></p>
-              <span class="text-custom">~</span>
-              <p class="justify-content-end date-text text-custom"><%= event.end_date.strftime("%H:%M") %></p>
-            </div>
-            <p class="d-flex text-dark" style="font-size:14px"><%= event.location.address %></p>
-          </div>
-          <div class="d-flex flex-col align-items-end z-up">
-            <!-- ICON TO EDIT EVENT -->
-            <div>
-              <%= link_to edit_event_path(event), class: "py-0 px-1 z-up" do %>
-                <i class="fa-regular fa-pen-to-square"></i>
-              <% end %>
-            </div>
-            <!-- ICON TO DUPLICATE EVENT -->
-            <div>
-              <%= link_to duplicate_event_path(event), class: "py-0 px-1 z-up" do %>
-                <i class="fa-regular fa-copy"></i>
-              <% end %>
-            </div>
-            <!-- ICON TO DELETE EVENT -->
-            <div>
-              <%= button_to event_path(event), method: :delete, data: { turbo_confirm: "Are you sure?" }, style: "border: none; background: none; padding: 0; color: #543A70;",class: "py-0 px-1 z-up" do %>
-                <i class="fa-regular fa-trash-can"></i>
-              <% end %>
-            </div>
-          </div>
-        </div>
-        <!---------------------------------------------->
-      </div>
-    </div>
-  </div>
-<% end %>
