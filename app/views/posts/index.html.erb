@@ -3,15 +3,29 @@
     <div class="row">
       <div class="column">
         <% @posts.each do |post| %>
-          <p><%= post.title %></p>
-          <p><%= post.event ? post.event.title : "No event associated" %></p>
+          <div class="d-flex flex-row align-items-center">
+            <% if current_user.photo.attached? %>
+              <%= cl_image_tag(current_user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered") %>
+            <% else %>
+              <%= image_tag "profilepic.jpg", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+            <% end %>
+            <div class="d-flex flex-column align-items-start">
+              <p class="mb-0"><%= post.user.name %></p>
+              <div class="d-flex flex-row align-items-center">
+                <p class="mb-0"><%= post.event ? post.event.title : "No event associated" %></p>
+                <% if post.event.present? %>
+                  <p class="mb-0 ms-2"> - <%= post.event.start_date.strftime("%Y/%m/%d %H:%M") %></p>
+                <% end %>
+              </div>
+            </div>
+          </div>
           <div style="width: 350px">
             <% if post.videos.attached? %>
-              <%= video_tag(url_for(post.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto;") %>
+              <%= video_tag(url_for(post.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto; margin-top: 8px; margin-bottom: 16px;") %>
             <% elsif post.event && post.event.videos.attached? %>
-              <%= video_tag(url_for(post.event.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto;") %>
+              <%= video_tag(url_for(post.event.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto; height: auto; margin-top: 8px; margin-bottom: 16px;") %>
             <% else %>
-              <p>No video attached.</p>
+              <p class="mt-3">No video attached.</p>
             <% end %>
           </div>
         <% end %>
