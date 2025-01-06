@@ -11,11 +11,17 @@
             <% end %>
             <div class="d-flex flex-column align-items-start">
               <p class="mb-0"><%= post.user.name %></p>
-              <div class="d-flex flex-row align-items-center">
+              <div class="d-flex flex-row align-items-center w-100">
                 <p class="mb-0"><%= post.event ? post.event.title : "No event associated" %></p>
                 <% if post.event.present? %>
                   <p class="mb-0 ms-2"> - <%= post.event.start_date.strftime("%Y/%m/%d %H:%M") %></p>
                 <% end %>
+                <!-- ICON TO DELETE EVENT -->
+                <div class="ms-auto">
+                  <%= button_to post_path(post), method: :delete, data: { turbo_confirm: "Are you sure?" }, style: "border: none; background: none; padding: 0; color: #543A70;", class: "py-0 px-1 z-up" do %>
+                    <i class="fa-regular fa-trash-can"></i>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>

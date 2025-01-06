@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   end
 
    # Non-nested posts resource for standalone posts
-   resources :posts, only: [:new, :create, :index, :show] do
+   resources :posts, only: [:new, :create, :index, :show, :destroy] do
     collection do
       post :save
     end
