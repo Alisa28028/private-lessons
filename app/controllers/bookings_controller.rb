@@ -8,7 +8,14 @@ class BookingsController < ApplicationController
     @event = Event.find(params[:event_id])
     @booking = Booking.create!(event: @event, user: current_user, state: 'paid')
 
-    redirect_to event_path(@event)
+    BookingMailer.booking_confirmation(current_user, @booking).deliver_later # Send the email in the background
+
+    # Redirect to the event show page with a success message
+    redirect_to event_path(@event), notice: 'Your booking was successful! A confirmation email has been sent.'
+  rescue ActiveRecord::RecordInvalid => e
+    # Handle any errors (e.g., invalid booking data)
+    redirect_to event_path(@event), alert: 'There was an error with your booking. Please try again.'
+  end
 
     # -----STRIPE REMOVED FOR DEMO PURPOSES-----
     # ------------------------------------------
@@ -35,6 +42,4 @@ class BookingsController < ApplicationController
     # redirect_to new_booking_payment_path(@booking)
     # ------------------------------------------
     # -----STRIPE REMOVED FOR DEMO PURPOSES-----
-  end
-
 end
