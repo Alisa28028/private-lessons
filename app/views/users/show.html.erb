@@ -11,9 +11,9 @@
           </div>
         </div>
         <% if @user == current_user %>
-          <div class="d-flex justify-content-between mt-4">
-            <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom" %>
-            <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom" %>
+          <div class="d-flex justify-content-center mt-4">
+            <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom-gray" %>
+            <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom-gray" %>
           </div>
         <% end %>
       </div>
@@ -21,18 +21,15 @@
   </div>
   <!-- Icons section for switchign content -->
   <div class="icon-section mt-0 ms-4 me-4">
-    <div class="d-flex justify-content-between">
-      <%= link_to "#", data: { turbo_frame: "teacher_content", action: "click->teacher#loadEvents" } do %>
-        <i class="icon-classes"></i>
-        <p>Classes</p>
+    <div class="d-flex justify-content-between ms-2 me-2" data-controller="link-highlight">
+      <%= link_to "#", data: { turbo_frame: "teacher_content", action: "click->teacher#loadEvents", class: "icon-link selected" } do %>
+        <i class="fa-regular fa-calendar"></i> Classes
       <% end %>
-      <%= link_to "#", data: { turbo_frame: "teacher_content", action: "click->teacher#loadPosts" } do %>
-        <i class="icon-posts"></i>
-        <p>Posts</p>
+      <%= link_to "#", data: { turbo_frame: "teacher_content", action: "click->teacher#loadPosts", class: "icon-link" } do %>
+        <i class="fa-solid fa-user"></i> My Posts
       <% end %>
-      <%= link_to "#", data: { turbo_frame: "student_content", action: "click->teacher#loadStudentPosts" } do %>
-        <i class="icon-student-posts"></i>
-        <p>Student Posts</p>
+      <%= link_to "#", data: { turbo_frame: "student_content", action: "click->teacher#loadStudentPosts", class: "icon-link" } do %>
+        <i class="fa-solid fa-user-group"></i> Student Posts
       <% end %>
     </div>
   </div>

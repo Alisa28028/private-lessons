@@ -4,13 +4,27 @@
 
 }
 
-.btn-right {
+
+.btn-custom-gray {
   margin-left: auto; /* Flexbox way */
   float: right; /* Alternatively, you can use float */
-  background-color: #543A70;
+  background-color: #c4bfc9 !important;
   color: white;
   border-radius: 5px;
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-right: 3px;
+  margin-left: 3px;
 }
+
+// .btn-profile {
+//   margin-left: auto; /* Flexbox way */
+//   float: right; /* Alternatively, you can use float */
+//   background-color: #543A70;
+//   color: white;
+//   border-radius: 5px;
+//   padding-left: 10px;
+// }
 
 .btn-right:hover {
   background-color: #F6F5FA; /* Set background to white on hover */
