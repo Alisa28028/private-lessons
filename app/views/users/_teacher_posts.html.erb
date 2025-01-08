@@ -9,7 +9,7 @@
               <% if post.user.photo.attached? %>
                 <%= cl_image_tag(post.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered") %>
               <% else %>
-                <%= image_tag "profilepic.jpg", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+                <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
               <% end %>
               <div class="d-flex flex-column align-items-start">
                 <p class="mb-0"><%= post.user.name %></p>
