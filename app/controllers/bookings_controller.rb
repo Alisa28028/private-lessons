@@ -8,7 +8,8 @@ class BookingsController < ApplicationController
     @event = Event.find(params[:event_id])
     @booking = Booking.create!(event: @event, user: current_user, state: 'paid')
 
-    BookingMailer.booking_confirmation(current_user, @booking).deliver_later # Send the email in the background
+    # send the email
+    BookingMailer.booking_confirmation(current_user, @booking).deliver_now
 
     # Redirect to the event show page with a success message
     redirect_to event_path(@event), notice: 'Your booking was successful! A confirmation email has been sent.'
