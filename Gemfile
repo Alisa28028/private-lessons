@@ -80,6 +80,10 @@ group :test do
   gem "selenium-webdriver"
 end
 
+group :development do
+  gem 'letter_opener'
+end
+
 # Custom Adds
 gem "inline_svg"
 gem "money-rails"
