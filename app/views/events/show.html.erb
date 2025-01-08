@@ -178,7 +178,12 @@
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center" >
             <%= link_to user_path(booking.user) do %>
-              <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+              <% if booking.user&.photo.present? %>
+                <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+              <% else %>
+                <!-- You can display a default image or a placeholder if no photo exists -->
+                <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+              <% end %>
             <% end %>
             <span><%= booking.user.name %></span>
           </div>
@@ -205,7 +210,12 @@
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center" >
                       <%= link_to user_path(booking.user) do %>
-                        <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+                        <% if booking.user&.photo.present? %>
+                          <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+                        <% else %>
+                          <!-- You can display a default image or a placeholder if no photo exists -->
+                          <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+                        <% end %>
                       <% end %>
                       <span><%= booking.user.name %></span>
                     </div>
