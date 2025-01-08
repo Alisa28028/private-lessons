@@ -8,10 +8,10 @@ class ApplicationController < ActionController::Base
 
   def configure_permitted_parameters
     # Permit name, email, password and password confirmation during sign up
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email, :password, :password_confirmation])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email, :password, :password_confirmation, :phone_number])
 
     # If you want to permit these fields during account update as well
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :email, :password, :password_confirmation, :current_password])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :email, :password, :password_confirmation, :current_password, :phone_number])
   end
     # Ensure the custom redirect after sign up
     def after_sign_up_path_for(resource)

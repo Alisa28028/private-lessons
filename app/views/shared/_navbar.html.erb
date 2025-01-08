@@ -38,7 +38,7 @@
             <% if current_user.photo.attached? %>
               <%= cl_image_tag(current_user.photo.key, class: "pl-avatar") %>
             <% else %>
-              <%= image_tag "profilepic.jpg", class: "pl-avatar" %>
+              <%= image_tag "default-avatar.png", class: "pl-avatar" %>
             <% end %>
           </button>
           <div class="pl-dropdown-content">
