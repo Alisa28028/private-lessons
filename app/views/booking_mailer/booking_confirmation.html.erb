@@ -5,7 +5,7 @@
 <ul>
   <li><strong>Class:</strong> <%= @event.title %></li>
   <li><strong>Date:</strong> <%= @event.start_date.strftime('%Y/%m/%d %H:%M') %></li>
-  <li><strong>Location:</strong> <%= @event.location %></li>
+  <li><strong>Location:</strong> <%= @event.location.name %></li>
   <li><strong>Instructor:</strong> <%= @event.user.name %></li>
 </ul>
 <p>If you need to cancel or reschedule, please contact us as soon as possible.</p>
