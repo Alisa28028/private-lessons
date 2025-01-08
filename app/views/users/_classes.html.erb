@@ -4,7 +4,7 @@
     <% if @event.present? %>
       <strong><%= @user.name %>'s upcoming classes!</strong>
     <% else %>
-      <p><%= @user.name %> doesn't have upcoming classes.</p>
+      <p class="d-flex justify-content-center mb-5"><%= @user.name %> doesn't have upcoming classes.</p>
     <% end %>
   </p>
   <%= render "shared/event_card_iteration", events: @events.where("start_date >= ?", Date.today) %>

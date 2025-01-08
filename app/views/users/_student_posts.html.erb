@@ -1,5 +1,4 @@
 <div class="student-posts">
-  <h2>Student Posts</h2>
   <div class="mt-1">
     <div class="container w-100 my-5 bg-white d-flex justify-content-center align-items-center" style="min-height: 30vh;">
       <div class="row w-100">
@@ -9,7 +8,7 @@
               <% if post.user.photo.attached? %>
                 <%= cl_image_tag(post.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered") %>
               <% else %>
-                <%= image_tag "profilepic.jpg", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+                <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
               <% end %>
               <div class="d-flex flex-column align-items-start">
                 <p class="mb-0"><%= post.user.name %></p>

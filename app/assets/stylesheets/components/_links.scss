@@ -1,4 +1,24 @@
 a {
     text-decoration: none;
-    color: #543A70;
+    color: #969598;
+}
+
+.icon-section .selected {
+  color: #0d0d0d; /* Replace with your desired color */
+  position: relative;
+}
+
+// .icon-section .selected i {
+//   color: #0d0d0d; /* Replace with your desired color */
+// }
+
+.icon-section .selected::after {
+  content: ""; /* Necessary for the pseudo-element */
+  position: absolute;
+  bottom: -2px; /* Adjust the vertical space between the text and the underline */
+  left: 0;
+  width: 100%; /* Set the width of the underline (adjust as needed) */
+  height: 1px; /* Thickness of the underline */
+  background-color: #171615; /* Color of the underline */
+  z-index: -2;
 }
