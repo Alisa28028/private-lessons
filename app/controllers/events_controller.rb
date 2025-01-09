@@ -5,9 +5,16 @@ class EventsController < ApplicationController
   def index
     @user = current_user
     @users = User.all
+
     @events = Event.all
-    # @event_bookings = Booking.where(event_id: @events)
-    @event_bookings = Booking.where(event_id: @events.pluck(:id))
+
+    # Make sure @event_bookings only gets assigned if @events is not empty
+    if @events.present?
+      @event_bookings = Booking.where(event_id: @events.pluck(:id))
+    else
+      @event_bookings = []
+    end
+
     @bookings = @user.bookings
   end
 

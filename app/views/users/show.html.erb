@@ -26,7 +26,8 @@
         <i class="fa-regular fa-calendar"></i> Classes
       <% end %>
       <%= link_to "#", data: { turbo_frame: "teacher_content", action: "click->teacher#loadPosts", class: "icon-link" } do %>
-        <i class="fa-solid fa-user"></i> My Posts
+        <i class="fa-solid fa-user"></i>
+        <%= current_user == @user ? "My Posts" : "Teacher's Posts" %>
       <% end %>
       <%= link_to "#", data: { turbo_frame: "student_content", action: "click->teacher#loadStudentPosts", class: "icon-link" } do %>
         <i class="fa-solid fa-user-group"></i> Student Posts
