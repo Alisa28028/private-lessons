@@ -41,7 +41,11 @@
               <div class="mb-2">
                 <% sorted_result.take(3).each do |(user, count)| %>
                   <div class="user-entry d-flex align-items-center">
-                    <%= cl_image_tag user[:photo], class: "avatar-bordered", style: "width: 25px; height: 25px", alt: user[:name] %>
+                    <% if user[:photo].present? %>
+                      <%= cl_image_tag user[:photo], class: "avatar-bordered", style: "width: 25px; height: 25px", alt: user[:name] %>
+                    <% else %>
+                      <%= image_tag 'default-avatar.png', class: "avatar-bordered", style: "width: 25px; height: 25px", alt: user[:name] %>
+                    <% end %>
                     <h6 class="text-dark m-0"><b> <span><%= user[:name] %></h6>
                       </div>
                     <% end %>
