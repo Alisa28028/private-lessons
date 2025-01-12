@@ -44,4 +44,11 @@ loadStudentPosts(event) {
     this.contentTarget.innerHTML = html
   })
 }
+
+// for full page reload
+reloadPage(event) {
+  event.preventDefault()
+
+  window.location.href = event.target.href
+  }
 }

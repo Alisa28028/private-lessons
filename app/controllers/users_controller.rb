@@ -23,6 +23,7 @@ class UsersController < ApplicationController
     @bookings = current_user.bookings
     @events = @user.events
     # @event = @user.events(params[:id])
+    @attending_events = @user.bookings.includes(:event).map(&:event)
   end
 
   def edit

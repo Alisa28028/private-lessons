@@ -28,8 +28,19 @@ class EventsController < ApplicationController
   end
 
   def show
-    @user = current_user # teacher user organizing this event (= teacher)
-    # @event = Event.find(params[:id]) # event I identify through show url id
+    # @user = User.find(params[:id])
+
+    # @event = @user.events
+    # @upcoming_events = @events.select { |event| event.start_date >= Date.today}.sort_by(&:start_date)
+    # @past_events = @events.select { |event| event.start_date < Date.today}.sort_by(&:start_date).reverse
+    if @events.present?
+    @upcoming_events = @events.where("start_date >= ?", Date.today).order(start_date: :asc)
+    @past_events = @events.where("start_date < ?", Date.today).order(start_date: :desc)
+    else @upcoming_events = []
+      @past_events = []
+
+    end
+
     @bookings = Booking.where(event_id: @event) # bookings list for this event
     @new_booking = Booking.new # instance to allow new booking
   end
@@ -65,7 +76,12 @@ class EventsController < ApplicationController
   def destroy
     @event = Event.find(params[:id])
     @event.destroy
-    redirect_to events_path, status: :see_other
+
+    if request.referer.include?('/users')
+      redirect_to user_path(current_user, anchor: 'classes'), notice: "Event successfully deleted!"
+    else
+      redirect_to events_path, notice: "Event successfully deleted!"
+    end
   end
 
   def edit
