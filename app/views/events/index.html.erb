@@ -2,9 +2,9 @@
   <div class="row">
     <div class="column">
       <h2 class="my-3 fw-bold d-flex justify-content-center">Welcome <%= current_user.name.capitalize %>!</h2>
-      <p class="my-2 d-flex align-items-center">Upcoming Events</p>
+      <p class="my-2 d-flex justify-content-center mb-3">Upcoming Events</p>
       <%# Iterating through attending events %>
-      <%= render '/shared/event_card_iteration', events: @events, bookings: @user.bookings %>
+      <%= render '/shared/event_card_iteration', events: @events.select { |event| event.start_date >= Time.now }, bookings: @user.bookings %>
     </div>
   </div>
 </div>
