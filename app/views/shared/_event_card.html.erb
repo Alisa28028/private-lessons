@@ -95,13 +95,13 @@
             </div>
             <div class="card-product-info-grid mb-2">
               <div>
-                <% if event.photos.attached? %>
-                  <%= link_to event_path(event) do %>
+                <% if event.present? && event.photos.attached? %>
+                  <%= link_to event_path(event), data: { action: "click->teacher#reloadPage" } do %>
                     <%= cl_image_tag event.photos.first.key %>
                   <% end %>
                 <% else %>
-                  <% if event.user.photo.attached? %>
-                    <%= link_to event_path(event) do %>
+                  <% if event.present? && event.user.photo.attached? %>
+                    <%= link_to event_path(event), data: { action: "click->teacher#reloadPage" } do %>
                       <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
                     <% end %>
                   <% end %>

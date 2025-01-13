@@ -43,6 +43,7 @@ class EventsController < ApplicationController
 
     @bookings = Booking.where(event_id: @event) # bookings list for this event
     @new_booking = Booking.new # instance to allow new booking
+
   end
 
   def create
