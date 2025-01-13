@@ -24,7 +24,7 @@
       </div>
     </div>
     <%# iterating through some events %>
-    <%= render 'shared/event_card_iteration', events: @events %>
+    <%= render 'shared/event_card_iteration', events: @events.select { |event| event.start_date >= Time.now } %>
   </div>
 </div>
 </div>
