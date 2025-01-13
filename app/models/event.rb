@@ -6,6 +6,7 @@ class Event < ApplicationRecord
   has_many :users, through: :bookings
   has_many :bookings, dependent: :destroy
   has_many :posts, dependent: :destroy
+  has_many :attendees, through: :bookings, source: :user
   has_many_attached :photos
   has_many_attached :videos
 
