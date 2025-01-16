@@ -46,18 +46,40 @@ class EventsController < ApplicationController
 
   end
 
-  def create
-    @event = Event.new(event_params)
-    @location = Location.find_by(name: params[:location_name])
-    @location ||= Location.create(name: params[:location_name])
-    @event.location = @location
+    def create
+      @event = Event.new(event_params)
+      @location = Location.find_by(name: params[:location_name])
+      @location ||= Location.create(name: params[:location_name])
+      @event.location = @location
 
-    @event.user = current_user
+      @event.user = current_user
+        # Save the event
       if @event.save
-        redirect_to root_path #need to change this to dashboard
-      else
-        render 'new', status: :unprocessable_entity
+        if @event.custom_dates.present? && @event.start_date.present?
+          # Iterate over custom dates selected by the user
+          @event.custom_dates.each do |date_string|
+            # Combine the selected custom date with the time from the start_date
+            event_time = DateTime.parse("#{date_string} #{@event.start_date.strftime('%H:%M')}")
+
+        # Create an event instance for each selected custom date
+        EventInstance.create!(
+          event: @event,
+          start_time: event_time,
+          end_time: event_time + @event.duration.minutes # assuming you have a duration field (e.g., 60 minutes)
+        )
       end
+    else
+     # If there are no custom dates, just create a single event instance
+     EventInstance.create!(
+      event: @event,
+      start_time: @event.start_date,
+      end_time: @event.start_date + @event.duration.minutes # Calculate end time based on duration
+      )
+    end
+        redirect_to @event, notice: 'Event created successfully!'
+      else
+      render 'new', status: :unprocessable_entity
+    end
   end
 
   def add_video
@@ -142,6 +164,7 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :capacity, :price_cents, :location_id, :start_date, :end_date, :description, videos: [], photos: [])
+    params.require(:event).permit(:title, :capacity, :price_cents, :location_id, :start_date, :end_date, :recurrence_type,
+      :recurrence_details, :duration, :time, :description, custom_dates: [], videos: [], photos: [])
   end
 end

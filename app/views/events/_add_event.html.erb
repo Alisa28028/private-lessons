@@ -2,6 +2,56 @@
   <div data-controller="datepicker" class="col-12">
     <%= simple_form_for @event, html: { multipart: true } do |f| %>
       <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
+      <!-------------START AND END DATES--------------->
+      <!--------------------------------------------------------->
+      <!-- Recurrence Pattern -->
+      <%= f.input :recurrence_type, label: "Recurrence Pattern", as: :select, collection:
+      ["Every Tuesday", "Every Wednesday", "Every Thursday", "Every Friday", "Every Saturday", "Every Sunday", "Custom Dates"],
+      include_blank: "No Recurrence", input_html: {
+        class: "form-select",
+        data: { action: "change->datepicker#toggleCustomRecurrenceField" },
+        data: { datepicker_target: "recurrenceSelect" } } %>
+      <!-- Custom Recurrence (if "Custom Dates" is selected) -->
+      <div id="custom-recurrence" class="form-group mb-8 d-none" data-datepicker-target="customRecurrenceField">
+        <label for="event_custom_dates">Select Custom Dates (e.g., Tuesdays)</label>
+        <input type="text" id="event_custom_dates" name="event[custom_dates]" placeholder="Select dates" class="form-control" data-datepicker-target="customDatesInput" />
+        <!---Time Picker to select the time-->
+        <label for="event_time">Select Time</label>
+        <input type="time" id="event_time" name="event[start_time]" class="form-control" data-datepicker-target="timeInput" />
+        <p class="text-muted">Choose specific days for your event (same time)</p>
+      </div>
+      <!------Event Date-------->
+      <div class="form-group">
+        <%= f.input :date, as: :date, label: "Event Date", input_html: { data: { datepicker_target: "start" } } %>
+      </div>
+      <!-- Start Time -->
+      <div class="form-group">
+        <%= f.input :start_time, as: :time, label: "Start Time", input_html: { data: { datepicker_target: "startTime" } } %>
+      </div>
+      <!-- Duration -->
+      <div class="form-group">
+        <%= f.input :duration, as: :integer, label: "Duration (in minutes)", input_html: { class: "form-control", min: 1 } %>
+      </div>
+      <!--------------------------------------------------------->
+      <select class="form-select mb-3"  name="location_name" data-datepicker-target="locationList">
+        <option value="">Choose a location</option>
+        <% @locations.each do |location_name| %>
+          <option value="<%= location_name %>"><%= location_name %></option>
+        <% end %>
+      </select>
+      <!---------------OTHER INPUTS-------------------------->
+      <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
+      <%= f.input :price_cents %>
+      <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+      <!-- Add picture or video upload -->
+      <div class="form-group mb-8">
+        <%= f.input :photos, as: :file, input_html: { multiple: true } %>
+      </div>
+      <div class="form-group mb-8">
+        <%= f.input :videos, as: :file, input_html: { multiple: true } %>
+      </div>
+      <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
+      <!-----------------TO CHECK STUDIOS AVAILABILITY------------------->
       <!-- Manually adding datetime-local input for start_date -->
       <div class="form-group">
         <%= f.input :start_date,
@@ -14,23 +64,6 @@
             as: :string,
             input_html: { data: { datepicker_target: "end", action: "change->datepicker#fetchStudios" } } %>
       </div>
-      <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
-      <%= f.input :price_cents %>
-      <select class="form-select mb-3"  name="location_name" data-datepicker-target="locationList">
-        <option value="">Choose a location</option>
-        <% @locations.each do |name| %>
-          <option value="<%= name %>"><%= name %></option>
-        <% end %>
-      </select>
-      <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
-      <!-- Add picture or video upload -->
-      <div class="form-group mb-8">
-        <%= f.input :photos, as: :file, input_html: { multiple: true } %>
-      </div>
-      <div class="form-group mb-8">
-        <%= f.input :videos, as: :file, input_html: { multiple: true } %>
-      </div>
-      <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
     <% end %>
     <div id="studiolist" data-datepicker-target="list" class="container" style="margin-top: 6rem;">
     </div>
