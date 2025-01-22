@@ -13,14 +13,16 @@ class EventsController < ApplicationController
 
   def new
     @event = Event.new
-    @locations = Location.all.map(&:name)
-    if params[:start_time].present? && params[:end_time].present?
-      @studiolist = StudioFetcher.fetch_studiolist(params[:start_time], params[:end_time])
-      @studiolist ||= []
-      respond_to do |format|
-        format.json { render partial: "events/locations", locals: { studiolist: @studiolist }, formats: [:html]}
-      end
-    end
+    @event.event_instances.build
+
+    # @locations = Location.all.map(&:name)
+    # if params[:start_time].present? && params[:end_time].present?
+    #   @studiolist = StudioFetcher.fetch_studiolist(params[:start_time], params[:end_time])
+    #   @studiolist ||= []
+    #   respond_to do |format|
+    #     format.json { render partial: "events/locations", locals: { studiolist: @studiolist }, formats: [:html]}
+    #   end
+    # end
   end
 
   def attendees
@@ -46,19 +48,52 @@ class EventsController < ApplicationController
 
   end
 
-  def create
-    @event = Event.new(event_params)
-    @location = Location.find_by(name: params[:location_name])
-    @location ||= Location.create(name: params[:location_name])
-    @event.location = @location
+  # def create
+  #   @event = Event.new(event_params)
+  #   @location = Location.find_by(name: params[:location_name])
+  #   @location ||= Location.create(name: params[:location_name])
+  #   @event.location = @location
 
+  #   @event.user = current_user
+  #     if @event.save
+  #       redirect_to root_path #need to change this to dashboard
+  #     else
+  #       render 'new', status: :unprocessable_entity
+  #     end
+  # end
+
+
+  def create
+    # Initialize the event object
+    @event = Event.new(event_params)
+
+    # Handle the location - find by name, or create a new one if it doesn't exist
+    # @location = Location.find_by(name: params[:location_name])
+    # @location ||= Location.create(name: params[:location_name])
+    # @event.location = @location
+
+    # Associate the current user with the event
     @event.user = current_user
-      if @event.save
-        redirect_to root_path #need to change this to dashboard
-      else
-        render 'new', status: :unprocessable_entity
-      end
+
+    # Handle one-time event logic
+    if params[:event][:event_instances_attributes].present? && params[:event][:event_instances_attributes]["0"][:start_time].present?
+      @event.handle_one_time_event(params)
+    end
+
+    # Handle custom dates logic
+    if params[:event][:custom_dates].present?
+      @event.handle_custom_dates_event(params[:event][:custom_dates])
+    end
+
+    # Save the event and handle success/failure
+    if @event.save
+      redirect_to dashboard_path, notice: "Event and instances were successfully created."
+    else
+      Rails.logger.debug @event.errors.full_messages # Log errors for debugging
+      render :new, status: :unprocessable_entity
+    end
   end
+
 
   def add_video
     if params[:event][:videos].present?
@@ -135,13 +170,19 @@ class EventsController < ApplicationController
     end
   end
 
+  def end_time
+    (start_time + duration.minutes).strftime("%H:%M")
+  end
+
   private
 
   def set_event
     @event = Event.find(params[:id])
   end
 
+
+
   def event_params
-    params.require(:event).permit(:title, :capacity, :price_cents, :location_id, :start_date, :end_date, :description, videos: [], photos: [])
+    params.require(:event).permit(:title, :capacity, :duration, :recurrence_type, :custom_dates, :price_cents, :description, videos: [], photos: [], event_instances_attributes: [:date, :start_time, :end_time])
   end
 end

@@ -3,37 +3,57 @@ import flatpickr from "flatpickr";
 
 // Connects to data-controller="datepicker"
 export default class extends Controller {
-  static targets = ["start", "end", "list", "locationList"];
+  static targets = [
+    "oneTimeEventForm",
+    "recurringEventForm",
+    "eventDate"
+    // "recurringOptions",
+    // "customRecurrence",
+    // "eventInstances",
+    // "list",
+    // "locationList"
+  ];
 
   connect() {
-    this.initStartDatePicker();
-    this.initEndDatePicker();
-  }
+    console.log("datepicker controller connected!");
 
-  initStartDatePicker() {
-    flatpickr(this.startTarget, {
-      enableTime: true,           // Enable time picker
-      dateFormat: "Y-m-d H:i",    // Date and time format
-      disableMobile: "true",
-      onChange: this.setEndDate.bind(this), // Set end date based on start date
-    })
-  }
 
-  initEndDatePicker() {
-    flatpickr(this.endTarget, {
-      enableTime: true,           // Enable time picker
-      dateFormat: "Y-m-d H:i",    // Date and time format
-      disableMobile: "true",
+  // initialize flatpickr on the date input field
+    flatpickr(this.eventDateTarget, {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      enableTime: false,
     });
   }
 
-  setEndDate(selectedDates) {
-    if (selectedDates.length > 0) {
-      const selectedDate = selectedDates[0];
-      selectedDate.setMinutes(selectedDate.getMinutes() + 60); // Add 60 minutes
-      this.endTarget._flatpickr.setDate(selectedDate);
+  selectEventType(event) {
+    const eventType = event.target.dataset.eventType;
+    console.log(`Event Type Selected: ${eventType}`);
+
+    // Hide both forms by default
+    this.oneTimeEventFormTarget.classList.add("d-none");
+    this.recurringEventFormTarget.classList.add("d-none");
+
+    if (eventType === "One-time") {
+      console.log("Showing one-time event form.");
+      this.oneTimeEventFormTarget.classList.remove("d-none");
+    } else if (eventType === "recurring") {
+      console.log("Showing recurring event form.");
+      this.recurringEventFormTarget.classList.remove("d-none");
     }
   }
+
+  selectRecurrence(event) {
+    const recurrenceType = event.target.dataset.eventType;
+    console.log(`Recurrence Type Selected: ${recurrenceType}`);
+
+    if (recurrenceType === "custom-dates") {
+      this.customRecurrenceTarget.classList.remove("d-none");
+    } else {
+      this.customRecurrenceTarget.classList.add("d-none");
+    }
+  }
+
 
   fetchStudios() {
     const url = `${location.pathname}?start_time=${this.startTarget.value}&end_time=${this.endTarget.value}`
