@@ -17,7 +17,6 @@ export default class extends Controller {
   connect() {
     console.log("datepicker controller connected!");
 
-
   // initialize flatpickr on the date input field
     flatpickr(this.eventDateTarget, {
       dateFormat: "Y-m-d",

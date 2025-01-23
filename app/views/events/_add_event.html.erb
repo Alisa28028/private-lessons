@@ -20,12 +20,12 @@
       <!--one time event form (visible by default)-->
       <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
       <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
-      <%= f.input :date, as: :date, label: "Event Date", input_html: { "data-datepicker-target" => "eventDate", "data-controller" => "datepicker" } %>
+      <%# <%= f.input :date, as: :date, label: "Event Date", input_html: { "data-datepicker-target" => "eventDate", "data-controller" => "datepicker" } %>
       <div data-datepicker-target="oneTimeEventForm">
         <%# <div data-datepicker-target="eventInstances"> %>
         <%= f.fields_for :event_instances do |ei| %>
           <div class="form-group">
-            <%= ei.input :date, as: :date, label: "Event Date", input_html: { data: { datepicker_target: "eventDate" } } %>
+            <%= ei.input :date, as: :date, label: "Event Date", input_html: { type: "text", data: { datepicker_target: "eventDate" } } %>
             <%= ei.input :start_time, as: :time, label: "Start Time" %>
           <% end %>
           <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
