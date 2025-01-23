@@ -20,6 +20,10 @@ class Event < ApplicationRecord
   # validates :start_time, presence: true
   # validates :end_time, presence: true
   validates :duration, presence: true
+  validates :day_of_week, inclusion: {
+    in: %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday],
+    message: "%{value} is not a valid day of the week"
+  }
   # validates :date, presence:true
 
   accepts_nested_attributes_for :event_instances, allow_destroy: true
@@ -69,6 +73,17 @@ class Event < ApplicationRecord
       self.errors.add(:base, "Start time and date are required for a one-time event.")
     end
   end
+
+  # Method for handling weekly events
+    def generate_weekly_instances(start_date, end_date, day_of_week, start_time)
+      # Convert day_of_week to a corresponding integer (Sunday = 0, Monday = 1, etc.)
+      target_wday = Date::DAYNAMES.index(day_of_week)
+
+      (start_date..end_date).to_a.select { |date| date.wday == target_wday }.each do |date|
+        event_instances.create(date: date, start_time: start_time)
+      end
+    end
+
 
   # Method for handling custom dates
   def handle_custom_dates_event(custom_dates)

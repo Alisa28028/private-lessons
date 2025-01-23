@@ -4,9 +4,10 @@ import flatpickr from "flatpickr";
 // Connects to data-controller="datepicker"
 export default class extends Controller {
   static targets = [
-    "oneTimeEventForm",
-    "recurringEventForm",
-    "eventDate"
+    // "oneTimeEventForm",
+    // "recurringEventForm",
+    "eventDate",
+    "eventTime",
     // "recurringOptions",
     // "customRecurrence",
     // "eventInstances",
@@ -23,35 +24,41 @@ export default class extends Controller {
       minDate: "today",
       enableTime: false,
     });
+
+    flatpickr(this.eventTimeTarget, {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+    })
   }
 
-  selectEventType(event) {
-    const eventType = event.target.dataset.eventType;
-    console.log(`Event Type Selected: ${eventType}`);
+  // selectEventType(event) {
+  //   const eventType = event.target.dataset.eventType;
+  //   console.log(`Event Type Selected: ${eventType}`);
 
-    // Hide both forms by default
-    this.oneTimeEventFormTarget.classList.add("d-none");
-    this.recurringEventFormTarget.classList.add("d-none");
+  //   // Hide both forms by default
+  //   this.oneTimeEventFormTarget.classList.add("d-none");
+  //   this.recurringEventFormTarget.classList.add("d-none");
 
-    if (eventType === "One-time") {
-      console.log("Showing one-time event form.");
-      this.oneTimeEventFormTarget.classList.remove("d-none");
-    } else if (eventType === "recurring") {
-      console.log("Showing recurring event form.");
-      this.recurringEventFormTarget.classList.remove("d-none");
-    }
-  }
+  //   if (eventType === "One-time") {
+  //     console.log("Showing one-time event form.");
+  //     this.oneTimeEventFormTarget.classList.remove("d-none");
+  //   } else if (eventType === "recurring") {
+  //     console.log("Showing recurring event form.");
+  //     this.recurringEventFormTarget.classList.remove("d-none");
+  //   }
+  // }
 
-  selectRecurrence(event) {
-    const recurrenceType = event.target.dataset.eventType;
-    console.log(`Recurrence Type Selected: ${recurrenceType}`);
+  // selectRecurrence(event) {
+  //   const recurrenceType = event.target.dataset.eventType;
+  //   console.log(`Recurrence Type Selected: ${recurrenceType}`);
 
-    if (recurrenceType === "custom-dates") {
-      this.customRecurrenceTarget.classList.remove("d-none");
-    } else {
-      this.customRecurrenceTarget.classList.add("d-none");
-    }
-  }
+  //   if (recurrenceType === "custom-dates") {
+  //     this.customRecurrenceTarget.classList.remove("d-none");
+  //   } else {
+  //     this.customRecurrenceTarget.classList.add("d-none");
+  //   }
+  // }
 
 
   fetchStudios() {

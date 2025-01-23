@@ -20,6 +20,7 @@
     <%= f.input :password_confirmation,
                 required: true,
                 input_html: { autocomplete: "new-password" } %>
+    <%= f.input :time_zone, collection: ActiveSupport::TimeZone.all.map(&:name), prompt: "Select your time zone" %>
   </div>
   <div class="form-actions" style="margin-top: 30px;">
     <%= f.button :submit, "Sign up", class: "btn-right" %>

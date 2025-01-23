@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_21_070521) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_23_080359) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -95,6 +95,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_21_070521) do
     t.time "start_time"
     t.time "end_time"
     t.text "custom_dates"
+    t.string "day_of_week"
     t.index ["location_id"], name: "index_events_on_location_id"
     t.index ["user_id"], name: "index_events_on_user_id"
   end
@@ -141,6 +142,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_21_070521) do
     t.boolean "is_teacher"
     t.string "description"
     t.string "phone_number"
+    t.string "time_zone"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

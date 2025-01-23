@@ -6,6 +6,7 @@ class EventsController < ApplicationController
     @user = current_user
     @users = User.all
     @events = Event.all
+
     # @event_bookings = Booking.where(event_id: @events)
     @event_bookings = Booking.where(event_id: @events.pluck(:id))
     @bookings = @user.bookings
@@ -42,10 +43,21 @@ class EventsController < ApplicationController
       @past_events = []
 
     end
+    # Set default time zone to JST (Asia/Tokyo)
+    jst_time_zone = 'Asia/Tokyo'
 
+    # Convert event times to the current user's time zone, if available, otherwise use JST
+    if current_user && current_user.time_zone
+      @event.start_time = @event.start_time.in_time_zone(current_user.time_zone)
+      @event.end_time = @event.end_time.in_time_zone(current_user.time_zone)
+    else
+      @event.start_time = @event.start_time.in_time_zone(jst_time_zone)
+      @event.end_time = @event.end_time.in_time_zone(jst_time_zone)
+    end
+
+    # Fetch bookings for the event
     @bookings = Booking.where(event_id: @event) # bookings list for this event
     @new_booking = Booking.new # instance to allow new booking
-
   end
 
   # def create
@@ -64,6 +76,7 @@ class EventsController < ApplicationController
 
 
   def create
+
     # Initialize the event object
     @event = Event.new(event_params)
 
@@ -83,6 +96,22 @@ class EventsController < ApplicationController
     # Handle custom dates logic
     if params[:event][:custom_dates].present?
       @event.handle_custom_dates_event(params[:event][:custom_dates])
+    end
+
+        # Handle weekly recurrence logic
+      if params[:event][:recurrence_type] == "weekly" &&
+        params[:event][:start_date].present? &&
+        params[:event][:end_date].present? &&
+        params[:event][:day_of_week].present? &&
+        params[:event][:start_time].present?
+
+      start_date = params[:event][:start_date].to_date
+      end_date = params[:event][:end_date].to_date
+      day_of_week = params[:event][:day_of_week]
+      start_time = params[:event][:start_time]
+
+      # Generate weekly event instances
+      @event.generate_weekly_instances(start_date, end_date, day_of_week, start_time)
     end
 
     # Save the event and handle success/failure
