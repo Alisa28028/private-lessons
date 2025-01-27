@@ -93,7 +93,7 @@
               <h5 class="fs-5 fw-bold"><%= event.title %></h5>
               <div class="d-flex gap-2">
                 <i class="fa-solid fa-person fa-sm mt-2"></i>
-                <% if event.capacity - event.bookings.count <= 0 %>
+                <% if (event.capacity || 0) - event.bookings.count <= 0 %>
                   <p class="attendee-number text-dark fs-6"><strong><%= event.capacity %>/<%= event.capacity %></strong></p>
                 <% else %>
                   <p class="attendee-number text-dark fs-6"><%= event.bookings.count %>/<%= event.capacity %></p>

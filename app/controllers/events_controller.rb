@@ -76,9 +76,20 @@ class EventsController < ApplicationController
 
 
   def create
-
     # Initialize the event object
     @event = Event.new(event_params)
+
+    # Log the parameters for debugging
+  Rails.logger.debug "Capacity: #{params[:event][:capacity]}"
+  Rails.logger.debug "Duration: #{params[:event][:duration]}"
+
+  # Set default values for capacity and duration if blank
+  @event.capacity = 10 if @event.capacity.blank?
+  @event.duration = 60 if @event.duration.blank?
+
+  Rails.logger.debug "Event params: #{event_params.inspect}"
+  Rails.logger.debug "Event object: #{@event.inspect}"
+  Rails.logger.debug "Recurrence type: #{@event.recurrence_type}"
 
     # Handle the location - find by name, or create a new one if it doesn't exist
     # @location = Location.find_by(name: params[:location_name])
@@ -87,10 +98,13 @@ class EventsController < ApplicationController
 
     # Associate the current user with the event
     @event.user = current_user
+    if @event.save
 
     # Handle one-time event logic
     if params[:event][:event_instances_attributes].present? && params[:event][:event_instances_attributes]["0"][:start_time].present?
+      if @event.recurrence_type == 'one-time'
       @event.handle_one_time_event(params)
+      end
     end
 
     # Handle custom dates logic
@@ -98,24 +112,12 @@ class EventsController < ApplicationController
       @event.handle_custom_dates_event(params[:event][:custom_dates])
     end
 
-        # Handle weekly recurrence logic
-      if params[:event][:recurrence_type] == "weekly" &&
-        params[:event][:start_date].present? &&
-        params[:event][:end_date].present? &&
-        params[:event][:day_of_week].present? &&
-        params[:event][:start_time].present?
 
-      start_date = params[:event][:start_date].to_date
-      end_date = params[:event][:end_date].to_date
-      day_of_week = params[:event][:day_of_week]
-      start_time = params[:event][:start_time]
+      # Generate weekly event instances if recurrence is weekly
+      if @event.recurrence_type == 'every-week'
+        @event.generate_instances!
+      end
 
-      # Generate weekly event instances
-      @event.generate_weekly_instances(start_date, end_date, day_of_week, start_time)
-    end
-
-    # Save the event and handle success/failure
-    if @event.save
       redirect_to dashboard_path, notice: "Event and instances were successfully created."
     else
       Rails.logger.debug @event.errors.full_messages # Log errors for debugging
@@ -212,6 +214,8 @@ class EventsController < ApplicationController
 
 
   def event_params
-    params.require(:event).permit(:title, :capacity, :duration, :recurrence_type, :custom_dates, :price_cents, :description, videos: [], photos: [], event_instances_attributes: [:date, :start_time, :end_time])
+    params.require(:event).permit(:title, :description, :capacity, :duration, :recurrence_type, :custom_dates, :start_date, :end_date, :start_time, :price_cents, :day_of_week, videos: [], photos: [],
+      event_instances_attributes: [:id, :date, :start_time, :_destroy]
+    )
   end
 end

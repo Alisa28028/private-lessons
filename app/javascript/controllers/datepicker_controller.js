@@ -4,12 +4,9 @@ import flatpickr from "flatpickr";
 // Connects to data-controller="datepicker"
 export default class extends Controller {
   static targets = [
-    // "oneTimeEventForm",
-    // "recurringEventForm",
     "eventDate",
     "eventTime",
-    // "recurringOptions",
-    // "customRecurrence",
+    "recurrenceType"
     // "eventInstances",
     // "list",
     // "locationList"
@@ -17,48 +14,90 @@ export default class extends Controller {
 
   connect() {
     console.log("datepicker controller connected!");
+    this.initFlatpickr();
+    this.initTimePicker();
 
-  // initialize flatpickr on the date input field
-    flatpickr(this.eventDateTarget, {
+    // listen for custom events
+    this.element.addEventListener("recurrenceTypeChanged", (event) => {
+      console.log("Recurrence type changed event fired!", event); // Ensure the event is firing
+
+      const { recurrenceType } = event.detail;
+      console.log(`Recurrence type changed to : ${recurrenceType}`);
+      this.handleRecurrenceChange(recurrenceType);
+    });
+  }
+
+  initFlatpickr(mode = "range") {
+    const flatpickrOptions = {
       dateFormat: "Y-m-d",
       minDate: "today",
-      enableTime: false,
-    });
+      mode: mode, // Use the mode passed as a parameter
+      onChange: this.updateHiddenFields.bind(this),
+    };
 
+    console.log(`Initializing Flatpickr with mode: ${mode}`, flatpickrOptions);
+
+    // Initialize flatpickr with the options
+    this.datePickerInstance = flatpickr(this.eventDateTarget, flatpickrOptions);
+  }
+
+  initFlatpickrRange(mode = "range") {
+    const flatpickrOptions = {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      mode: mode, // Use the mode passed as a parameter
+      onChange: this.updateHiddenFields.bind(this),
+    };
+
+    console.log(`it should work Initializing Flatpickr with mode: ${mode}`, flatpickrOptions);
+
+    // Initialize flatpickr with the options
+    this.datePickerInstance = flatpickr(this.eventDateTarget, flatpickrOptions);
+  }
+
+
+  handleRecurrenceChange(recurrenceType) {
+    console.log("Recurrence type changed to:", recurrenceType);
+
+    // Destroy existing Flatpickr instance if it exists
+    if (this.datePickerInstance) {
+      this.datePickerInstance.destroy();
+    }
+
+    // Initialize the Flatpickr instance with the appropriate mode
+    if (recurrenceType === "every-week") {
+      console.log("Initializing Flatpickr with range mode");
+      this.initFlatpickrRange("range");
+    } else {
+      console.log("Initializing Flatpickr with single mode");
+      this.initFlatpickr("single");
+    }
+  }
+
+
+
+  initTimePicker() {
+    // Initialize Flatpickr for time input (single time picker)
     flatpickr(this.eventTimeTarget, {
       enableTime: true,
       noCalendar: true,
       dateFormat: "H:i",
-    })
+      onChange: this.updateTimeHiddenField.bind(this),
+    });
   }
 
-  // selectEventType(event) {
-  //   const eventType = event.target.dataset.eventType;
-  //   console.log(`Event Type Selected: ${eventType}`);
+  updateHiddenFields(selectedDates) {
+    const startDate = selectedDates[0] ? selectedDates[0].toISOString().split("T")[0] : "";
+    const endDate = selectedDates[1] ? selectedDates[1].toISOString().split("T")[0] : "";
 
-  //   // Hide both forms by default
-  //   this.oneTimeEventFormTarget.classList.add("d-none");
-  //   this.recurringEventFormTarget.classList.add("d-none");
+    document.getElementById("event_start_date").value = startDate;
+    document.getElementById("event_end_date").value = endDate;
+  }
 
-  //   if (eventType === "One-time") {
-  //     console.log("Showing one-time event form.");
-  //     this.oneTimeEventFormTarget.classList.remove("d-none");
-  //   } else if (eventType === "recurring") {
-  //     console.log("Showing recurring event form.");
-  //     this.recurringEventFormTarget.classList.remove("d-none");
-  //   }
-  // }
-
-  // selectRecurrence(event) {
-  //   const recurrenceType = event.target.dataset.eventType;
-  //   console.log(`Recurrence Type Selected: ${recurrenceType}`);
-
-  //   if (recurrenceType === "custom-dates") {
-  //     this.customRecurrenceTarget.classList.remove("d-none");
-  //   } else {
-  //     this.customRecurrenceTarget.classList.add("d-none");
-  //   }
-  // }
+  updateTimeHiddenField(selectedDates) {
+    const selectedTime = selectedDates[0] ? selectedDates[0].toTimeString().split(" ")[0] : "";
+    document.getElementById("hidden_event_start_time").value = selectedTime;
+  }
 
 
   fetchStudios() {

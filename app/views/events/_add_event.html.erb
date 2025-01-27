@@ -5,8 +5,9 @@
       <div class="recurrence-buttons d-flex justify-content-center mb-5">
         <button type="button"
       class="btn btn-outline-primary me-3"
-      data-action="click->event-form#selectEventType"
-          data-event-type="One-time">
+      data-action="click->event-form#selectEventType click->event-form#selectRecurrence"
+          data-event-type="One-time"
+          data-recurrence-type="one-time">
           One-time
         </button>
         <button
@@ -18,60 +19,98 @@
         </button>
       </div>
       <!--one time event form (visible by default)-->
-      <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
-      <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
-      <%# <%= f.input :date, as: :date, label: "Event Date", input_html: { "data-datepicker-target" => "eventDate", "data-controller" => "datepicker" } %>
       <div data-event-form-target="oneTimeEventForm">
+        <%= f.hidden_field :recurrence_type, value: 'one-time' %>
+        <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
+        <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+        <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
+        <%= f.input :capacity, as: :integer, label:false, input_html: { placeholder: "Capacity..." } %>
+        <%# <%= f.input :date, as: :date, label: "Event Date", input_html: { "data-datepicker-target" => "eventDate", "data-controller" => "datepicker" } %>
         <%# <div data-datepicker-target="eventInstances"> %>
         <%= f.fields_for :event_instances do |ei| %>
           <div class="form-group" data-controller="datepicker">
-            <%= ei.input :date, as: :string, label: "Event Date", input_html: { data: { datepicker_target: "eventDate" } } %>
-            <%= ei.input :start_time, as: :string, label: "Start Time", input_html: { data: { datepicker_target: "eventTime "} } %>
-          <% end %>
-          <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
-          <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
-          <%= f.input :price_cents %>
-          <div class="form-group mb-8">
-            <%= f.input :photos, as: :file, input_html: { multiple: true } %>
+            <%= ei.input :date,
+            as: :string,
+            label: "Event Date",
+            input_html: { data: { datepicker_target: "eventDate" } } %>
+            <%= ei.input :start_time,
+            as: :string,
+            label: "Start Time",
+            input_html: { data: { datepicker_target: "eventTime"} } %>
           </div>
-          <div class="form-group mb-8">
-            <%= f.input :videos, as: :file, input_html: { multiple: true } %>
-          </div>
-          <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
+        <% end %>
+        <%= f.input :price_cents %>
+        <div class="form-group mb-8">
+          <%= f.input :photos, as: :file, input_html: { multiple: true } %>
         </div>
+        <div class="form-group mb-8">
+          <%= f.input :videos, as: :file, input_html: { multiple: true } %>
+        </div>
+        <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
       </div>
-      <!-------Recurring Event form (hidden initially)-------->
-      <div data-event-form-target="recurringOptions" class="d-none">
-        <h4>Recurring event options</h4>
-        <button type="button" class="btn btn-outline-primary me-3" data-action="click->event-form#selectRecurrence" data-recurrence-type="every-week">Every Week</button>
-        <button type="button" class="btn btn-outline-primary" data-action="click->event-form#selectRecurrence" data-recurrence-type="custom-dates">Custom Dates</button>
-        <div data-event-form-target="everyWeekEventForm" class="d-none">hellooo!
-          <%= f.input :start_date, as: :date, label: "Start Date", input_html: { placeholder: "YYYY-MM-DD" } %>
-          <%= f.input :end_date, as: :date, label: "End Date", input_html: { placeholder: "YYYY-MM-DD" } %>
-          <%= f.input :day_of_week, collection: Date::DAYNAMES, label: "Day of the Week", prompt: "Select a Day" %>
-          <%= f.input :start_time, as: :time, label: "Start Time", input_html: { placeholder: "HH:MM AM/PM" } %>
-          <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
-          <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
-          <%= f.input :price_cents %>
-          <div class="form-group mb-8">
-            <%= f.input :photos, as: :file, input_html: { multiple: true } %>
+    <% end %>
+    <!-------Recurring Event form (hidden initially)-------->
+    <div data-event-form-target="recurringOptions" class="d-none">
+      <h4>Recurring event options</h4>
+      <button type="button" class="btn btn-outline-primary me-3"
+        data-action="click->event-form#selectRecurrence"
+        data-recurrence-type="every-week">Every Week</button>
+      <button type="button" class="btn btn-outline-primary"
+        data-action="click->event-form#selectRecurrence"
+        data-recurrence-type="custom-dates">Custom Dates</button>
+      <!------Weekly recurrence options-------->
+      <%= simple_form_for @event, html: { multipart: true } do |f| %>
+        <div data-event-form-target="everyWeekEventForm" class="d-none">
+          <%= f.hidden_field :recurrence_type, value: 'every-week' %>
+          <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
+          <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+          <label for="date-range">Select date range</label>
+          <div data-controller="datepicker">
+            <input id="date-range"
+          type="text"
+          placeholder="Select date range"
+          data-datepicker-target="eventDate">
+            <!-- Hidden Fields for Start and End Date -->
+            <%= f.hidden_field :start_date, id: 'event_start_date' %>
+            <%= f.hidden_field :end_date, id: 'event_end_date' %>
+            <!-- Day of the Week Dropdown -->
+            <%= f.input :day_of_week,
+          collection: Date::DAYNAMES,
+          label: "Day of the Week",
+          prompt: "Select a Day" %>
+            <!-- Visible Time Picker -->
+            <label for="event_time">Select Time</label>
+            <input
+          id="event_time"
+          type="text"
+          placeholder="Select time"
+          data-datepicker-target="eventTime">
+              <!-- Hidden Field for Start Time -->
+              <%= f.hidden_field :start_time, id: 'hidden_event_start_time' %>
+            </div>
+            <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
+            <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
+            <%= f.input :price_cents %>
+            <div class="form-group mb-8">
+              <%= f.input :photos, as: :file, input_html: { multiple: true } %>
+            </div>
+            <div class="form-group mb-8">
+              <%= f.input :videos, as: :file, input_html: { multiple: true } %>
+            </div>
+            <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
           </div>
-          <div class="form-group mb-8">
-            <%= f.input :videos, as: :file, input_html: { multiple: true } %>
-          </div>
-          <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
-        </div>
-        <!-----Custom dates input (hidden by default)--------->
-        <div data-event-form-target="customRecurrence" class="d-none">
-          <%= f.input :custom_dates, as: :text, input_html: {
+          <!-----Custom dates input (hidden by default)--------->
+          <div data-event-form-target="customRecurrence" class="d-none">
+            <%= f.input :custom_dates, as: :text, input_html: {
           placeholder: "Select dates",
           data: { controller: "event-form", action: "change->event-form#updateSelectedDates" }
         } %>
+          </div>
         </div>
+        <%= f.hidden_field :recurrence_type, id: "recurrence_type", data: { event_form_target: "recurrenceType" } %>
       </div>
     <% end %>
   </div>
-</div>
-<!------capacity and price-------->
-<!----------location dropdown------>
-<!-- app/views/studios/studiolist.html.erb -->
+  <!------capacity and price-------->
+  <!----------location dropdown------>
+  <!-- app/views/studios/studiolist.html.erb -->
