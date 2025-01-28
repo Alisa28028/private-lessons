@@ -98,19 +98,50 @@
               <%= f.input :videos, as: :file, input_html: { multiple: true } %>
             </div>
             <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
-          </div>
-          <!-----Custom dates input (hidden by default)--------->
-          <div data-event-form-target="customRecurrence" class="d-none">
-            <%= f.input :custom_dates, as: :text, input_html: {
-          placeholder: "Select dates",
-          data: { controller: "event-form", action: "change->event-form#updateSelectedDates" }
-        } %>
-          </div>
+          <% end %>
         </div>
-        <%= f.hidden_field :recurrence_type, id: "recurrence_type", data: { event_form_target: "recurrenceType" } %>
-      </div>
-    <% end %>
-  </div>
-  <!------capacity and price-------->
-  <!----------location dropdown------>
-  <!-- app/views/studios/studiolist.html.erb -->
+        <!-----Custom dates input (hidden by default)--------->
+        <%= simple_form_for @event, html: { multipart: true } do |f| %>
+          <div data-event-form-target="customRecurrence" class="d-none">
+            <%= f.hidden_field :recurrence_type, value: 'custom-dates' %>
+            <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
+            <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+            <label for="date-multiple">Select multiple dates</label>
+            <div data-controller="datepicker">
+              <input id="date-mutliple"
+          type="text"
+          placeholder="Select mutliple date"
+          data-datepicker-target="eventDate">
+              <%# <%= f.input :custom_dates, as: :text, input_html: { %>
+              <%# placeholder: "Select dates", %>
+              <%# data: { controller: "event-form", action: "change->event-form#updateSelectedDates" } %>
+              <%# } %>
+              <!-- Visible Time Picker -->
+              <label for="event_time">Select Time</label>
+              <input
+          id="event_time"
+          type="text"
+          placeholder="Select time"
+          data-datepicker-target="eventTime">
+              </div>
+              <!-- Hidden Field for Start Time -->
+              <%= f.hidden_field :start_time, id: 'hidden_event_start_time' %>
+            </div>
+            <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
+            <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
+            <%= f.input :price_cents %>
+            <div class="form-group mb-8">
+              <%= f.input :photos, as: :file, input_html: { multiple: true } %>
+            </div>
+            <div class="form-group mb-8">
+              <%= f.input :videos, as: :file, input_html: { multiple: true } %>
+            </div>
+            <%= f.submit "Create Class", class: "btn btn-custom my-3 btn-right" %>
+          </div>
+          <%= f.hidden_field :recurrence_type, id: "recurrence_type", data: { event_form_target: "recurrenceType" } %>
+        </div>
+      <% end %>
+    </div>
+    <!------capacity and price-------->
+    <!----------location dropdown------>
+    <!-- app/views/studios/studiolist.html.erb -->

@@ -27,7 +27,7 @@ export default class extends Controller {
     });
   }
 
-  initFlatpickr(mode = "range") {
+  initFlatpickr(mode = "multiple") {
     const flatpickrOptions = {
       dateFormat: "Y-m-d",
       minDate: "today",
@@ -35,7 +35,7 @@ export default class extends Controller {
       onChange: this.updateHiddenFields.bind(this),
     };
 
-    console.log(`Initializing Flatpickr with mode: ${mode}`, flatpickrOptions);
+    console.log(`it should work Initializing Flatpickr with mode: ${mode}`, flatpickrOptions);
 
     // Initialize flatpickr with the options
     this.datePickerInstance = flatpickr(this.eventDateTarget, flatpickrOptions);
@@ -44,7 +44,6 @@ export default class extends Controller {
   initFlatpickrRange(mode = "range") {
     const flatpickrOptions = {
       dateFormat: "Y-m-d",
-      minDate: "today",
       mode: mode, // Use the mode passed as a parameter
       onChange: this.updateHiddenFields.bind(this),
     };
@@ -65,14 +64,32 @@ export default class extends Controller {
     }
 
     // Initialize the Flatpickr instance with the appropriate mode
-    if (recurrenceType === "every-week") {
+    if (recurrenceType === "one-time") {
+      console.log("Initializing Flatpickr with single mode");
+      this.initFlatpickr("single");
+    } else if (recurrenceType === "every-week") {
       console.log("Initializing Flatpickr with range mode");
       this.initFlatpickrRange("range");
     } else {
-      console.log("Initializing Flatpickr with single mode");
-      this.initFlatpickr("single");
+      console.log("Initializing Flatpickr with multiple mode");
+      this.initFlatpickr("multiple");
     }
   }
+
+
+  //   // Initialize the Flatpickr instance with the appropriate mode
+  //   if (recurrenceType === "every-week") {
+  //     console.log("Initializing Flatpickr with range mode");
+  //     this.initFlatpickrRange("range");
+  //   } else if (recurrenceType === "custom-dates") {
+  //     console.log("Initializing Flatpickr with multiple mode");
+  //     this.initFlatpickr("multiple");
+  //   } else {
+  //     console.log("Initializing Flatpickr with single mode");
+  //     this.initFlatpickr("single");
+  //   }
+  // }
+
 
 
 
@@ -98,7 +115,6 @@ export default class extends Controller {
     const selectedTime = selectedDates[0] ? selectedDates[0].toTimeString().split(" ")[0] : "";
     document.getElementById("hidden_event_start_time").value = selectedTime;
   }
-
 
   fetchStudios() {
     const url = `${location.pathname}?start_time=${this.startTarget.value}&end_time=${this.endTarget.value}`
