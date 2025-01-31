@@ -15,7 +15,8 @@
   <p class="d-flex justify-content-center my-4 fs-3 text-custom">
     <% if @events.present? %>
       <h6 class="d-flex justify-content-center mb-3"><%= @user.name %>'s upcoming classes!</h6>
-      <%= render "shared/event_card_iteration", events: @events.select { |event| event.start_date >= Time.now } %>
+      <%= render "shared/event_card_iteration", events: @events %>
+      <%# <%= render "shared/event_card_iteration", events: @events.select { |event| event.start_date >= Time.now } %>
     <% else %>
       <p class="d-flex justify-content-center mb-3"><%= @user.name %> doesn't have upcoming classes.</p>
     <% end %>
@@ -28,5 +29,6 @@
       <p class="d-flex justify-content-center mb-5"><%= @user.name %> doesn't have past classes.</p>
     <% end %>
   </p>
-  <%= render "shared/event_card_iteration", events: @events.select { |event| event.start_date < Time.now } %>
+  <%= render "shared/event_card_iteration", events: @events %>
+  <%# <%= render "shared/event_card_iteration", events: @events.select { |event| event.start_date < Time.now } %>
 </div>

@@ -122,14 +122,19 @@ class Event < ApplicationRecord
 
   # Method for handling custom dates
   def handle_custom_dates_event(custom_dates)
-    custom_dates = custom_dates || [] # Ensure custom_dates is an array
+     # Ensure custom_dates is a string, then split it by commas to get an array
+    custom_dates = custom_dates.split(',') if custom_dates.is_a?(String)
+
     custom_dates.each do |custom_date|
       begin
-        parsed_date = DateTime.parse(custom_date)
-        self.event_instances.build(
-          start_time: parsed_date,
-          end_time: parsed_date + self.duration.minutes,
-          date: parsed_date.to_date
+        # Parse the date string
+        parsed_date = Date.parse(custom_date)
+
+        # Create an event instance for each date
+        self.event_instances.create!(
+          start_time: parsed_date.to_time, # Assuming the event starts at midnight, or adjust as needed
+          end_time: parsed_date.to_time + self.duration.minutes, # Duration-based end time
+          date: parsed_date # Store the date for reference
         )
       rescue ArgumentError
         self.errors.add(:custom_dates, "#{custom_date} is not a valid date.")

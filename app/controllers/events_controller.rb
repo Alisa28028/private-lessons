@@ -109,6 +109,7 @@ class EventsController < ApplicationController
 
     # Handle custom dates logic
     if params[:event][:custom_dates].present?
+      Rails.logger.debug "Received custom dates: #{params[:event][:custom_dates].inspect}"
       @event.handle_custom_dates_event(params[:event][:custom_dates])
     end
 
