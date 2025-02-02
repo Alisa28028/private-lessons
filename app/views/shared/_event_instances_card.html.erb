@@ -1,3 +1,6 @@
+<div>
+  <p>this is an instance</p>
+</div>
 <%# Home page cards %>
 <%# check if the current user is the event creator %>
 <% if event.user != current_user %> <!-----Non creator users (show booking and wait list buttons-------->
@@ -142,7 +145,10 @@
                       <% if instance.end_time.present? %>
                         <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
                       <% else %>
-                        <p class="justify-content-end date-text text-custom">End time not available</p>
+                        <% calculated_end_time = instance.start_time + event.duration.minutes %>
+                        <p class="justify-content-end date-text text-custom">
+                          <%= calculated_end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %>
+                        </p>
                       <% end %>
                     </div>
                   <% end %>
@@ -153,7 +159,7 @@
               <% if event.location.present? %>
                 <p class="d-flex text-dark" style="font-size:14px"><%= event.location.address %></p>
               <% else %>
-                <p class="d-flex text-dark" style="font-size:14px">Location not available</p>
+                <p class="d-flex text-dark" style="font-size:14px">No Location yet</p>
               <% end %>
             </div>
             <div class="d-flex flex-col align-items-end z-up">
@@ -232,15 +238,3 @@
       </div>
     </div>
   </div>
-  <%# <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Detect the user's time zone using the browser's Intl API
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-        // Display the time zone in the page
-        const timeZoneElement = document.getElementById('user-time-zone');
-        if (timeZoneElement) {
-          timeZoneElement.textContent = `Your Time Zone: ${userTimeZone}`;
-        }
-      });
-    </script> %>

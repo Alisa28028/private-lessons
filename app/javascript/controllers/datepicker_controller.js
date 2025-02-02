@@ -107,12 +107,25 @@ export default class extends Controller {
       dateFormat: "Y-m-d",
       minDate: "today",
       mode: "range",
-      onChange: this.updateHiddenFields.bind(this),
+      onClose: (selectedDates) => {
+        if (selectedDates.length === 2) {
+          const startDate = selectedDates[0].toISOString().split("T")[0];
+          const endDate = selectedDates[1].toISOString().split("T")[0];
+
+          console.log("📅 Weekly Event - Start Date:", startDate, "End Date:", endDate);
+
+          document.getElementById("event_start_date").value = startDate;
+          document.getElementById("event_end_date").value = endDate;
+        } else {
+          console.warn("⚠️ Please select a valid date range.");
+        }
+      },
     };
 
-    console.log("initializing flatpickr with range mode");
+    console.log("📅 Initializing Flatpickr with range mode");
     this.initializeFlatpickr(target, flatpickrOptions);
   }
+
 
   initFlatpickrMultiple(target) {
     const flatpickrOptions = {

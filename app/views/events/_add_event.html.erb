@@ -2,7 +2,7 @@
   <%= simple_form_for @event, html: { multipart: true } do |f| %>
     <!----Recurrence type buttons-------->
     <div data-controller="event-form" class="col-12">
-      <div class="recurrence-buttons d-flex justify-content-center mb-5">
+      <div class="recurrence-buttons d-flex justify-content-center mb-3">
         <button type="button"
       class="btn btn-outline-primary me-3"
       data-action="click->event-form#selectEventType click->event-form#selectRecurrence"

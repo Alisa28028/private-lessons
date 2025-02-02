@@ -1,6 +1,12 @@
-<%# <% events.sort_by { |event| event[:start_date] }.each do |event| %>
+<%# <% events.each do |event| %>
   <%# <%= render "shared/event_card", event: event %>
   <%# <% end %>
   <% events.each do |event| %>
-    <%= render "shared/event_card", event: event %>
+    <% if event.event_instances.any? %>
+      <% event.event_instances.each do |instance| %>
+        <%= render "shared/event_instances_card", instance: instance, event: event %>
+      <% end %>
+    <% else %>
+      <%= render "shared/event_card", event: event %>
+    <% end %>
   <% end %>
