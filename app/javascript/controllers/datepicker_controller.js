@@ -3,36 +3,191 @@ import flatpickr from "flatpickr";
 
 // Connects to data-controller="datepicker"
 export default class extends Controller {
-  static targets = ["start", "end", "list", "locationList"];
+  static targets = [
+    "eventDate",
+    "eventTime",
+    "recurrenceType",
+    "weeklyDatePicker",
+    "customDatePicker",
+    // "eventInstances",
+    // "list",
+    // "locationList"
+  ];
+
+
 
   connect() {
-    this.initStartDatePicker();
-    this.initEndDatePicker();
+    console.log("datepicker controller connected!");
+    this.initTimePicker();
+
+
+  //   // listen for custom events
+  //   this.element.addEventListener("recurrenceTypeChanged", (event) => {
+  //     console.log("Recurrence type changed event fired!", event); // Ensure the event is firing
+
+  //     const { recurrenceType } = event.detail;
+  //     console.log(`Recurrence type changed to : ${recurrenceType}`);
+  //     this.handleRecurrenceChange(recurrenceType);
+  //   });
+  // }
+
+  /// Listen for recurrence type changes (button clicks)
+  const recurrenceButtons = document.querySelectorAll('[data-recurrence-type]');
+
+  recurrenceButtons.forEach(button => {
+    button.addEventListener("click", (event) => {
+      const recurrenceType = event.target.dataset.recurrenceType;
+      console.log(`Recurrence Type Selected: ${recurrenceType}`);
+
+      this.handleRecurrenceChange(recurrenceType);
+    });
+  });
+}
+
+
+  handleRecurrenceChange(recurrenceType) {
+    console.log("Recurrence type changed to:", recurrenceType);
+
+    // Destroy existing Flatpickr instance if it exists
+    if (this.datePickerInstance) {
+      this.datePickerInstance.destroy();
+      this.datePickerInstance = null;
+    }
+
+    const checkTargetAndInitialize = () => {
+      if (recurrenceType === "one-time") {
+        console.log("📅 Initializing Flatpickr with single mode!");
+        const eventDateInput = document.querySelector("[data-datepicker-target='eventDate']");
+        if (eventDateInput) {
+          this.initFlatpickrSingle(eventDateInput);
+        } else {
+          console.warn("⏳ Waiting for eventDate input to appear...");
+          setTimeout(checkTargetAndInitialize, 50);
+        }
+      } else if (recurrenceType === "every-week") {
+        console.log("📅 Initializing Flatpickr with range mode");
+        const weeklyPickerInput = document.querySelector("[data-datepicker-target='weeklyDatePicker']");
+        if (weeklyPickerInput) {
+          this.initFlatpickrRange(weeklyPickerInput);
+        } else {
+          console.warn("⏳ Waiting for weeklyDatePicker input to appear...");
+          setTimeout(checkTargetAndInitialize, 50);
+        }
+      } else if (recurrenceType === "custom-dates") {
+        console.log("📅 Initializing Flatpickr with multiple mode");
+        const customPickerInput = document.querySelector("[data-datepicker-target='customDatePicker']");
+        if (customPickerInput) {
+          this.initFlatpickrMultiple(customPickerInput);
+        } else {
+          console.warn("⏳ Waiting for customDatePicker input to appear...");
+          setTimeout(checkTargetAndInitialize, 50);
+        }
+      }
+    };
+
+    // Start checking for target availability
+    setTimeout(checkTargetAndInitialize, 50);
   }
 
-  initStartDatePicker() {
-    flatpickr(this.startTarget, {
-      enableTime: true,           // Enable time picker
-      dateFormat: "Y-m-d H:i",    // Date and time format
-      disableMobile: "true",
-      onChange: this.setEndDate.bind(this), // Set end date based on start date
-    })
+
+  initFlatpickrSingle(target) {
+    const flatpickrOptions = {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      mode: "single",
+      onchange: this.updateHiddenFields.bind(this),
+    };
+
+    console.log("initializing flatpickr with single mode");
+    this.initializeFlatpickr(target, flatpickrOptions);
   }
 
-  initEndDatePicker() {
-    flatpickr(this.endTarget, {
-      enableTime: true,           // Enable time picker
-      dateFormat: "Y-m-d H:i",    // Date and time format
-      disableMobile: "true",
+  initFlatpickrRange(target) {
+    const flatpickrOptions = {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      mode: "range",
+      onClose: (selectedDates) => {
+        if (selectedDates.length === 2) {
+          const startDate = selectedDates[0].toISOString().split("T")[0];
+          const endDate = selectedDates[1].toISOString().split("T")[0];
+
+          console.log("📅 Weekly Event - Start Date:", startDate, "End Date:", endDate);
+
+          document.getElementById("event_start_date").value = startDate;
+          document.getElementById("event_end_date").value = endDate;
+        } else {
+          console.warn("⚠️ Please select a valid date range.");
+        }
+      },
+    };
+
+    console.log("📅 Initializing Flatpickr with range mode");
+    this.initializeFlatpickr(target, flatpickrOptions);
+  }
+
+
+  initFlatpickrMultiple(target) {
+    const flatpickrOptions = {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      mode: "multiple",
+      onChange: this.updateHiddenFields.bind(this),
+    };
+    console.log("initializing flatpickr with multiple mode");
+    this.initializeFlatpickr(target, flatpickrOptions);
+  }
+
+  initializeFlatpickr(target, options) {
+    if (!target) {
+      console.error("flatpickr target is undefined or null!");
+      return;
+    }
+
+    // destroy previous instance if it exists
+    if (this.datePickerInstance) {
+      this.datePickerInstance.destroy();
+    }
+    this.datePickerInstance = flatpickr(target, options);
+  }
+
+  initTimePicker() {
+    // Initialize Flatpickr for time input (single time picker)
+    flatpickr(this.eventTimeTarget, {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      onChange: this.updateTimeHiddenField.bind(this),
     });
   }
 
-  setEndDate(selectedDates) {
-    if (selectedDates.length > 0) {
-      const selectedDate = selectedDates[0];
-      selectedDate.setMinutes(selectedDate.getMinutes() + 60); // Add 60 minutes
-      this.endTarget._flatpickr.setDate(selectedDate);
+  updateHiddenFields(selectedDates) {
+    if (this.hasWeeklyDatePickerTarget) {
+      // Handling weekly event date range
+    const startDate = selectedDates[0] ? selectedDates[0].toISOString().split("T")[0] : "";
+    const endDate = selectedDates[1] ? selectedDates[1].toISOString().split("T")[0] : "";
+
+    document.getElementById("event_start_date").value = startDate;
+    document.getElementById("event_end_date").value = endDate;
+  }
+
+  if (this.hasCustomDatePickerTarget) {
+    // Handling custom dates (multiple selections)
+    const formattedDates = selectedDates.map(date => date.toISOString().split("T")[0]);
+    console.log("Selected custom dates:", formattedDates);
+
+    const customDatesField = document.getElementById("custom_dates_field");
+    if (customDatesField) {
+      customDatesField.value = formattedDates.join(","); // Store as a comma-separated string
+    } else {
+      console.error("Custom dates field not found in form!");
     }
+  }
+}
+
+  updateTimeHiddenField(selectedDates) {
+    const selectedTime = selectedDates[0] ? selectedDates[0].toTimeString().split(" ")[0] : "";
+    document.getElementById("hidden_event_start_time").value = selectedTime;
   }
 
   fetchStudios() {

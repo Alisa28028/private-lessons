@@ -6,6 +6,7 @@ class EventsController < ApplicationController
     @user = current_user
     @users = User.all
     @events = Event.all
+
     # @event_bookings = Booking.where(event_id: @events)
     @event_bookings = Booking.where(event_id: @events.pluck(:id))
     @bookings = @user.bookings
@@ -13,14 +14,16 @@ class EventsController < ApplicationController
 
   def new
     @event = Event.new
-    @locations = Location.all.map(&:name)
-    if params[:start_time].present? && params[:end_time].present?
-      @studiolist = StudioFetcher.fetch_studiolist(params[:start_time], params[:end_time])
-      @studiolist ||= []
-      respond_to do |format|
-        format.json { render partial: "events/locations", locals: { studiolist: @studiolist }, formats: [:html]}
-      end
-    end
+    @event.event_instances.build
+
+    # @locations = Location.all.map(&:name)
+    # if params[:start_time].present? && params[:end_time].present?
+    #   @studiolist = StudioFetcher.fetch_studiolist(params[:start_time], params[:end_time])
+    #   @studiolist ||= []
+    #   respond_to do |format|
+    #     format.json { render partial: "events/locations", locals: { studiolist: @studiolist }, formats: [:html]}
+    #   end
+    # end
   end
 
   def attendees
@@ -40,25 +43,89 @@ class EventsController < ApplicationController
       @past_events = []
 
     end
+    # Set default time zone to JST (Asia/Tokyo)
+    jst_time_zone = 'Asia/Tokyo'
 
+    # Convert event times to the current user's time zone, if available, otherwise use JST
+    if current_user && current_user.time_zone
+      @event.start_time = @event.start_time.in_time_zone(current_user.time_zone)
+      @event.end_time = @event.end_time.in_time_zone(current_user.time_zone)
+    else
+      @event.start_time = @event.start_time.in_time_zone(jst_time_zone)
+      @event.end_time = @event.end_time.in_time_zone(jst_time_zone)
+    end
+
+    # Fetch bookings for the event
     @bookings = Booking.where(event_id: @event) # bookings list for this event
     @new_booking = Booking.new # instance to allow new booking
-
   end
+
+  # def create
+  #   @event = Event.new(event_params)
+  #   @location = Location.find_by(name: params[:location_name])
+  #   @location ||= Location.create(name: params[:location_name])
+  #   @event.location = @location
+
+  #   @event.user = current_user
+  #     if @event.save
+  #       redirect_to root_path #need to change this to dashboard
+  #     else
+  #       render 'new', status: :unprocessable_entity
+  #     end
+  # end
+
 
   def create
+    # Initialize the event object
     @event = Event.new(event_params)
-    @location = Location.find_by(name: params[:location_name])
-    @location ||= Location.create(name: params[:location_name])
-    @event.location = @location
 
+    # Log the parameters for debugging
+  Rails.logger.debug "Capacity: #{params[:event][:capacity]}"
+  Rails.logger.debug "Duration: #{params[:event][:duration]}"
+
+  # Set default values for capacity and duration if blank
+  @event.capacity = 10 if @event.capacity.blank?
+  @event.duration = 60 if @event.duration.blank?
+
+  Rails.logger.debug "Event params: #{event_params.inspect}"
+  Rails.logger.debug "Event object: #{@event.inspect}"
+  Rails.logger.debug "Recurrence type: #{@event.recurrence_type}"
+
+    # Handle the location - find by name, or create a new one if it doesn't exist
+    # @location = Location.find_by(name: params[:location_name])
+    # @location ||= Location.create(name: params[:location_name])
+    # @event.location = @location
+
+    # Associate the current user with the event
     @event.user = current_user
-      if @event.save
-        redirect_to root_path #need to change this to dashboard
-      else
-        render 'new', status: :unprocessable_entity
+    if @event.save
+
+    # Handle one-time event logic
+    if params[:event][:event_instances_attributes].present? && params[:event][:event_instances_attributes]["0"][:start_time].present?
+      if @event.recurrence_type == 'one-time'
+      @event.handle_one_time_event(params)
       end
+    end
+
+    # Handle custom dates logic
+    if params[:event][:custom_dates].present?
+      Rails.logger.debug "Received custom dates: #{params[:event][:custom_dates].inspect}"
+      @event.handle_custom_dates_event(params[:event][:custom_dates])
+    end
+
+
+      # Generate weekly event instances if recurrence is weekly
+      if @event.recurrence_type == 'every-week'
+        @event.generate_instances!
+      end
+
+      redirect_to dashboard_path, notice: "Event and instances were successfully created."
+    else
+      Rails.logger.debug @event.errors.full_messages # Log errors for debugging
+      render :new, status: :unprocessable_entity
+    end
   end
+
 
   def add_video
     if params[:event][:videos].present?
@@ -135,13 +202,21 @@ class EventsController < ApplicationController
     end
   end
 
+  def end_time
+    (start_time + duration.minutes).strftime("%H:%M")
+  end
+
   private
 
   def set_event
     @event = Event.find(params[:id])
   end
 
+
+
   def event_params
-    params.require(:event).permit(:title, :capacity, :price_cents, :location_id, :start_date, :end_date, :description, videos: [], photos: [])
+    params.require(:event).permit(:title, :description, :capacity, :duration, :recurrence_type, :custom_dates, :start_date, :end_date, :start_time, :price_cents, :day_of_week, videos: [], photos: [],
+      event_instances_attributes: [:id, :date, :start_time, :_destroy]
+    )
   end
 end
