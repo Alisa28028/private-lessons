@@ -5,6 +5,17 @@ class UsersController < ApplicationController
     require 'time'
     @bookings = current_user.bookings
     @events = current_user.events
+
+    # Fetch and filter event instances for the current user
+    @event_instances = EventInstance.where(event_id: @events.pluck(:id))
+    .where("date > ?", Time.now)  # Get future event instances
+    .order(:date)  # Sort by date
+
+  # Optional: For past event instances
+  @past_event_instances = EventInstance.where(event_id: @events.pluck(:id))
+        .where("date <= ?", Time.now)  # Get past event instances
+        .order(:date)  # Sort by date
+
     # Earnings: look for events for last month and current month, then pass it as an argument to private method iterating on each event to find paid bookings and multiply by event price
     @last_month_events = @events.where(start_date: (Time.now.beginning_of_month.prev_month).midnight..(Time.now.beginning_of_month - 1).midnight)
     @last_month_events_sum = monthly_sum(@last_month_events)
@@ -22,7 +33,12 @@ class UsersController < ApplicationController
   def show
     @bookings = current_user.bookings
     @events = @user.events
-    # @event = @user.events(params[:id])
+    # Get the event instances related to the user's bookings
+    @event_instances = EventInstance.where(id: @bookings.pluck(:event_instance_id)).where("date > ?", Time.now).order(:date)
+
+    # Get the associated events for the future event instances
+    @events = @event_instances.map(&:event).uniq
+
     @attending_events = @user.bookings.includes(:event).map(&:event)
   end
 
