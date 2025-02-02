@@ -46,13 +46,24 @@ class EventsController < ApplicationController
     # Set default time zone to JST (Asia/Tokyo)
     jst_time_zone = 'Asia/Tokyo'
 
-    # Convert event times to the current user's time zone, if available, otherwise use JST
+      # Convert event times to the current user's time zone, if available, otherwise use JST
     if current_user && current_user.time_zone
-      @event.start_time = @event.start_time.in_time_zone(current_user.time_zone)
-      @event.end_time = @event.end_time.in_time_zone(current_user.time_zone)
+      @event.start_time = @event.start_time&.in_time_zone(current_user.time_zone)
+      @event.end_time = @event.end_time&.in_time_zone(current_user.time_zone)
+
+      @event.event_instances.each do |instance|
+        instance.start_time = instance.start_time&.in_time_zone(current_user.time_zone)
+        instance.end_time = instance.end_time&.in_time_zone(current_user.time_zone)
+      end
     else
-      @event.start_time = @event.start_time.in_time_zone(jst_time_zone)
-      @event.end_time = @event.end_time.in_time_zone(jst_time_zone)
+      jst_time_zone = "Asia/Tokyo"
+      @event.start_time = @event.start_time&.in_time_zone(jst_time_zone)
+      @event.end_time = @event.end_time&.in_time_zone(jst_time_zone)
+
+      @event.event_instances.each do |instance|
+        instance.start_time = instance.start_time&.in_time_zone(jst_time_zone)
+        instance.end_time = instance.end_time&.in_time_zone(jst_time_zone)
+      end
     end
 
     # Fetch bookings for the event
