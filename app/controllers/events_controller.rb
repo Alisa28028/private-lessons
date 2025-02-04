@@ -5,10 +5,16 @@ class EventsController < ApplicationController
   def index
     @user = current_user
     @users = User.all
-    @events = Event.all
+    # Get event instances that are in the future and order them by date
+    @event_instances = EventInstance.where("date > ?", Time.now).order(:date)
 
-    # @event_bookings = Booking.where(event_id: @events)
-    @event_bookings = Booking.where(event_id: @events.pluck(:id))
+    # Get associated events for the sorted event instances
+    @events = @event_instances.map(&:event).uniq
+
+    # Get bookings related to the event instances
+    @event_bookings = Booking.where(event_instance_id: @event_instances.pluck(:id))
+
+    # Get bookings for the current user
     @bookings = @user.bookings
   end
 
