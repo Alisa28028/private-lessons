@@ -5,6 +5,7 @@
       <p class="my-2 d-flex justify-content-center mb-3">Upcoming Events</p>
       <%# Iterating through attending events %>
       <%= render '/shared/event_card_iteration', events: @events, event_instances: @event_instances, bookings: @user.bookings %>
+
     </div>
   </div>
 </div>
