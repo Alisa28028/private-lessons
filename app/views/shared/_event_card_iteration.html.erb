@@ -6,23 +6,6 @@
       <!-- Event has event instances, render instance cards -->
       <% event.event_instances.each do |instance| %>
         <%= render "shared/event_instances_card", instance: instance, event: instance.event %>
-        <% if instance.event.recurrence_type == "one-time" %>
-          <!-- Display date and time for one-time events -->
-          <% if instance.date.present? %>
-            <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
-            <div class="d-flex align-items-center gap-1">
-              <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-              <span class="text-custom">~</span>
-              <% if instance.end_time.present? %>
-                <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-              <% else %>
-                <p class="justify-content-end date-text text-custom">End time not available</p>
-              <% end %>
-            </div>
-          <% else %>
-            <p>No valid date or time available.</p>
-          <% end %>
-        <% end %>
       <% end %>
     <% else %>
       <!-- Event does not have event instances, render the event card -->

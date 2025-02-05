@@ -14,6 +14,7 @@ class User < ApplicationRecord
   has_many :bookings_as_teacher, through: :events, source: :bookings
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_many :videos, dependent: :destroy
   def is_teacher?
     events.any?
   end

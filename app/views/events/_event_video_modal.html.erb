@@ -9,9 +9,16 @@
       </div>
       <!-- Modal Body (Video Upload or URL Input) -->
       <div class="modal-body">
-        <%= simple_form_for @event, url: add_video_event_path(@event), method: :post do |f| %>
-          <%= f.input :videos, as: :file, input_html: { multiple: true } %>
-          <%= f.submit "Upload video", class: "btn btn-custom my-3 btn-right" %>
+        <%= simple_form_for Video.new, url: videos_path, method: :post, html: { multipart: true } do |f| %>
+          <%= f.input :file, as: :file, label: "Upload Video", input_html: { multiple: false } %>
+          <!-- Hidden Fields to Associate Video -->
+          <% if @event.present? %>
+            <%= f.hidden_field :event_id, value: @event.id %>
+          <% end %>
+          <% if @event_instance.present? %>
+            <%= f.hidden_field :event_instance_id, value: @event_instance.id %>
+          <% end %>
+          <%= f.submit "Upload Video", class: "btn btn-custom my-3 btn-right" %>
         <% end %>
       </div>
       <!-- Modal Footer -->

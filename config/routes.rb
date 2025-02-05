@@ -20,8 +20,12 @@ Rails.application.routes.draw do
       end
         resources :comments, only: :create
     end
+    resources :videos, only: [:create, :destroy]
   end
-
+  # Standalone video routes (for independent uploads)
+  resources :videos, only: [:create, :index, :show, :destroy]
+   # Routes for managing event instances independently
+   resources :event_instances, only: [:show, :index, :edit, :update, :destroy]
    # Non-nested posts resource for standalone posts
    resources :posts, only: [:new, :create, :index, :show, :destroy] do
     collection do
