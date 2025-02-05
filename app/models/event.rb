@@ -8,6 +8,7 @@ class Event < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :event_instances, dependent: :destroy
   has_many :attendees, through: :bookings, source: :user
+  has_many :videos, dependent: :destroy
   has_many_attached :photos
   has_many_attached :videos
 
@@ -73,29 +74,6 @@ class Event < ApplicationRecord
       self.errors.add(:base, "Start time and date are required for a one-time event.")
     end
   end
-
-  # Method for handling weekly events
-  # def generate_weekly_instances(start_date, end_date, day_of_week, start_time)
-  #   Rails.logger.debug "Generating weekly instances with: start_date=#{start_date}, end_date=#{end_date}, day_of_week=#{day_of_week}, start_time=#{start_time}"
-
-  #     # Default start_time to a specific value if blank (e.g., 9:00 AM)
-  # start_time ||= "09:00"
-
-  #   target_wday = Date::DAYNAMES.index(day_of_week)
-  #   Rails.logger.debug "Target weekday index: #{target_wday}"
-
-  #   dates = (start_date..end_date).to_a.select { |date| date.wday == target_wday }
-  #   Rails.logger.debug "Selected dates: #{dates}"
-
-  #   dates.each do |date|
-  #     instance = event_instances.new(date: date, start_time: start_time)
-  #     if instance.save
-  #       Rails.logger.debug "Created instance: #{instance.inspect}"
-  #     else
-  #       Rails.logger.error "Failed to create instance: #{instance.errors.full_messages}"
-  #     end
-  #   end
-  # end
 
   def generate_instances!
     start_date = self.start_date.to_date

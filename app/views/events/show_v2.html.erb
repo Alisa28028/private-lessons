@@ -3,7 +3,7 @@
   <div class="row px-3">
     <div class="column mt-3">
       <div class="d-flex justify-content-between">
-        <h2 class="text-custom-dark"><strong><%= @event.title %></strong></h2>
+        <h2 class="text-custom-dark"><strong><%= instance.event.title %></strong></h2>
         <p class="opacity-50 attendee-number fw-bold text-danger d-flex align-items-center mb-0"><%= @event.capacity - @event.bookings.count %> Spots left!</p>
       </div>
       <div class="d-flex justify-content-between mt-2 mb-4">

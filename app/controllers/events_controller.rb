@@ -7,13 +7,9 @@ class EventsController < ApplicationController
     @users = User.all
 
     @event_instances = EventInstance.where("date > ?", Time.now).order(:date)
-
     # Get associated events for the sorted event instances
     @events = @event_instances.map(&:event).uniq
-
-
     @event_bookings = Booking.where(event_instance_id: @event_instances.pluck(:id))
-
     # Get bookings for the current user
     @bookings = @user.bookings
   end
@@ -37,18 +33,14 @@ class EventsController < ApplicationController
   end
 
   def show
-    # @user = User.find(params[:id])
 
-    # @event = @user.events
-    # @upcoming_events = @events.select { |event| event.start_date >= Date.today}.sort_by(&:start_date)
-    # @past_events = @events.select { |event| event.start_date < Date.today}.sort_by(&:start_date).reverse
-    if @events.present?
-    @upcoming_events = @events.where("start_date >= ?", Date.today).order(start_date: :asc)
-    @past_events = @events.where("start_date < ?", Date.today).order(start_date: :desc)
-    else @upcoming_events = []
-      @past_events = []
+    # if @events.present?
+    # @upcoming_events = @events.where("start_date >= ?", Date.today).order(start_date: :asc)
+    # @past_events = @events.where("start_date < ?", Date.today).order(start_date: :desc)
+    # else @upcoming_events = []
+    #   @past_events = []
 
-    end
+    # end
     # Set default time zone to JST (Asia/Tokyo)
     jst_time_zone = 'Asia/Tokyo'
 
@@ -62,7 +54,7 @@ class EventsController < ApplicationController
         instance.end_time = instance.end_time&.in_time_zone(current_user.time_zone)
       end
     else
-      jst_time_zone = "Asia/Tokyo"
+
       @event.start_time = @event.start_time&.in_time_zone(jst_time_zone)
       @event.end_time = @event.end_time&.in_time_zone(jst_time_zone)
 
@@ -116,29 +108,9 @@ class EventsController < ApplicationController
     # Associate the current user with the event
     @event.user = current_user
     if @event.save
-
-    # Handle one-time event logic
-    if params[:event][:event_instances_attributes].present? && params[:event][:event_instances_attributes]["0"][:start_time].present?
-      if @event.recurrence_type == 'one-time'
-      @event.handle_one_time_event(params)
-      end
-    end
-
-    # Handle custom dates logic
-    if params[:event][:custom_dates].present?
-      Rails.logger.debug "Received custom dates: #{params[:event][:custom_dates].inspect}"
-      @event.handle_custom_dates_event(params[:event][:custom_dates])
-    end
-
-
-      # Generate weekly event instances if recurrence is weekly
-      if @event.recurrence_type == 'every-week'
-        @event.generate_instances!
-      end
-
-      redirect_to dashboard_path, notice: "Event and instances were successfully created."
+      handle_event_instances_creation
+      redirect_to dashboard_path, notice: "Event(s) were sucessfully created."
     else
-      Rails.logger.debug @event.errors.full_messages # Log errors for debugging
       render :new, status: :unprocessable_entity
     end
   end
@@ -160,12 +132,17 @@ class EventsController < ApplicationController
 
   def destroy
     @event = Event.find(params[:id])
-    @event.destroy
+    if @event
+      @event.destroy
+      notice_message = "Event successfully deleted!"
+    else
+      notice_message = "Event not found."
+    end
 
     if request.referer.include?('/users')
-      redirect_to user_path(current_user, anchor: 'classes'), notice: "Event successfully deleted!"
+      redirect_to user_path(current_user, anchor: 'classes'), notice: notice_message
     else
-      redirect_to events_path, notice: "Event successfully deleted!"
+      redirect_to events_path, notice: notice_message
     end
   end
 
@@ -226,14 +203,42 @@ class EventsController < ApplicationController
   private
 
   def set_event
-    @event = Event.find(params[:id])
+    @event = Event.find_by(id: params[:id])
+    # if ID belongs to an  EventInstance, find its associated Event
+    if @event.nil?
+      event_instance = EventInstance.find_by(id: params[:id])
+      @event = event_instance&.event
+    end
+
+    unless @event
+      redirect_to events_path, alert: "Event not found."
+    end
   end
-
-
 
   def event_params
     params.require(:event).permit(:title, :description, :capacity, :duration, :recurrence_type, :custom_dates, :start_date, :end_date, :start_time, :price_cents, :day_of_week, videos: [], photos: [],
       event_instances_attributes: [:id, :date, :start_time, :_destroy]
     )
+  end
+
+  def handle_event_instances_creation
+   # Handle one-time event logic
+   if params[:event][:event_instances_attributes].present? && params[:event][:event_instances_attributes]["0"][:start_time].present?
+    if @event.recurrence_type == 'one-time'
+    @event.handle_one_time_event(params)
+    end
+  end
+
+  # Handle custom dates logic
+  if params[:event][:custom_dates].present?
+    Rails.logger.debug "Received custom dates: #{params[:event][:custom_dates].inspect}"
+    @event.handle_custom_dates_event(params[:event][:custom_dates])
+  end
+
+
+    # Generate weekly event instances if recurrence is weekly
+    if @event.recurrence_type == 'every-week'
+      @event.generate_instances!
+    end
   end
 end

@@ -1,0 +1,269 @@
+<div class="container px-4 bg-white">
+  <div class="row mt-6 py-1">
+    <div class="col-7 d-flex align-items-center">
+      <h2 class="text-custom-dark"><strong><%= @event_instance.event.title %></strong></h2>
+    </div>
+    <div class="col-5 d-flex justify-content-end align-items-center">
+      <h6 class="mb-0 text-danger">
+        <% capacity = @event_instance.respond_to?(:capacity) ? @event_instance.capacity : @event.capacity %>
+        <% bookings_count = @event_instance.respond_to?(:bookings) ? @event_instance.bookings.count : @event.bookings.count %>
+        <% if capacity.present? && bookings_count.present? %>
+          <% if capacity - bookings_count <= 0 %>
+            <strong>EVENT FULL!!</strong>
+          <% else %>
+            Spots left: <%= capacity - bookings_count %>
+          <% end %>
+        <% end %>
+      </h6>
+    </div>
+  </div>
+  <!-- Cover Image and Instructor Name-->
+  <div class="row mt-2 mx-auto">
+    <% if @event.photos.attached? %>
+      <%= cl_image_tag(@event.photos.first.key, width: 450, height: 150, crop: "fill", radius: 10) %>
+    <% else %>
+      <%= image_tag "sexy_lady.jpg", style: "width: 100%; height: 100%; object-fit: cover; display: block;", alt: "Default Photo"  %>
+    <% end %>
+  </div>
+  <% if @event.videos.attached? %>
+    <%= video_tag(url_for(@event.videos.first), controls: true, type: "video/mp4") %>
+  <% else %>
+    <p>No video attached.</p>
+  <% end %>
+  <div class="row mt-2">
+    <h4 class="text-custom">Taught by:
+      <%= link_to user_path(@event.user), class: "text-custom" do %>
+        <%= @event.user.name %>
+        <%= cl_image_tag @event.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+      <% end %>
+    </h4>
+  </div>
+  <!-- Description Row -->
+  <div class="flex row rounded-4 px-2 bg-warning shadow mt-3">
+    <p class="mb-0 mt-3"><strong>Time: </strong>
+      <% if @event.event_instances.any? %>
+        <%= @event.event_instances.first.start_time.in_time_zone("Asia/Tokyo").strftime("%D at %H:%M %p") %>
+      <% else %>
+        <%= @event.start_date.strftime("%D at %H:%M %p") %></p>
+    <% end %>
+  </p>
+  <p><strong>Location: </strong>
+    <% if @event.location.present? %>
+      <%= @event.location.name %>, <%= @event.location.address %></p>
+  <% else %>
+    <p>No location yet</p>
+  <% end %>
+  <p><%= @event.description %></p>
+</div>
+<!-- Button Row -->
+<div class="row my-4">
+  <!-- Only show button if current_user is not the event creator -->
+  <% if @event.user != current_user %>
+    <% if @event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
+      <button type="button" style="font-size: small" class="btn btn-light-purple ml-2 mb-0 mr-0">
+        <strong>Attending!!!</strong>
+      </button>
+    <% elsif @event.capacity - @event.bookings.count <= 0 %>
+      <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
+        Join Wait List
+      </button>
+    <% else %>
+      <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
+        Book this Class
+      </button>
+    <% end %>
+    <%= link_to new_event_post_path(@event), class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
+      <i class="fa-regular fa-square-plus"></i> Add post
+    <% end %>
+  <% end %>
+  <!-------------------------------------------------->
+  <% if user_signed_in? %>
+    <% if current_user == @event.user %>
+      <div class="event-buttons mt-1 d-flex justify-content-between">
+        <!-- Buttons for the event creator (teacher) -->
+        <div>
+          <%= link_to "#", class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
+            <i class="fa-solid fa-download"></i> copy url
+          <% end %>
+          <script>
+            document.getElementById('copy-url-button').addEventListener('click', function() {
+              // Get the current URL
+              const currentUrl = window.location.href;
+
+              // Create a temporary textarea element to copy the text
+              const textarea = document.createElement('textarea');
+              textarea.value = currentUrl;
+              document.body.appendChild(textarea);
+
+              // Select and copy the text
+              textarea.select();
+              document.execCommand('copy');
+
+              // Remove the temporary textarea
+              document.body.removeChild(textarea);
+
+              // Optional: Provide feedback to the user
+              alert('URL copied to clipboard!');
+            });
+          </script>
+        </div>
+        <div>
+          <!-- ICON TO CREATE A POST -->
+          <%= link_to new_event_post_path(@event), class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
+            <i class="fa-regular fa-square-plus"></i> Add post
+          <% end %>
+        </div>
+        <div class="d-flex flex-end" style="margin-left: 3px;">
+          <!-- ICON TO ADD VIDEO -->
+          <%= link_to '#', class: "btn btn-outline-primary btn-sm me-1", data: { bs_toggle: "modal", bs_target: "#addVideoModal" } do %>
+            <i class="fa-regular fa-file-video"></i>
+          <% end %>
+          <%= render 'events/event_video_modal', event_instance: @event_instance, event: @event %>
+          <!-- ICON TO EDIT EVENT -->
+          <%= link_to edit_event_path(@event), class: "btn btn-outline-primary btn-sm me-1" do %>
+            <i class="fa-regular fa-pen-to-square"></i>
+          <% end %>
+          <!-- ICON TO DUPLICATE EVENT -->
+          <%= link_to duplicate_event_path(@event), class: "btn btn-outline-primary btn-sm me-1" do %>
+            <i class="fa-regular fa-copy"></i>
+          <% end %>
+          <!-- ICON TO DELETE EVENT -->
+          <%= button_to event_path(@event), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn btn-outline-primary btn-sm" do %>
+            <i class="fa-regular fa-trash-can"></i>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <!-- Button for unauthenticated users -->
+    <div class="event-buttons mt-3">
+      <%= link_to new_user_session_path, class: "btn btn-warning btn-sm" do %>
+        <i class="fa-solid fa-sign-in-alt"></i> Login to Book
+      <% end %>
+    </div>
+  <% end %>
+  <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="bookingModalLabel">Book <strong><%= @event.title.capitalize %></strong>?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="modal-body">
+            <%= link_to fake_path(@event), class: "btn btn-custom my-3" do %>
+              <i class="fa-solid fa-sign-in-alt"></i> Book!
+            <% end %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END of Booking Modal -->
+  <!-- Waiting List Modal -->
+  <div class="modal fade" id="waitinglistModal" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= @event.title.capitalize %></strong> Wait List</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="modal-body">
+            <%= simple_form_for [@event, @new_booking] do |f| %>
+              <%= f.submit "Join Wait List", class: "btn btn-custom my-3" %>
+            <% end %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END of Waiting List Modal -->
+</div>
+<div class="row mt-3 mb-6">
+  <div class="d-flex flex-column w-100">
+    <h2 class="text-custom justify-content-center"><strong>Attendees</strong></h2>
+    <% @bookings.take(10).each do |booking| %>
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center" >
+          <%= link_to user_path(booking.user) do %>
+            <% if booking.user.photo.attached? %>
+              <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+            <% else %>
+              <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "default avatar" %>
+            <% end %>
+          <% end %>
+          <span><%= booking.user.name %></span>
+        </div>
+        <!-- Limit booking state view to only event's creator -->
+        <% if current_user == @event.user %>
+          <span class="<%= booking.state %>"><%= booking.state.capitalize %></span>
+        <% end %>
+        <!-- End limit -->
+      </div>
+    <% end %>
+    <div class="d-flex justify-content-between">
+      <% if @bookings.count >= 4 %>
+        <p class="mt-2">...plus <strong><%= @bookings.count - 10 %></strong> more</p>
+        <a href="", data-bs-toggle="modal", data-bs-target="#attendeesModal", class="mt-2"><strong>See all</strong></a>
+      <% end %>
+      <%# END of Iterating through attending users % %>
+      <!-- All Attendees Modal -->
+      <div class="modal fade" id="attendeesModal" tabindex="-1" aria-labelledby="attendeesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-body">
+              <h1 class="modal-title fs-5 my-3 d-flex justify-content-center" id="attendeesModalLabel">All Attendees</h1>
+              <% @bookings[0...@event.capacity].each do |booking| %>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center" >
+                    <%= link_to user_path(booking.user) do %>
+                      <% if booking.user&.photo.present? %>
+                        <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+                      <% else %>
+                        <!-- You can display a default image or a placeholder if no photo exists -->
+                        <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+                      <% end %>
+                    <% end %>
+                    <span><%= booking.user.name %></span>
+                  </div>
+                  <!-- Limit booking state view to only event's creator -->
+                  <% if current_user == @event.user %>
+                    <span class="<%= booking.state %>"><%= booking.state.capitalize %></span>
+                  <% end %>
+                  <!-- End limit -->
+                </div>
+              <% end %>
+              <hr>
+              <% if @bookings.count > @event.capacity %>
+                <h1 class="modal-title fs-5 my-3 d-flex justify-content-center" id="attendeesModalLabel">Wait List</h1>
+                <% @bookings[@event.capacity..].each do |booking| %>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center" >
+                      <%= link_to user_path(booking.user) do %>
+                        <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+                      <% end %>
+                      <span><%= booking.user.name %></span>
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+            <!-- Waiting List // All Attendees Modal -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+        <!-- END of All Attendees Modal -->
+      </div>
+    </div>
+  </div>
+</div>
+</div>
