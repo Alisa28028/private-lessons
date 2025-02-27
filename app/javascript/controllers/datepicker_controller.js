@@ -109,9 +109,15 @@ export default class extends Controller {
       mode: "range",
       onClose: (selectedDates) => {
         if (selectedDates.length === 2) {
-          const startDate = selectedDates[0].toISOString().split("T")[0];
-          const endDate = selectedDates[1].toISOString().split("T")[0];
+             // Convert to JST and get YYYY-MM-DD format
+          const formatDate = (date) => {
+            return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+              .toISOString()
+              .split("T")[0];
+          };
 
+          const startDate = formatDate(selectedDates[0]);
+          const endDate = formatDate(selectedDates[1]);
           console.log("📅 Weekly Event - Start Date:", startDate, "End Date:", endDate);
 
           document.getElementById("event_start_date").value = startDate;
@@ -130,6 +136,7 @@ export default class extends Controller {
   initFlatpickrMultiple(target) {
     const flatpickrOptions = {
       dateFormat: "Y-m-d",
+      timeZone: 'Asia/Tokyo',
       minDate: "today",
       mode: "multiple",
       onChange: this.updateHiddenFields.bind(this),
@@ -172,23 +179,53 @@ export default class extends Controller {
   }
 
   if (this.hasCustomDatePickerTarget) {
-    // Handling custom dates (multiple selections)
-    const formattedDates = selectedDates.map(date => date.toISOString().split("T")[0]);
+      // Handling custom dates (multiple selections)
+    const formattedDates = selectedDates.map(date => {
+      // Adjusting for the local timezone by subtracting the offset
+      return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+        .toISOString()
+        .split("T")[0];  // Get only the "YYYY-MM-DD" part
+    });
     console.log("Selected custom dates:", formattedDates);
 
+    // 🔥 Actually update the hidden input field here!
     const customDatesField = document.getElementById("custom_dates_field");
     if (customDatesField) {
-      customDatesField.value = formattedDates.join(","); // Store as a comma-separated string
+      customDatesField.value = JSON.stringify(formattedDates);
     } else {
-      console.error("Custom dates field not found in form!");
+      console.error("❌ custom_dates_field not found in the DOM!");
     }
   }
 }
 
   updateTimeHiddenField(selectedDates) {
+    if (!selectedDates.length) return; // Prevent errors if no dates are selected
+
     const selectedTime = selectedDates[0] ? selectedDates[0].toTimeString().split(" ")[0] : "";
-    document.getElementById("hidden_event_start_time").value = selectedTime;
+    const applySameTimeToAll = document.getElementById("apply_same_time_to_all")?.checked;
+
+    let timeValues;
+
+    if (applySameTimeToAll) {
+      // Apply the same time to all selected dates
+      timeValues = new Array(selectedDates.length).fill(selectedTime);
+    } else {
+      // Use the selected time for each custom date
+      timeValues = selectedDates.map(date => date.toTimeString().split(" ")[0]);
+    }
+
+    console.log("⏰ Final time values:", timeValues);
+
+    // Update hidden fields based on event type
+    if (this.hasWeeklyDatePickerTarget) {
+      document.getElementById("hidden_weekly_event_start_time").value = timeValues.join(",");
+    }
+
+    if (this.hasCustomDatePickerTarget) {
+      document.getElementById("hidden_custom_event_start_time").value = timeValues.join(",");
+    }
   }
+
 
   fetchStudios() {
     const url = `${location.pathname}?start_time=${this.startTarget.value}&end_time=${this.endTarget.value}`

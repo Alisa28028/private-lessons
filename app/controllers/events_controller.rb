@@ -88,6 +88,9 @@ class EventsController < ApplicationController
     # Initialize the event object
     @event = Event.new(event_params)
 
+  Rails.logger.debug "🛠 Raw event params: #{params[:event].inspect}"
+  Rails.logger.debug "🔍 Received start_time: #{params.dig(:event, :start_time).inspect}"
+
     # Log the parameters for debugging
   Rails.logger.debug "Capacity: #{params[:event][:capacity]}"
   Rails.logger.debug "Duration: #{params[:event][:duration]}"
@@ -216,25 +219,32 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :description, :capacity, :duration, :recurrence_type, :custom_dates, :start_date, :end_date, :start_time, :price_cents, :day_of_week, videos: [], photos: [],
+    params.require(:event).permit(:title, :description, :capacity, :duration, :recurrence_type, :custom_dates, :start_date,
+       :end_date, :start_time, :price_cents, :day_of_week, videos: [], photos: [],
       event_instances_attributes: [:id, :date, :start_time, :_destroy]
     )
   end
 
   def handle_event_instances_creation
    # Handle one-time event logic
-   if params[:event][:event_instances_attributes].present? && params[:event][:event_instances_attributes]["0"][:start_time].present?
-    if @event.recurrence_type == 'one-time'
-    @event.handle_one_time_event(params)
+    if params[:event][:event_instances_attributes].present? && params[:event][:event_instances_attributes]["0"][:start_time].present?
+      Rails.logger.debug "💾 Event saved: #{@event.inspect}"
+
+      if @event.recurrence_type == 'one-time'
+      @event.handle_one_time_event(params)
+      end
     end
-  end
 
-  # Handle custom dates logic
-  if params[:event][:custom_dates].present?
-    Rails.logger.debug "Received custom dates: #{params[:event][:custom_dates].inspect}"
-    @event.handle_custom_dates_event(params[:event][:custom_dates])
-  end
+    # Handle custom dates logic
+    if params[:event][:custom_dates].present?
+      Rails.logger.debug "🗓️Received custom dates: #{params[:event][:custom_dates].inspect}"
+      Rails.logger.debug "🛠 Params received in controller: #{params.inspect}"
 
+      @event.update!(start_time: params[:event][:start_time]) # Ensure start_time is set
+
+      @event.reload
+      @event.handle_custom_dates_event(params[:event][:custom_dates])
+    end
 
     # Generate weekly event instances if recurrence is weekly
     if @event.recurrence_type == 'every-week'

@@ -94,31 +94,68 @@ class Event < ApplicationRecord
 
     # Iterate over the matching dates and create instances
     matching_dates.each do |date|
-      event_instances.create!(date: date, start_time: start_time)
+      # Correctly setting the date and time in Asia/Tokyo first
+    start_time_jst = ActiveSupport::TimeZone["Asia/Tokyo"].local(date.year, date.month, date.day, start_time.hour, start_time.min)
+
+    # Convert to UTC
+    start_time_utc = start_time_jst.utc
+
+    Rails.logger.debug { "Creating instance - Date: #{date}, Start Time JST: #{start_time_jst}, Start Time UTC: #{start_time_utc}" }
+
+    event_instances.create!(date: date, start_time: start_time_utc)
     end
   end
 
   # Method for handling custom dates
   def handle_custom_dates_event(custom_dates)
-     # Ensure custom_dates is a string, then split it by commas to get an array
-    custom_dates = custom_dates.split(',') if custom_dates.is_a?(String)
+     # Ensure custom_dates is an array
+  custom_dates = JSON.parse(custom_dates) if custom_dates.is_a?(String)
 
-    custom_dates.each do |custom_date|
-      begin
-        # Parse the date string
-        parsed_date = Date.parse(custom_date)
+  Rails.logger.debug "🚨 self.start_time before processing: #{self.start_time.inspect}"
 
-        # Create an event instance for each date
-        self.event_instances.create!(
-          start_time: parsed_date.to_time, # Assuming the event starts at midnight, or adjust as needed
-          end_time: parsed_date.to_time + self.duration.minutes, # Duration-based end time
-          date: parsed_date # Store the date for reference
-        )
-      rescue ArgumentError
-        self.errors.add(:custom_dates, "#{custom_date} is not a valid date.")
-      end
+  # Ensure start_time is properly handled
+  start_time_str = self.start_time.present? ? self.start_time.strftime("%H:%M:%S") : nil
+
+  if start_time_str.nil?
+    self.errors.add(:start_time, "Start time is missing or invalid.")
+    return
+  end
+
+  custom_dates.each do |custom_date|
+    begin
+      # Parse the date string
+      parsed_date = Date.parse(custom_date)
+
+      # Log the selected start time
+      Rails.logger.debug "🔎 Using start_time: #{start_time_str} for date: #{custom_date}"
+
+       # Correctly setting the date and time in Asia/Tokyo first
+      start_time_jst = ActiveSupport::TimeZone["Asia/Tokyo"].local(parsed_date.year, parsed_date.month, parsed_date.day, start_time.hour, start_time.min)
+
+      # Convert to UTC
+      start_time_utc = start_time_jst.utc
+
+
+      puts "Start Time JST: #{start_time_jst}"
+      puts "Start Time UTC: #{start_time_utc}"
+
+      # Debugging logs
+      Rails.logger.debug { "📅 Custom Date: #{custom_date}, Parsed Date: #{parsed_date}" }
+      Rails.logger.debug { "⏰ Start Time JST: #{start_time_jst}, Start Time UTC: #{start_time_utc}" }
+
+      # Create an event instance for each date
+      self.event_instances.create!(
+        start_time: start_time_utc,
+        end_time: start_time_utc + self.duration.minutes,
+        date: parsed_date
+      )
+    rescue JSON::ParserError
+      self.errors.add(:custom_dates, "Invalid format for custom dates.")
+    rescue ArgumentError
+      self.errors.add(:custom_dates, "#{custom_date} is not a valid date.")
     end
   end
+end
 
 private
 def recurring_weekly?

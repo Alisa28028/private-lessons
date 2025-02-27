@@ -63,7 +63,8 @@ class EventInstance < ApplicationRecord
 
     # Iterate over the matching dates and create instances
     matching_dates.each do |date|
-      event_instances.create!(date: date, start_time: start_time)
+      start_time_utc = date.to_time.change(hour: start_time.hour, min: start_time.min).in_time_zone("Asia/Tokyo").utc
+      event_instances.create!(date: date, start_time: start_time_utc)
     end
   end
 
@@ -77,10 +78,14 @@ class EventInstance < ApplicationRecord
         # Parse the date string
         parsed_date = Date.parse(custom_date)
 
+        start_time_jst = parsed_date.in_time_zone('Asia/Tokyo').beginning_of_day # Assuming the event starts at midnight JST
+        start_time_utc = start_time_jst.utc
+
         # Create an event instance for each date
         self.event_instances.create!(
-          start_time: parsed_date.to_time, # Assuming the event starts at midnight, or adjust as needed
-          end_time: parsed_date.to_time + self.duration.minutes, # Duration-based end time
+          start_time: start_time_utc, # Now this is in UTC
+          # end_time: parsed_date.to_time + self.duration.minutes, # Duration-based end time
+          end_time: start_time_utc + self.duration.minutes,
           date: parsed_date # Store the date for reference
         )
       rescue ArgumentError
