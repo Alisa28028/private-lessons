@@ -89,7 +89,7 @@
           placeholder="Select time"
           data-datepicker-target="eventTime">
             <!-- Hidden Field for Start Time -->
-            <%= f.hidden_field :start_time, id: 'hidden_event_start_time' %>
+            <%= f.hidden_field :start_time, id: 'hidden_weekly_event_start_time' %>
           </div>
           <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
           <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
@@ -117,20 +117,21 @@
           data-datepicker-target="customDatePicker">
             <!-- Hidden field to store selected dates -->
             <%= f.hidden_field :custom_dates, id: 'custom_dates_field' %>
-            <%# <%= f.input :custom_dates, as: :text, input_html: { %>
-            <%# placeholder: "Select dates", %>
-            <%# data: { controller: "event-form", action: "change->event-form#updateSelectedDates" } %>
-            <%# } %>
             <!-- Visible Time Picker -->
+            <div class="mb-1">
+              <label for="apply_same_time_to_all">Same time for all custom dates?</label>
+              <input type="checkbox" id="apply_same_time_to_all" name="apply_same_time_to_all">
+            </div>
             <label for="event_time">Select Time</label>
             <input
-          id="event_time"
-          type="text"
-          placeholder="Select time"
-          data-datepicker-target="eventTime">
+              id="event_time"
+              type="text"
+              placeholder="Select time"
+              data-datepicker-target="eventTime">
+              <%# data-action="change->datepicker#updateTimeHiddenField"> %>
+              <!-- Hidden Field for Start Time -->
+              <%= f.hidden_field :start_time, id: 'hidden_custom_event_start_time' %>
             </div>
-            <!-- Hidden Field for Start Time -->
-            <%= f.hidden_field :start_time, id: 'hidden_event_start_time' %>
             <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
             <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
             <%= f.input :price_cents %>
