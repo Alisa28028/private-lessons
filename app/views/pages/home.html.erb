@@ -7,7 +7,7 @@
   </div>
 </div>
 <%# ----------END OF BANNER---------- %>
-<div class="container w-100 my-5 mt-0">
+<div class="container w-100 my-5 mt-0 pb-5">
   <div class="row">
     <div class="column">
       <%# <div class="banner" style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url(<%= image_path "alisa.png" %>
@@ -27,5 +27,4 @@
     <%= render 'shared/event_card_iteration', events: @events %>
     <%# <%= render 'shared/event_card_iteration', events: @events.select { |event| event.start_date || event.event_instances.first&.start_time >= Time.now } %>
   </div>
-</div>
 </div>
