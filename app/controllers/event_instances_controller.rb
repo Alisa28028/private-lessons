@@ -40,16 +40,22 @@ class EventInstancesController < ApplicationController
     @event_instance = EventInstance.find_by(id: params[:id])
       if @event_instance
         @event_instance.destroy
-        notice_message = "Event successfully deleted!"
+        notice_message = "Event successfully deleted!!!"
       else
         notice_message = "Event not found."
       end
 
-      if request.referer&.include?('/users')
-        redirect_to user_path(current_user, anchor: 'classes'), notice: notice_message
-      else
-        redirect_to event_path(@event_instance.event), notice: notice_message
-      end
+
+    # Redirect logic based on the referer
+    referer = request.referer
+
+    if referer&.include?(user_path(current_user)) # If deleted from user profile
+      redirect_to user_path(current_user, anchor: 'classes'), notice: notice_message
+    elsif referer == root_url || referer == root_path # If deleted from the homepage
+      redirect_to root_path, notice: notice_message
+    else # Default to event page if no referer matches
+      redirect_to event_path(@event_instance&.event), notice: notice_message
+    end
   end
 
 
