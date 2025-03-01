@@ -145,12 +145,16 @@ class EventsController < ApplicationController
       # Redirect logic based on the referer
     referer = request.referer
 
-    if referer&.include?(user_path(current_user)) # If deleted from user profile
+    if referer&.include?('/users')
       redirect_to user_path(current_user, anchor: 'classes'), notice: notice_message
-    elsif referer == root_url || referer == root_path # If deleted from the homepage
+    elsif referer&.include?('/dashboard') # Redirect to dashboard if deleted from dashboard
+      redirect_to dashboard_path, notice: notice_message
+    elsif referer&.include?(root_path) # Redirect to homepage if deleted from homepage
       redirect_to root_path, notice: notice_message
-    else # Default to event page if no referer matches
-      redirect_to event_path(@event_instance&.event), notice: notice_message
+    elsif event.present?
+      redirect_to event_path(event), notice: notice_message
+    else
+      redirect_to root_path, notice: notice_message # Fallback in case event was nil
     end
   end
 
