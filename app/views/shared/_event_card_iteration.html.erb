@@ -1,6 +1,11 @@
 <%# <% events.each do |event| %>
   <%# <%= render "shared/event_card", event: event %>
   <%# <% end %>
+  <h3>Debug: Inside event_card_iteration</h3>
+  <p>Event Instances Count: <%= event_instances.count %></p>
+  <% event_instances.each do |instance| %>
+    <p><%= instance.start_time %></p>
+  <% end %>
   <% events.each do |event| %>
     <% if event.event_instances.any? %>
       <!-- Event has event instances, render instance cards -->
