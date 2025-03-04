@@ -4,10 +4,28 @@ class UsersController < ApplicationController
   def dashboard
     require 'time'
     @bookings = current_user.bookings
-    @events = current_user.events
+    # Fetch events the user is teaching (associated with user) - for both Events and EventInstances
+    @events = current_user.events || []  # Events user is teaching
+    @event_instances = @events.map(&:event_instances).flatten
+    # Fetch upcoming event instances (the user is attending or teaching)
+    @upcoming_event_instances = EventInstance.joins(:event)
+                                            .where('event_instances.start_time > ? AND (events.user_id = ? OR event_instances.id IN (?))',
+                                                    Time.now, current_user.id, @bookings.pluck(:event_instance_id))
+                                            .or(EventInstance.joins(:event)
+                                                              .where('events.start_time > ? AND events.user_id = ?',
+                                                                    Time.now, current_user.id))
+                                                                    .where.not('event_instances.start_time <= ?', Time.now)
+                                                                    .order('event_instances.start_time ASC') || []
 
-    @upcoming_event_instances = @event_instances.select { |instance| instance.start_time > Time.now }
-    @past_event_instances = @event_instances.select { |instance| instance.start_time <= Time.now }
+    # Fetch past event instances (the user is attending or teaching)
+    @past_event_instances = EventInstance.joins(:event)
+                                        .where('event_instances.start_time <= ? AND (events.user_id = ? OR event_instances.id IN (?))',
+                                                Time.now, current_user.id, @bookings.pluck(:event_instance_id))
+                                        .or(EventInstance.joins(:event)
+                                                          .where('events.start_time <= ? AND events.user_id = ?',
+                                                                Time.now, current_user.id))
+                                                                .order('event_instances.start_time DESC') || []
+
 
     @event_instances = EventInstance.joins(:event)
                                 .left_joins(:bookings)

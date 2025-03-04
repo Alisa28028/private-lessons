@@ -9,11 +9,12 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h1 class="modal-title fs-5" id="bookingModalLabel">Book <%= @event.title.capitalize %> for <strong><%= humanized_money_with_symbol(@event.price) %></strong>?</h1>
+                <h1 class="modal-title fs-5" id="bookingModalLabel">
+                  Book <%= @event_instance.event.title.capitalize %> for <strong><%= humanized_money_with_symbol(@event_instance.event.price) %></strong>?</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <%= simple_form_for [@event, @new_booking] do |f| %>
+                <%= simple_form_for [@event_instance.event, @event_instance, @new_booking] do |f| %>
                   <%= f.submit "Pay", class: "btn btn-custom my-3" %>
                 <% end %>
               </div>
