@@ -4,18 +4,34 @@ class UsersController < ApplicationController
   def dashboard
     require 'time'
     @bookings = current_user.bookings
-    @events = current_user.events
+    # Fetch events the user is teaching (associated with user) - for both Events and EventInstances
+    @events = current_user.events || []  # Events user is teaching
+    @event_instances = @events.map(&:event_instances).flatten
+    # Fetch upcoming event instances (the user is attending or teaching)
+    @upcoming_event_instances = EventInstance.joins(:event)
+                                            .where('event_instances.start_time > ? AND (events.user_id = ? OR event_instances.id IN (?))',
+                                                    Time.now, current_user.id, @bookings.pluck(:event_instance_id))
+                                            .or(EventInstance.joins(:event)
+                                                              .where('events.start_time > ? AND events.user_id = ?',
+                                                                    Time.now, current_user.id))
+                                                                    .where.not('event_instances.start_time <= ?', Time.now)
+                                                                    .order('event_instances.start_time ASC') || []
 
-    # Fetch and filter event instances for the current user
-    @event_instances = EventInstance.where(event_id: @events.pluck(:id))
-    .where("date > ?", Time.now)  # Get future event instances
-    .order(:date)  # Sort by date
+    # Fetch past event instances (the user is attending or teaching)
+    @past_event_instances = EventInstance.joins(:event)
+                                        .where('event_instances.start_time <= ? AND (events.user_id = ? OR event_instances.id IN (?))',
+                                                Time.now, current_user.id, @bookings.pluck(:event_instance_id))
+                                        .or(EventInstance.joins(:event)
+                                                          .where('events.start_time <= ? AND events.user_id = ?',
+                                                                Time.now, current_user.id))
+                                                                .order('event_instances.start_time DESC') || []
 
-  # Optional: For past event instances
-  @past_event_instances = EventInstance.where(event_id: @events.pluck(:id))
-        .where("date <= ?", Time.now)  # Get past event instances
-        .order(:date)  # Sort by date
 
+    @event_instances = EventInstance.joins(:event)
+                                .left_joins(:bookings)
+                                .where("events.user_id = ? OR bookings.user_id = ?", current_user.id, current_user.id)
+                                .distinct
+                                .order(start_time: :desc)
     # Earnings: look for events for last month and current month, then pass it as an argument to private method iterating on each event to find paid bookings and multiply by event price
     @last_month_events = @events.where(start_date: (Time.now.beginning_of_month.prev_month).midnight..(Time.now.beginning_of_month - 1).midnight)
     @last_month_events_sum = monthly_sum(@last_month_events)

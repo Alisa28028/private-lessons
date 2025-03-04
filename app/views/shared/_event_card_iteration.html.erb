@@ -1,16 +1,8 @@
 <%# <% events.each do |event| %>
   <%# <%= render "shared/event_card", event: event %>
   <%# <% end %>
-  <% events.each do |event| %>
-    <% if event.event_instances.any? %>
-      <!-- Event has event instances, render instance cards -->
-      <% event.event_instances.each do |instance| %>
-        <%= render "shared/event_instances_card", instance: instance, event: instance.event %>
-      <% end %>
-    <% else %>
-      <!-- Event does not have event instances, render the event card -->
-      <%= render "shared/event_card", event: event %>
-    <% end %>
+  <% event_instances.each do |instance| %>
+    <%= render "shared/event_instances_card", instance: instance %>
   <% end %>
   <%# <!-- Render event instances that don't have event details directly -->
   <% event_instances.each do |instance| %>

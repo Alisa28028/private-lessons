@@ -2,7 +2,9 @@ class PagesController < ApplicationController
   skip_before_action :authenticate_user!, only: [ :home ]
 
   def home
+    @event_instances = EventInstance.all
     @events = Event.all
+
     # Filter future and past events
     @future_events = @events.where("start_date >= ?", Time.zone.now.beginning_of_day)
     @past_events = @events.where("start_date < ?", Time.zone.now.beginning_of_day)
