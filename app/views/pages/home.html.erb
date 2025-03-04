@@ -24,7 +24,12 @@
       </div>
     </div>
     <%# iterating through some events %>
-    <%= render 'shared/event_card_iteration', events: @events %>
-    <%# <%= render 'shared/event_card_iteration', events: @events.select { |event| event.start_date || event.event_instances.first&.start_time >= Time.now } %>
+    <% @upcoming_event_instances.each do |upcoming_event_instance| %>
+      <%= render "shared/event_instances_card", instance: upcoming_event_instance, event: upcoming_event_instance.event %>
+    <% end %>
+    <h4>past classes</h4>
+    <% @past_event_instances.each do |past_event_instance| %>
+      <%= render "shared/event_instances_card", instance: past_event_instance, event: past_event_instance.event %>
+    <% end %>
   </div>
 </div>
