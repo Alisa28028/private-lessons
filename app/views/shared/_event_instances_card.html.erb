@@ -1,7 +1,7 @@
 <%# Home page cards %>
 <%# check if the current user is the event creator %>
 <% if instance.event.user != current_user %> <!-----Non creator users (show booking and wait list buttons-------->
-  <% if event.id.present? %>
+  <% if instance.event.id.present? %>
     <div class="card-product m-1 mb-3">
       <%# <%= link_to event_path(event), class: "card-link" do %>
         <div class="d-flex flex-column justify-content-between">
@@ -28,19 +28,52 @@
         </div>
         <div class="card-product-infos d-flex flex-row">
           <!-- EVENT DATE AND TIME / INSTRUCTOR-->
-          <div class="d-flex flex-column">
-            <% if event.start_date.present? %>
-              <p><%= event.start_date.in_time_zone("Asia/Tokyo").strftime("%B %d, %Y") %></p>
-              <% if event.start_time.present? && event.end_time.present? %>
-                <p><%= event.start_time.strftime("%H:%M") %>~<%= event.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-              <% elsif event.event_instances.any? %>
-                <p><%= event.event_instances.first.start_time.in_time_zone("Asia/Tokyo").strftime("%B %d, %Y") %></p>
-                <p><%= event.event_instances.first.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %>~<%= event.event_instances.first.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-              <% else %>
-                <p>No valid start date or time available.</p>
+          <div class="d-flex justify-content-between ms-3">
+            <div>
+              <% if instance.event.recurrence_type == "one-time" %>
+                <% if instance.date.present? %>
+                  <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                  <div class="d-flex align-items-center gap-1">
+                    <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                    <span class="text-custom">~</span>
+                    <% if instance.end_time.present? %>
+                      <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                    <% else %>
+                      <p class="justify-content-end date-text text-custom">End time not available</p>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <p>No valid date or time available.</p>
+                <% end %>
+                <p><%= event.user.name %></p>
+              <% elsif instance.event.recurrence_type == "every-week" %>
+                <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                <div class="d-flex align-items-center gap-1">
+                  <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                  <span class="text-custom">~</span>
+                  <% if instance.end_time.present? %>
+                    <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                  <% else %>
+                    <p class="justify-content-end date-text text-custom">End time not available</p>
+                  <% end %>
+                </div>
+                <p><%= event.user.name %></p>
+              <% elsif instance.event.recurrence_type == "custom-dates" %>
+                <% if instance.date.present? %>
+                  <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                  <div class="d-flex align-items-center gap-1">
+                    <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                    <span class="text-custom">~</span>
+                    <% if instance.end_time.present? %>
+                      <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                    <% else %>
+                      <p class="justify-content-end date-text text-custom">End time not available</p>
+                    <% end %>
+                  </div>
+                <% end %>
+                <p><%= event.user.name %></p>
               <% end %>
-            <% end %>
-            <p><%= event.user.name %></p>
+            </div>
           </div>
           <!-- EVENT IS FULL CONDITIONAL -->
           <div class="d-flex flex-column justify-content-end">
@@ -91,7 +124,7 @@
       <div class="d-flex flex-column justify-content-between h-100">
         <div class="d-flex justify-content-between">
           <!-- EVENT TITLE -->
-          <h5 class="fs-5 fw-bold"><%= instance.event.title %></h5>
+          <h5 class="fs-6 fw-bold mb-0 ms-2"><%= instance.event.title.upcase %></h5>
           <div class="d-flex gap-2">
             <i class="fa-solid fa-person fa-sm mt-2"></i>
             <% if (instance.event.capacity || 0) - instance.event.bookings.count <= 0 %>
@@ -102,7 +135,7 @@
           </div>
         </div>
         <div class="card-product-info-grid mb-2">
-          <div>
+          <div class="ms-1">
             <% if instance.event.present? && instance.event.photos.attached? %>
               <%= link_to event_instance_path(instance), data: { action: "click->teacher#reloadPage" } do %>
                 <%= cl_image_tag instance.event.photos.first.key %>
