@@ -1,29 +1,19 @@
-<div class="container my-5">
-  <div class="row">
-    <div class="column">
-      <div class="d-flex justify-content-center">
-        <button type="button" class="btn btn-custom m-2" data-bs-toggle="modal" data-bs-target="#bookingModal">
-          Book this Class
-        </button>
-        <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="bookingModalLabel">
-                  Book <%= @event_instance.event.title.capitalize %> for <strong><%= humanized_money_with_symbol(@event_instance.event.price) %></strong>?</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <%= simple_form_for [@event_instance.event, @event_instance, @new_booking] do |f| %>
-                  <%= f.submit "Pay", class: "btn btn-custom my-3" %>
-                <% end %>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
+<div class="modal fade" id="bookingModal<%= instance.id %>" tabindex="-1" aria-labelledby="bookingModalLabel<%= instance.id %>" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
+          Book <%= instance.event.title.capitalize %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= simple_form_for [instance.event, instance, @new_booking] do |f| %>
+          <%= f.submit "Pay", class: "btn btn-custom my-3" %>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

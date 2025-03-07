@@ -1,4 +1,4 @@
 Booking Confirmation
 Dear <%= @user.name %>,
-Thank you for booking <%= @event.title %> on <%= @event.start_date.strftime("%Y/%m/%d %H:%M") %>.
+Thank you for booking <%= @event_instance.event.title %> on <%= @event_instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %>.
 We look forward to seeing you at the event!

@@ -93,19 +93,19 @@
                 <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
                 <!-- ATTENDING  -->
                 <!-- Checking if current user is already attending the event -->
-                <% if instance.event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
+                <% if instance.bookings.map {|b| b.user_id }.include?(current_user.id) %>
                   <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
                     Attending!
                   </p>
                   <!-- JOIN WAIT LIST  -->
                   <!-- if not attending, check if the event is full. If yes, JOIN WAIT LIST -->
-                <% elsif instance.event.capacity - instance.event.bookings.count <= 0 %>
-                  <button type="button" style="font-size: small;" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal<%= instance.event.id %> ">
+                <% elsif instance.event.capacity - instance.bookings.count <= 0 %>
+                  <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal<%= instance.id %>">
                     Join Wait List
                   </button>
                 <% else %>
-                  <button type="button" style="font-size: small;" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal<%= instance.event.id %> ">
-                    Book Class!
+                  <button type="button" class="btn btn-custom m-1" data-bs-toggle="modal" data-bs-target="#bookingModal<%= instance.id %>">
+                    Book Class
                   </button>
                 <% end %>
               </div>
@@ -226,30 +226,27 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="bookingModalLabel<%= instance.id %>">
-          Book "<%= instance.event.title %>" Class on
-          <% if instance.date.present? %>
-            <%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %>
-          <% else %>
-            Date and time not available
-          <% end %>
-        </h5>
+        <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
+          Book <%= instance.event.title.capitalize %> class on <%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
+        </h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to book this class?</p>
+        <%= simple_form_for [instance, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
+          <div class="d-flex justify-content-end">
+            <%= f.submit "Book!", class: "btn btn-custom my-3" %>
+          </div>
+        <% end %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <%= link_to fake_path(instance), class: "btn btn-primary" do %>
-          Book Now
-        <% end %>
       </div>
     </div>
   </div>
 </div>
+</div>
 <!-- Wait list Modal for the Event -->
-<div class="modal fade" id="waitinglistModal<%= instance.id %>" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
+<div class="modal fade" id="waitinglistModal" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

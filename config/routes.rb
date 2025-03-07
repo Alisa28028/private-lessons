@@ -25,7 +25,9 @@ Rails.application.routes.draw do
   # Standalone video routes (for independent uploads)
   resources :videos, only: [:create, :index, :show, :destroy]
    # Routes for managing event instances independently
-   resources :event_instances, only: [:show, :index, :edit, :update, :destroy]
+   resources :event_instances, only: [:show, :index, :edit, :update, :destroy] do
+    resources :bookings, only: [:create]
+   end
    # Non-nested posts resource for standalone posts
    resources :posts, only: [:new, :create, :index, :show, :destroy] do
     collection do
@@ -53,7 +55,7 @@ Rails.application.routes.draw do
   get "/search", to: "events#search", as: :search
 
   # Fake payment route
-  get "/events/:event_id/fake", to: "payments#fake", as: :fake
+  get "/event_instances/:event_instance_id/fake", to: "payments#fake", as: :fake_event_instance
 
    # Mount StripeEvent engine for handling webhooks
   mount StripeEvent::Engine, at: '/stripe-webhooks'
