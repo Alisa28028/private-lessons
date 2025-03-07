@@ -5,18 +5,29 @@ class BookingsController < ApplicationController
   #   @bookings = Booking.where(event_id: @event) # bookings list for this event
   # end
   def create
-    @event = Event.find(params[:event_id])
-    @booking = Booking.create!(event: @event, user: current_user, state: 'paid')
+    @event_instance = EventInstance.find(params[:event_instance_id])
+    @booking = @event_instance.bookings.build(user: current_user)
+    # @booking = Booking.create!(event: @event, user: current_user, state: 'paid')
 
     # send the email
     BookingMailer.booking_confirmation(current_user, @booking).deliver_now
 
-    # Redirect to the event show page with a success message
-    redirect_to event_path(@event), notice: 'Your booking was successful! A confirmation email has been sent.'
-  rescue ActiveRecord::RecordInvalid => e
-    # Handle any errors (e.g., invalid booking data)
-    redirect_to event_path(@event), alert: 'There was an error with your booking. Please try again.'
+
+    if @booking.save
+      flash[:notice] = "You have successfully booked this class!"
+      redirect_to event_instances_path, notice: 'Your booking was successful! A confirmation email has been sent.'
+    else
+      flash[:alert] = "Booking failed."
+      redirect_back fallback_location: event_instances_path, alert: 'There was an error with your booking. Please try again.'
+    end
   end
+
+  #   # Redirect to the event show page with a success message
+  #   redirect_to event_path(@event), notice: 'Your booking was successful! A confirmation email has been sent.'
+  # rescue ActiveRecord::RecordInvalid => e
+  #   # Handle any errors (e.g., invalid booking data)
+  #   redirect_to event_path(@event), alert: 'There was an error with your booking. Please try again.'
+  # end
 
     # -----STRIPE REMOVED FOR DEMO PURPOSES-----
     # ------------------------------------------

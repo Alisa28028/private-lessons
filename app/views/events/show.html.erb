@@ -27,7 +27,7 @@
     <p>No video attached.</p>
   <% end %>
   <div class="row mt-2">
-    <h4 class="text-custom">Taught by:
+    <h4 class="text-custom">The teacher:
       <%= link_to user_path(@event.user), class: "text-custom" do %>
         <%= @event.user.name %>
         <%= cl_image_tag @event.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
