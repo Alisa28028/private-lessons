@@ -3,247 +3,249 @@
 <% if instance.event.user != current_user %> <!-----Non creator users (show booking and wait list buttons-------->
   <% if instance.event.id.present? %>
     <div class="card-product m-1 mb-3">
-      <%# <%= link_to event_path(event), class: "card-link" do %>
-        <div class="d-flex flex-column justify-content-between">
-          <div class="d-flex flex-row justify-content-between p-2">
-            <!-- EVENT TITLE -->
-            <div class="d-flex flex-column">
-              <h2><%= event.title.upcase %></h2>
-            </div>
-            <!-- EVENT LOCATION -->
-            <div class="d-flex flex-column text-end">
-              <%# <p class="text-custom d-flex justify-content-end"><strong><%= event.location.address %></strong></p>
-        </div>
-      </div>
-      <div class="card-product-info-grid mb-2">
-        <!-- EVENT PHOTO -->
-        <div>
-          <% if event.photos.attached? %>
-            <%= cl_image_tag event.photos.first.key %>
-          <% else %>
-            <% if event.user.photo.attached? %>
-              <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
-            <% end %>
-          <% end %>
-        </div>
-        <div class="card-product-infos d-flex flex-row">
-          <!-- EVENT DATE AND TIME / INSTRUCTOR-->
-          <div class="d-flex justify-content-between ms-3">
-            <div>
-              <% if instance.event.recurrence_type == "one-time" %>
-                <% if instance.date.present? %>
-                  <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
-                  <div class="d-flex align-items-center gap-1">
-                    <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                    <span class="text-custom">~</span>
-                    <% if instance.end_time.present? %>
-                      <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                    <% else %>
-                      <p class="justify-content-end date-text text-custom">End time not available</p>
-                    <% end %>
-                  </div>
-                <% else %>
-                  <p>No valid date or time available.</p>
-                <% end %>
-                <p><%= event.user.name %></p>
-              <% elsif instance.event.recurrence_type == "every-week" %>
-                <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
-                <div class="d-flex align-items-center gap-1">
-                  <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                  <span class="text-custom">~</span>
-                  <% if instance.end_time.present? %>
-                    <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                  <% else %>
-                    <p class="justify-content-end date-text text-custom">End time not available</p>
-                  <% end %>
-                </div>
-                <p><%= event.user.name %></p>
-              <% elsif instance.event.recurrence_type == "custom-dates" %>
-                <% if instance.date.present? %>
-                  <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
-                  <div class="d-flex align-items-center gap-1">
-                    <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                    <span class="text-custom">~</span>
-                    <% if instance.end_time.present? %>
-                      <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                    <% else %>
-                      <p class="justify-content-end date-text text-custom">End time not available</p>
-                    <% end %>
-                  </div>
-                <% end %>
-                <p><%= event.user.name %></p>
-              <% end %>
-            </div>
-          </div>
-          <!-- EVENT IS FULL CONDITIONAL -->
-          <div class="d-flex flex-column justify-content-end">
-            <% if instance.event.capacity - instance.event.bookings.count <= 0 %>
-              <p class="attendee-number text-end text-danger mb-2"><strong>EVENT FULL!</strong></p>
-            <% else %>
-              <!-- REMAINING SPOTS -->
-              <% remaining_spots = instance.event.capacity - instance.event.bookings.count %>
-              <% if remaining_spots <= 10 %>
-                <p class="attendee-number text-end text-danger d-flex align-items-end mb-2"> <%= instance.event.capacity - instance.event.bookings.count %> Spots left</p>
-              <% end %>
-            <% end %>
-            <!-- Conditional Buttons inside the card -->
-            <!---------------------------------------------->
-            <% if current_user %>
-              <div style="position: relative; display: inline-flex;">
-                <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
-                <!-- ATTENDING  -->
-                <!-- Checking if current user is already attending the event -->
-                <% if instance.bookings.map {|b| b.user_id }.include?(current_user.id) %>
-                  <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
-                    Attending!
-                  </p>
-                  <!-- JOIN WAIT LIST  -->
-                  <!-- if not attending, check if the event is full. If yes, JOIN WAIT LIST -->
-                <% elsif instance.event.capacity - instance.bookings.count <= 0 %>
-                  <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal<%= instance.id %>">
-                    Join Wait List
-                  </button>
-                <% else %>
-                  <button type="button" class="btn btn-custom m-1" data-bs-toggle="modal" data-bs-target="#bookingModal<%= instance.id %>">
-                    Book Class
-                  </button>
-                <% end %>
+      <%= link_to event_instance_path(instance), class: "text-decoration-none text-dark" do %>
+        <div class="card-product m-1 mb-3 position-relative">
+          <div class="d-flex flex-column justify-content-between">
+            <div class="d-flex flex-row justify-content-between p-2">
+              <!-- EVENT TITLE -->
+              <div class="d-flex flex-column">
+                <h2><%= event.title.upcase %></h2>
               </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-    <%# <% end %>
-  <% end %>
-</div>
-<% else %> <!-- For event creators (show edit, duplicate, delete buttons) -->
-  <!-- EVENT CREATOR LAYOUT (DASHBOARD CARD) -->
-  <div class="card-product m-1 mb-3 p-2">
-    <%# <%= link_to event_path(event), class: "card-link" do %>
-      <div class="d-flex flex-column justify-content-between h-100">
-        <div class="d-flex justify-content-between">
-          <!-- EVENT TITLE -->
-          <h5 class="fs-6 fw-bold mb-0 ms-2"><%= instance.event.title.upcase %></h5>
-          <div class="d-flex gap-2">
-            <i class="fa-solid fa-person fa-sm mt-2"></i>
-            <% if (instance.event.capacity || 0) - instance.event.bookings.count <= 0 %>
-              <p class="attendee-number text-dark fs-6"><strong><%= instance.event.capacity %>/<%= instance.event.capacity %></strong></p>
-            <% else %>
-              <p class="attendee-number text-dark fs-6"><%= instance.event.bookings.count %>/<%= instance.event.capacity %></p>
-            <% end %>
-          </div>
-        </div>
-        <div class="card-product-info-grid mb-2">
-          <div class="ms-1">
-            <% if instance.event.present? && instance.event.photos.attached? %>
-              <%= link_to event_instance_path(instance), data: { action: "click->teacher#reloadPage" } do %>
-                <%= cl_image_tag instance.event.photos.first.key %>
-              <% end %>
-            <% else %>
-              <% if instance.event.present? && instance.event.user.photo.attached? %>
-                <%= link_to event_instance_path(instance), data: { action: "click->teacher#reloadPage" } do %>
-                  <%= cl_image_tag(instance.event.user.photo.key, class: "pl-avatar") %>
-                <% end %>
-              <% end %>
-            <% end %>
-          </div>
-          <div class="d-flex justify-content-between ms-3">
-            <div>
-              <% if instance.event.recurrence_type == "one-time" %>
-                <% if instance.date.present? %>
-                  <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
-                  <div class="d-flex align-items-center gap-1">
-                    <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                    <span class="text-custom">~</span>
-                    <% if instance.end_time.present? %>
-                      <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                    <% else %>
-                      <p class="justify-content-end date-text text-custom">End time not available</p>
-                    <% end %>
-                  </div>
+              <!-- EVENT LOCATION -->
+              <%# <div class="d-flex flex-column text-end">
+              <p class="text-custom d-flex justify-content-end"><strong><%= event.location.address</strong></p> %>
+            </div>
+            <div class="card-product-info-grid mb-2">
+              <!-- EVENT PHOTO -->
+              <div>
+                <% if event.photos.attached? %>
+                  <%= cl_image_tag event.photos.first.key %>
                 <% else %>
-                  <p>No valid date or time available.</p>
-                <% end %>
-              <% elsif instance.event.recurrence_type == "every-week" %>
-                <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
-                <div class="d-flex align-items-center gap-1">
-                  <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                  <span class="text-custom">~</span>
-                  <% if instance.end_time.present? %>
-                    <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                  <% else %>
-                    <p class="justify-content-end date-text text-custom">End time not available</p>
-                  <% end %>
-                </div>
-              <% elsif instance.event.recurrence_type == "custom-dates" %>
-                <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
-                <div class="d-flex align-items-center gap-1">
-                  <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                  <span class="text-custom">~</span>
-                  <% if instance.end_time.present? %>
-                    <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
-                  <% else %>
-                    <p class="justify-content-end date-text text-custom">End time not available</p>
+                  <% if event.user.photo.attached? %>
+                    <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
                   <% end %>
                 <% end %>
               </div>
-              <%# </div> %>
-              <div class="d-flex flex-col align-items-end z-up">
-                <!-- ICON TO EDIT EVENT -->
-                <div>
-                  <%= link_to edit_event_path(instance), class: "py-0 px-1 z-up" do %>
-                    <i class="fa-regular fa-pen-to-square" style="color: #543A70;"></i>
-                  <% end %>
+              <div class="card-product-infos d-flex flex-row">
+                <!-- EVENT DATE AND TIME / INSTRUCTOR-->
+                <div class="d-flex justify-content-between ms-3">
+                  <div>
+                    <% if instance.event.recurrence_type == "one-time" %>
+                      <% if instance.date.present? %>
+                        <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                        <div class="d-flex align-items-center gap-1">
+                          <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                          <span class="text-custom">~</span>
+                          <% if instance.end_time.present? %>
+                            <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                          <% else %>
+                            <p class="justify-content-end date-text text-custom">End time not available</p>
+                          <% end %>
+                        </div>
+                      <% else %>
+                        <p>No valid date or time available.</p>
+                      <% end %>
+                      <p><%= event.user.name %></p>
+                    <% elsif instance.event.recurrence_type == "every-week" %>
+                      <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                      <div class="d-flex align-items-center gap-1">
+                        <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                        <span class="text-custom">~</span>
+                        <% if instance.end_time.present? %>
+                          <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                        <% else %>
+                          <p class="justify-content-end date-text text-custom">End time not available</p>
+                        <% end %>
+                      </div>
+                      <p><%= event.user.name %></p>
+                    <% elsif instance.event.recurrence_type == "custom-dates" %>
+                      <% if instance.date.present? %>
+                        <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                        <div class="d-flex align-items-center gap-1">
+                          <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                          <span class="text-custom">~</span>
+                          <% if instance.end_time.present? %>
+                            <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                          <% else %>
+                            <p class="justify-content-end date-text text-custom">End time not available</p>
+                          <% end %>
+                        </div>
+                      <% end %>
+                      <p><%= event.user.name %></p>
+                    <% end %>
+                  </div>
                 </div>
-                <!-- ICON TO DUPLICATE EVENT -->
-                <div>
-                  <%= link_to duplicate_event_path(instance), class: "py-0 px-1 z-up" do %>
-                    <i class="fa-regular fa-copy" style="color: #543A70;"></i>
+                <!-- EVENT IS FULL CONDITIONAL -->
+                <div class="d-flex flex-column justify-content-end">
+                  <% if instance.event.capacity - instance.event.bookings.count <= 0 %>
+                    <p class="attendee-number text-end text-danger mb-2"><strong>EVENT FULL!</strong></p>
+                  <% else %>
+                    <!-- REMAINING SPOTS -->
+                    <% remaining_spots = instance.event.capacity - instance.event.bookings.count %>
+                    <% if remaining_spots <= 10 %>
+                      <p class="attendee-number text-end text-danger d-flex align-items-end mb-2"> <%= instance.event.capacity - instance.event.bookings.count %> Spots left</p>
+                    <% end %>
                   <% end %>
-                </div>
-                <!-- ICON TO DELETE EVENT -->
-                <div>
-                  <%= button_to event_path(instance.event), method: :delete, data: { turbo: false, turbo_confirm: "Are you sure???" }, style: "border: none; background: none; padding: 0; color: #543A70;", class: "py-0 px-1 z-up" do %>
-                    <i class="fa-regular fa-trash-can"></i>
+                  <!-- Conditional Buttons inside the card -->
+                  <!---------------------------------------------->
+                  <% if current_user %>
+                    <div style="position: relative; display: inline-flex;">
+                      <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
+                      <!-- ATTENDING  -->
+                      <!-- Checking if current user is already attending the event -->
+                      <% if instance.bookings.map {|b| b.user_id }.include?(current_user.id) %>
+                        <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
+                          Attending!
+                        </p>
+                        <!-- JOIN WAIT LIST  -->
+                        <!-- if not attending, check if the event is full. If yes, JOIN WAIT LIST -->
+                      <% elsif instance.event.capacity - instance.bookings.count <= 0 %>
+                        <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal<%= instance.id %>">
+                          Join Wait List
+                        </button>
+                      <% else %>
+                        <button type="button" class="btn btn-custom m-1" data-bs-toggle="modal" data-bs-target="#bookingModal<%= instance.id %>" onclick="event.preventDefault(); event.stopPropagation();">
+                          Book Class
+                        </button>
+                      <% end %>
+                    </div>
                   <% end %>
                 </div>
               </div>
-              <!---removing block A for now--->
             </div>
-            <!--------removing block B for now----->
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<% end %>
-<%# <% end %>
-<!-- END of Conditional Buttons inside the card -->
-<!---------------------------------------------->
-<!-- Booking Modal for the Event !-->
-<div class="modal fade" id="bookingModal<%= instance.id %>" tabindex="-1" aria-labelledby="bookingModalLabel<%= instance.id %>" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
-          Book <%= instance.event.title.capitalize %> class on <%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
-        </h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <%= simple_form_for [instance, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
-          <div class="d-flex justify-content-end">
-            <%= f.submit "Book!", class: "btn btn-custom my-3" %>
-          </div>
+          <%# <% end %>
         <% end %>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <% else %> <!-- For event creators (show edit, duplicate, delete buttons) -->
+      <!-- EVENT CREATOR LAYOUT (DASHBOARD CARD) -->
+      <div class="card-product m-1 mb-3 p-2">
+        <%# <%= link_to event_path(event), class: "card-link" do %>
+          <div class="d-flex flex-column justify-content-between h-100">
+            <div class="d-flex justify-content-between">
+              <!-- EVENT TITLE -->
+              <h5 class="fs-6 fw-bold mb-0 ms-2"><%= instance.event.title.upcase %></h5>
+              <div class="d-flex gap-2">
+                <i class="fa-solid fa-person fa-sm mt-2"></i>
+                <% if (instance.event.capacity || 0) - instance.event.bookings.count <= 0 %>
+                  <p class="attendee-number text-dark fs-6"><strong><%= instance.event.capacity %>/<%= instance.event.capacity %></strong></p>
+                <% else %>
+                  <p class="attendee-number text-dark fs-6"><%= instance.event.bookings.count %>/<%= instance.event.capacity %></p>
+                <% end %>
+              </div>
+            </div>
+            <div class="card-product-info-grid mb-2">
+              <div class="ms-1">
+                <% if instance.event.present? && instance.event.photos.attached? %>
+                  <%= link_to event_instance_path(instance), data: { action: "click->teacher#reloadPage" } do %>
+                    <%= cl_image_tag instance.event.photos.first.key %>
+                  <% end %>
+                <% else %>
+                  <% if instance.event.present? && instance.event.user.photo.attached? %>
+                    <%= link_to event_instance_path(instance), data: { action: "click->teacher#reloadPage" } do %>
+                      <%= cl_image_tag(instance.event.user.photo.key, class: "pl-avatar") %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </div>
+              <div class="d-flex justify-content-between ms-3">
+                <div>
+                  <% if instance.event.recurrence_type == "one-time" %>
+                    <% if instance.date.present? %>
+                      <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                      <div class="d-flex align-items-center gap-1">
+                        <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                        <span class="text-custom">~</span>
+                        <% if instance.end_time.present? %>
+                          <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                        <% else %>
+                          <p class="justify-content-end date-text text-custom">End time not available</p>
+                        <% end %>
+                      </div>
+                    <% else %>
+                      <p>No valid date or time available.</p>
+                    <% end %>
+                  <% elsif instance.event.recurrence_type == "every-week" %>
+                    <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                    <div class="d-flex align-items-center gap-1">
+                      <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                      <span class="text-custom">~</span>
+                      <% if instance.end_time.present? %>
+                        <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                      <% else %>
+                        <p class="justify-content-end date-text text-custom">End time not available</p>
+                      <% end %>
+                    </div>
+                  <% elsif instance.event.recurrence_type == "custom-dates" %>
+                    <p class="justify-content-end date-text"><%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></p>
+                    <div class="d-flex align-items-center gap-1">
+                      <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                      <span class="text-custom">~</span>
+                      <% if instance.end_time.present? %>
+                        <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></p>
+                      <% else %>
+                        <p class="justify-content-end date-text text-custom">End time not available</p>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  <%# </div> %>
+                  <div class="d-flex flex-col align-items-end z-up">
+                    <!-- ICON TO EDIT EVENT -->
+                    <div>
+                      <%= link_to edit_event_path(instance), class: "py-0 px-1 z-up" do %>
+                        <i class="fa-regular fa-pen-to-square" style="color: #543A70;"></i>
+                      <% end %>
+                    </div>
+                    <!-- ICON TO DUPLICATE EVENT -->
+                    <div>
+                      <%= link_to duplicate_event_path(instance), class: "py-0 px-1 z-up" do %>
+                        <i class="fa-regular fa-copy" style="color: #543A70;"></i>
+                      <% end %>
+                    </div>
+                    <!-- ICON TO DELETE EVENT -->
+                    <div>
+                      <%= button_to event_path(instance.event), method: :delete, data: { turbo: false, turbo_confirm: "Are you sure???" }, style: "border: none; background: none; padding: 0; color: #543A70;", class: "py-0 px-1 z-up" do %>
+                        <i class="fa-regular fa-trash-can"></i>
+                      <% end %>
+                    </div>
+                  </div>
+                  <!---removing block A for now--->
+                </div>
+                <!--------removing block B for now----->
+              </div>
+            </div>
+          </div>
+          <span class="stretched-link"></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  <%# <% end %>
+  <!-- END of Conditional Buttons inside the card -->
+  <!---------------------------------------------->
+  <!-- Booking Modal for the Event !-->
+  <div class="modal fade" id="bookingModal<%= instance.id %>" tabindex="-1" aria-labelledby="bookingModalLabel<%= instance.id %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
+            Book <%= instance.event.title.capitalize %> class on <%= instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <%= simple_form_for [instance, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
+            <div class="d-flex justify-content-end">
+              <%= f.submit "Book!", class: "btn btn-custom my-3" %>
+            </div>
+          <% end %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 <!-- Wait list Modal for the Event -->
 <div class="modal fade" id="waitinglistModal" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
