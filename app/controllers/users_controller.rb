@@ -3,48 +3,41 @@ class UsersController < ApplicationController
 
   def dashboard
     require 'time'
+
     @bookings = current_user.bookings
-    # Fetch events the user is teaching (associated with user) - for both Events and EventInstances
-    @events = current_user.events || []  # Events user is teaching
-    @event_instances = @events.map(&:event_instances).flatten
-    # Fetch upcoming event instances (the user is attending or teaching)
-    @upcoming_event_instances = EventInstance.joins(:event)
-                                            .where('event_instances.start_time > ? AND (events.user_id = ? OR event_instances.id IN (?))',
-                                                    Time.now, current_user.id, @bookings.pluck(:event_instance_id))
-                                            .or(EventInstance.joins(:event)
-                                                              .where('events.start_time > ? AND events.user_id = ?',
-                                                                    Time.now, current_user.id))
-                                                                    .where.not('event_instances.start_time <= ?', Time.now)
-                                                                    .order('event_instances.start_time ASC') || []
 
-    # Fetch past event instances (the user is attending or teaching)
-    @past_event_instances = EventInstance.joins(:event)
-                                        .where('event_instances.start_time <= ? AND (events.user_id = ? OR event_instances.id IN (?))',
-                                                Time.now, current_user.id, @bookings.pluck(:event_instance_id))
-                                        .or(EventInstance.joins(:event)
-                                                          .where('events.start_time <= ? AND events.user_id = ?',
-                                                                Time.now, current_user.id))
-                                                                .order('event_instances.start_time DESC') || []
+    # Ensure @events is an ActiveRecord relation
+    @events = current_user.events.presence || Event.none
 
+    # Fetch upcoming event instances
+    @upcoming_event_instances = EventInstance
+      .left_joins(:event)
+      .where('event_instances.start_time > ? AND (events.user_id = ? OR event_instances.id IN (?))',
+             Time.now, current_user.id, @bookings.pluck(:event_instance_id))
+      .order(start_time: :asc)
 
-    @event_instances = EventInstance.joins(:event)
-                                .left_joins(:bookings)
-                                .where("events.user_id = ? OR bookings.user_id = ?", current_user.id, current_user.id)
-                                .distinct
-                                .order(start_time: :desc)
-    # Earnings: look for events for last month and current month, then pass it as an argument to private method iterating on each event to find paid bookings and multiply by event price
-    @last_month_events = @events.where(start_date: (Time.now.beginning_of_month.prev_month).midnight..(Time.now.beginning_of_month - 1).midnight)
-    @last_month_events_sum = monthly_sum(@last_month_events)
-    @current_month_events = @events.where(start_date: (Time.now.beginning_of_month).midnight..Time.now)
-    @current_month_events_sum = monthly_sum(@current_month_events)
-    # Most attended students: in a private method, iterate through bookings paid during a given month to sort attendees by frequency
-    @most_attended_list_current_month = most_attended(@current_month_events)
-    @most_attended_list_last_month = most_attended(@last_month_events)
-    # Attending students this/last mexit
-    # based on last/current month events (see above), count bookings for each one and sum
-    @current_month_bookings = booking_count(@current_month_events)
-    @last_month_bookings = booking_count(@last_month_events)
+    # Fetch past event instances
+    @past_event_instances = EventInstance
+      .left_joins(:event)
+      .where('event_instances.start_time <= ? AND (events.user_id = ? OR event_instances.id IN (?))',
+             Time.now, current_user.id, @bookings.pluck(:event_instance_id))
+      .order(start_time: :desc)
+
+    # Earnings Calculation
+    @last_month_event_instances = EventInstance.where(start_time: Time.now.last_month.beginning_of_month..Time.now.last_month.end_of_month)
+    # @last_month_events_sum = monthly_sum(@last_month_event_instances)
+
+    @current_month_event_instances = EventInstance.where(start_time: Time.now.beginning_of_month..Time.now)
+    # @current_month_events_sum = monthly_sum(@current_month_event_instances)
+
+    # Attended students
+    @most_attended_list_current_month = most_attended(@current_month_event_instances)
+    @most_attended_list_last_month = most_attended(@last_month_event_instances)
+
+    @current_month_bookings = booking_count(@current_month_event_instances)
+    @last_month_bookings = booking_count(@last_month_event_instances)
   end
+
 
   def show
     @bookings = current_user.bookings
@@ -99,15 +92,15 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  def monthly_sum(monthly_events)
-    monthly_sum = 0
-    monthly_events.each do |event|
-      paid_bookings = event.bookings.where(state: "paid")
-      event_revenue = paid_bookings.count * event.price_cents
-      monthly_sum += event_revenue
-    end
-    monthly_sum
-  end
+  # def monthly_sum(monthly_events)
+  #   monthly_sum = 0
+  #   monthly_events.each do |event|
+  #     paid_bookings = event.bookings.where(state: "paid")
+  #     event_revenue = paid_bookings.count * event.price_cents
+  #     monthly_sum += event_revenue
+  #   end
+  #   monthly_sum
+  # end
 
   def most_attended(monthly_events)
     most_attended = []

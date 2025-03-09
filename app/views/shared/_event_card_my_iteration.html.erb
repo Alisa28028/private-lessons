@@ -4,13 +4,13 @@
     <div class="d-flex flex-column justify-content-between">
       <div class="d-flex flex-row justify-content-between p-2">
         <div class="d-flex flex-column">
-          <h2><%= booking.event.title.upcase %></h2>
+          <h2><%= booking.instance.title.upcase %></h2>
           <p class="justify-content-end date-text"><%= booking.event.start_date.strftime("%B %d, %Y") %></p>
         </div>
         <!-- NEW Conditional for EVENT FULL or BOOKABLE -->
         <div class="d-flex flex-column text-end">
           <p class="text-custom d-flex justify-content-end"><strong><%= booking.event.location.address %></strong></p>
-          <% if booking.event.capacity - booking.event.bookings.count <= 0 %>
+          <% if booking.instance.effective_capacity - booking.event.bookings.count <= 0 %>
             <p class="opacity-50 attendee-number"><strong>EVENT FULL!!!!</strong></p>
           <% else %>
             <p class="opacity-50 attendee-number text-end">Spots! left: <%= booking.event.capacity - booking.event.bookings.count %></p>
@@ -32,7 +32,7 @@
           <!-- This first if only shows Buttons if it's the show page -->
           <% if @event %>
             <div class="d-flex justify-content-end align-items-center">
-              <% if booking.event.capacity - booking.event.bookings.count <= 0 %>
+              <% if booking.effective_capacity - booking.event.bookings.count <= 0 %>
                 <button type="button", style="font-size: small", class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
                   Join Wait List
                 </button>
