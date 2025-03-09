@@ -5,19 +5,21 @@ class BookingsController < ApplicationController
   #   @bookings = Booking.where(event_id: @event) # bookings list for this event
   # end
   def create
+    Rails.logger.debug "Event Instance ID: #{params[:event_instance_id]}"
+
     @event_instance = EventInstance.find(params[:event_instance_id])
     @booking = @event_instance.bookings.build(user: current_user)
     # @booking = Booking.create!(event: @event, user: current_user, state: 'paid')
 
-    # send the email
+    if @booking.save
+      # send the email
     BookingMailer.booking_confirmation(current_user, @booking).deliver_now
 
-
-    if @booking.save
       flash[:notice] = "You have successfully booked this class!"
       redirect_to event_instances_path, notice: 'Your booking was successful! A confirmation email has been sent.'
     else
-      flash[:alert] = "Booking failed."
+      Rails.logger.debug "Booking Errors: #{@booking.errors.full_messages.join(", ")}"
+    flash[:alert] = "Booking failed: #{@booking.errors.full_messages.join(", ")}"
       redirect_back fallback_location: event_instances_path, alert: 'There was an error with your booking. Please try again.'
     end
   end
@@ -54,4 +56,9 @@ class BookingsController < ApplicationController
     # redirect_to new_booking_payment_path(@booking)
     # ------------------------------------------
     # -----STRIPE REMOVED FOR DEMO PURPOSES-----
+    private
+
+    def booking_params
+      params.require(:booking).permit(:user_id) # Add any other required fields
+    end
 end

@@ -14,7 +14,7 @@ class Event < ApplicationRecord
 
   validates :title, presence: true
   validates :price_cents, presence: true
-  validates :capacity, presence: true
+  validates :default_capacity, presence: true, numericality: { greater_than: 0 }
   validates :duration, presence: true
   validates :day_of_week, inclusion: {
     in: %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday],

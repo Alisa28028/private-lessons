@@ -59,11 +59,11 @@
 <div class="row my-4">
   <!-- Only show button if current_user is not the event creator -->
   <% if @event.user != current_user %>
-    <% if @event.bookings.map {|b| b.user_id }.include?(current_user.id) %>
+    <% if @event_instance.bookings.map {|b| b.user_id }.include?(current_user.id) %>
       <button type="button" style="font-size: small" class="btn btn-light-purple ml-2 mb-0 mr-0">
         <strong>Attending!!!</strong>
       </button>
-    <% elsif @event.capacity - @event.bookings.count <= 0 %>
+    <% elsif @event_instance.effective_capacity - @event_instance.bookings.count <= 0 %>
       <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
         Join Wait List
       </button>

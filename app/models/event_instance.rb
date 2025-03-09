@@ -8,6 +8,8 @@ class EventInstance < ApplicationRecord
   # validates :capacity
   # validates :price
   # validates :duration
+
+
   before_save :set_end_time_from_duration
 
   def handle_one_time_event(params)
@@ -96,6 +98,10 @@ class EventInstance < ApplicationRecord
 
   def spots_left
     capacity - bookings.count
+  end
+
+  def effective_capacity
+    capacity || event.default_capacity
   end
 
   private

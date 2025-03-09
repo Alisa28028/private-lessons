@@ -6,6 +6,7 @@ class PagesController < ApplicationController
     @event_instances = EventInstance.all.order(start_time: :asc) # Ensure all instances are fetched
 
     @bookings = current_user&.bookings || []
+    Rails.logger.debug "Time.current: #{Time.current}, JST: #{Time.now.in_time_zone('Asia/Tokyo')}"
 
     # Fetch upcoming event instances (all, not just the user's)
     @upcoming_event_instances = EventInstance
@@ -19,7 +20,7 @@ class PagesController < ApplicationController
 
     if user_signed_in?
       @user = current_user
-      @user_bookings = @user.bookings
+
     end
   end
 
