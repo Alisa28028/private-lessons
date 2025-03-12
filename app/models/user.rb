@@ -10,6 +10,7 @@ class User < ApplicationRecord
   validates :phone_number, presence: true
   validates_inclusion_of :time_zone, in: ActiveSupport::TimeZone.all.map(&:name), allow_nil: true
   has_many :events, dependent: :destroy
+  has_many :event_instances, through: :events
   has_many :bookings, dependent: :destroy
   has_many :bookings_as_teacher, through: :events, source: :bookings
   has_many :posts, dependent: :destroy
