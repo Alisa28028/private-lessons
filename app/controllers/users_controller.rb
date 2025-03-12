@@ -39,41 +39,99 @@ class UsersController < ApplicationController
   end
 
 
-  def show
-    @bookings = current_user.bookings
-    @events = @user.events
-    # Get the event instances related to the user's bookings
-    @event_instances = EventInstance.where(id: @bookings.pluck(:event_instance_id)).where("date > ?", Time.now).order(:date)
+  # def show
+  #   @bookings = current_user.bookings
+  #   @events = @user.events
+  #   # Get the event instances related to the user's bookings
+  #   @event_instances = EventInstance.where(id: @bookings.pluck(:event_instance_id)).where("date > ?", Time.now).order(:date)
 
-    # Get the associated events for the future event instances
-    @events = @event_instances.map(&:event).uniq
+  #   # Get the associated events for the future event instances
+  #   @events = @event_instances.map(&:event).uniq
 
-    @attending_events = @user.bookings.includes(:event).map(&:event)
-  end
+  #   @attending_events = current_user.bookings.includes(:event_instance).map(&:event_instance).compact
+  # end
+
+#   def show
+#   @user = current_user # or User.find(params[:id])
+#   @event_instances = current_user.bookings.includes(:event_instance).map(&:event_instance).compact
+
+#   created_event_instances = current_user.events.includes(:event_instances).flat_map(&:event_instances)
+#   @all_event_instances = (created_event_instances + @event_instances).uniq
+
+#   # Render the user show page with the necessary instance variables
+# end
+
+def show
+  @user = User.find(params[:id])
+  @upcoming_event_instances = EventInstance
+    .joins(:event)
+    .where(events: { user_id: @user.id }) # Events created by this user
+    .where('event_instances.start_time > ?', Time.current) # Only future events
+    .order(start_time: :asc)
+end
+
 
   def edit
 
   end
 
+
+
+  # def classes
+  #   @event_instances = current_user.bookings.includes(:event_instance).map(&:event_instance).compact
+  #   respond_to do |format|
+  #     format.turbo_stream { render turbo_stream: turbo_stream.replace("teacher_content", partial: "users/classes", locals: { event_instances: @event_instances }) }
+  #     format.html { render partial: "users/classes", locals: { event_instances: @event_instances } }
+  #   end
+  # end
+
   def classes
-    # Fecth the classes for the teacher
-    @events = @user.events
-    render partial: 'users/classes', locals: { events: @events }
-    # render turbo_stream: turbo_stream.replace('classes', partial: 'users/classes', locals: { events: @events })
+    # Ensure @events is an ActiveRecord relation
+    @events = current_user.events.presence || Event.none
+    # Fetch upcoming event instances
+    @upcoming_event_instances = EventInstance
+      .joins(:event)
+      .where(events: { user_id: current_user.id })
+      .where('event_instances.start_time > ?', Time.current)
+      .order(start_time: :asc)
+    puts "All upcoming Event Instances: #{@upcoming_event_instances.count}"  # Debugging line
+    render partial: 'users/classes', locals: { event_instances: @upcoming_event_instances }, formats: [:html]
   end
+
 
   def teacher_posts
     # Fetch posts by the teacher
-    @posts = @user.posts
+    @teacher_posts = @user.posts
       # flash.now[:notice] = "No posts yet" if @posts.nil? || @posts.empty?
-    render partial: 'users/teacher_posts', locals: { posts: @posts }
+    render partial: 'users/teacher_posts', locals: { teacher_posts: @teacher_posts }, formats: [:html]
     # render turbo_stream: turbo_stream.replace('teacher_posts', partial: 'users/teacher_posts', locals: { posts: @posts })
   end
 
+  # def student_posts
+  #   @student_posts = @user.events.includes(:posts).flat_map(&:posts)
+  #   render partial: 'users/student_posts', locals: { posts: @student_posts }
+  # end
+  # def student_posts
+  #   @student_posts = Post.where(user_id: current_user.id) # Adjust this query as needed
+  #   render partial: 'users/student_posts', locals: { student_posts: @student_posts }
+  # end
+
   def student_posts
-    @student_posts = @user.events.includes(:posts).flat_map(&:posts)
-    render partial: 'users/student_posts', locals: { posts: @student_posts }
+    # Find event instances created by the teacher (the profile we are on)
+    teacher_event_instances = EventInstance.joins(:event).where(events: { user_id: @user.id })
+
+    # Find students who booked any of these event instances
+    student_ids = Booking.where(event_instance_id: teacher_event_instances.pluck(:id)).pluck(:user_id).uniq
+
+    # Get posts from these students
+    @student_posts = Post.where(user_id: student_ids)
+
+    @student_posts ||= []
+    Rails.logger.debug "Student Posts: #{@student_posts.inspect}"
+
+    render partial: 'users/student_posts', locals: { student_posts: @student_posts }, formats: [:html]
   end
+
 
 
   def update
