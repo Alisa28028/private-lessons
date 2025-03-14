@@ -131,7 +131,7 @@
               <div class="d-flex gap-2">
                 <i class="fa-solid fa-person fa-sm mt-2"></i>
                 <% if (instance.effective_capacity || 0) - instance.bookings.count <= 0 %>
-                  <p class="attendee-number text-dark fs-6"><strong><%= instance.effective_capacity %>/<%= instance.eeffective_capacity %></strong></p>
+                  <p class="attendee-number text-dark fs-6"><strong><%= instance.effective_capacity %>/<%= instance.effective_capacity %></strong></p>
                 <% else %>
                   <p class="attendee-number text-dark fs-6"><%= instance.bookings.count %>/<%= instance.effective_capacity %></p>
                 <% end %>

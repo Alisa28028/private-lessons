@@ -28,6 +28,7 @@
         <%# <%= f.input :date, as: :date, label: "Event Date", input_html: { "data-datepicker-target" => "eventDate", "data-controller" => "datepicker" } %>
         <%# <div data-datepicker-target="eventInstances"> %>
         <%= f.fields_for :event_instances do |ei| %>
+          <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
           <div class="form-group" data-controller="datepicker">
             <%= ei.input :date,
             as: :string,
@@ -67,6 +68,9 @@
         <%= f.hidden_field :recurrence_type, value: 'every-week' %>
         <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
         <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+        <%= f.fields_for :event_instances do |ei| %>
+          <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
+        <% end %>
         <label for="date-range">Select date range</label>
         <div data-controller="datepicker">
           <input id="date-range"
@@ -92,7 +96,9 @@
             <%= f.hidden_field :start_time, id: 'hidden_weekly_event_start_time' %>
           </div>
           <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
-          <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
+          <%= f.input :capacity, label:false, input_html: {
+            placeholder: "Capacity...",
+            value: f.object.capacity || f.object.default_capacity } %>
           <%= f.input :price_cents %>
           <div class="form-group mb-8">
             <%= f.input :photos, as: :file, input_html: { multiple: true } %>
@@ -109,6 +115,9 @@
           <%= f.hidden_field :recurrence_type, value: 'custom-dates' %>
           <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
           <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+          <%= f.fields_for :event_instances do |ei| %>
+            <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
+          <% end %>
           <label for="date-multiple">Select multiple dates</label>
           <div data-controller="datepicker">
             <input id="date-multiple"

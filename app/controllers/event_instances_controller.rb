@@ -70,6 +70,6 @@ class EventInstancesController < ApplicationController
   end
 
   def event_instance_params
-    params.require(:event_instance).permit(:date, :start_time, :end_time, :capacity, :duration, :price)
+    params.require(:event_instance).permit(:date, :start_time, :end_time, :capacity, :duration, :price, :cancellation_policy_duration)
   end
 end
