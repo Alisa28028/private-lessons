@@ -41,6 +41,12 @@ class Event < ApplicationRecord
 
   monetize :price_cents
 
+  after_initialize :set_default_cancellation_policy, if: :new_record?
+
+  def set_default_cancellation_policy
+    self.cancellation_policy_duration ||= 24
+  end
+
   def handle_one_time_event(params)
     # Find or initialize the first EventInstance
     instance = self.event_instances.first_or_initialize
@@ -102,7 +108,12 @@ class Event < ApplicationRecord
 
     Rails.logger.debug { "Creating instance - Date: #{date}, Start Time JST: #{start_time_jst}, Start Time UTC: #{start_time_utc}" }
 
-    event_instances.create!(date: date, start_time: start_time_utc)
+    event_instances.create!(
+      date: date,
+      start_time: start_time_utc,
+      cancellation_policy_duration: cancellation_policy_duration
+    )
+
     end
   end
 

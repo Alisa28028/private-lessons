@@ -3,12 +3,19 @@ class EventInstance < ApplicationRecord
   has_many :bookings
   validates :date, presence: true
   validates :start_time, presence: true
+  # validates :cancellation_policy_duration, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   has_many :videos, dependent: :destroy
 
   # validates :capacity
   # validates :price
   # validates :duration
 
+
+  before_validation :apply_default_cancellation_policy
+
+  def apply_default_cancellation_policy
+    self.cancellation_policy_duration ||= event.cancellation_policy_duration
+  end
 
   before_save :set_end_time_from_duration
 
@@ -46,6 +53,7 @@ class EventInstance < ApplicationRecord
     end
   end
 
+    # Method for handling weekly events
   def generate_instances!
     start_date = self.start_date.to_date
     end_date = self.end_date.to_date

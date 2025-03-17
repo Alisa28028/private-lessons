@@ -8,15 +8,25 @@ class BookingsController < ApplicationController
     Rails.logger.debug "Event Instance ID: #{params[:event_instance_id]}"
 
     @event_instance = EventInstance.find(params[:event_instance_id])
-    @booking = @event_instance.bookings.build(user: current_user)
+    # @booking = @event_instance.bookings.build(user: current_user)
     # @booking = Booking.create!(event: @event, user: current_user, state: 'paid')
+    if @event_instance.effective_capacity - @event_instance.bookings.count > 0
+      # There is space → Proceed with normal booking
+      @booking = @event_instance.bookings.new(user: current_user, waitlisted: false)
+    else
+      # No space → Add to waitlist
+      @booking = @event_instance.bookings.new(user: current_user, waitlisted: true, joined_at: Time.current)
+    end
 
     if @booking.save
+      if @booking.waitlisted == false
       # send the email
     BookingMailer.booking_confirmation(current_user, @booking).deliver_now
+      end
 
-      flash[:notice] = "You have successfully booked this class!"
-      redirect_to event_instances_path, notice: 'Your booking was successful! A confirmation email has been sent.'
+      notice_message = @booking.waitlisted? ? "You've been added to the waitlist!" : "You are booked!"
+      flash[:notice] = notice_message
+      redirect_to event_instances_path, notice: notice_message
     else
       Rails.logger.debug "Booking Errors: #{@booking.errors.full_messages.join(", ")}"
     flash[:alert] = "Booking failed: #{@booking.errors.full_messages.join(", ")}"
@@ -24,6 +34,54 @@ class BookingsController < ApplicationController
     end
   end
 
+  # In BookingsController
+
+def join_waitlist
+  @event_instance = EventInstance.find(params[:event_instance_id])
+  @booking = @event_instance.bookings.find_or_initialize_by(user: current_user)
+
+  if @event_instance.effective_capacity - @event_instance.bookings.count > 0
+    # If there is space, book them normally
+    @booking.update(waitlisted: false, joined_at: nil)
+    flash[:notice] = "You are booked!"
+  else
+    # If no space, add to the waitlist
+    @booking.update(waitlisted: true, joined_at: Time.current)
+    flash[:notice] = "You have been added to the waitlist!"
+  end
+
+  redirect_to event_instance_path(@event_instance)
+end
+
+def leave_waitlist
+  @event_instance = EventInstance.find(params[:event_instance_id])
+  @booking = @event_instance.bookings.find_by(user: current_user, waitlisted: true)
+
+  if @booking
+    @booking.update(waitlisted: false, joined_at: nil)
+    flash[:notice] = "You have successfully left the waitlist."
+  end
+
+  redirect_to event_instance_path(@event_instance)
+end
+
+
+  def destroy
+    @booking = Booking.find_by(id: params[:id])
+
+    if @booking.nil?
+      flash[:alert] = "Booking not found."
+      redirect_back(fallback_location: root_path) and return
+    end
+    if @booking.waitlisted? || booking.user == current_user
+      @booking.destroy
+      flash[:notice] = "You have been removed from the waitlist."
+    else
+      flash[:alert] = "You can't remove this booking."
+    end
+    redirect_to event_instance_path(@booking.event_instance)
+
+  end
   #   # Redirect to the event show page with a success message
   #   redirect_to event_path(@event), notice: 'Your booking was successful! A confirmation email has been sent.'
   # rescue ActiveRecord::RecordInvalid => e
