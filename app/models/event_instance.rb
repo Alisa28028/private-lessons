@@ -3,7 +3,7 @@ class EventInstance < ApplicationRecord
   has_many :bookings
   validates :date, presence: true
   validates :start_time, presence: true
-  validates :cancellation_policy_duration, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  # validates :cancellation_policy_duration, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   has_many :videos, dependent: :destroy
 
   # validates :capacity
