@@ -158,7 +158,8 @@ class Event < ApplicationRecord
       self.event_instances.create!(
         start_time: start_time_utc,
         end_time: start_time_utc + self.duration.minutes,
-        date: parsed_date
+        date: parsed_date,
+        cancellation_policy_duration: cancellation_policy_duration
       )
     rescue JSON::ParserError
       self.errors.add(:custom_dates, "Invalid format for custom dates.")
