@@ -11,6 +11,12 @@ class EventInstance < ApplicationRecord
   # validates :duration
 
 
+  before_validation :apply_default_cancellation_policy
+
+  def apply_default_cancellation_policy
+    self.cancellation_policy_duration ||= event.cancellation_policy_duration
+  end
+
   before_save :set_end_time_from_duration
 
   def handle_one_time_event(params)
@@ -47,6 +53,7 @@ class EventInstance < ApplicationRecord
     end
   end
 
+    # Method for handling weekly events
   def generate_instances!
     start_date = self.start_date.to_date
     end_date = self.end_date.to_date

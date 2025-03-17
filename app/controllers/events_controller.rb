@@ -16,7 +16,7 @@ class EventsController < ApplicationController
 
   def new
     @event = Event.new
-    @event.event_instances.build
+    @event.event_instances.build if @event.event_instances.empty?
 
     # @locations = Location.all.map(&:name)
     # if params[:start_time].present? && params[:end_time].present?
@@ -229,9 +229,9 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :description, :capacity, :default_capacity, :duration, :recurrence_type, :custom_dates, :start_date,
+    params.require(:event).permit(:title, :description, :capacity, :cancellation_policy_duration, :default_capacity, :duration, :recurrence_type, :custom_dates, :start_date,
        :end_date, :start_time, :price_cents, :day_of_week, videos: [], photos: [],
-      event_instances_attributes: [:id, :date, :start_time, :_destroy, :cancellation_policy_duration]
+      event_instances_attributes: [:id, :date, :start_time, :capacity , :cancellation_policy_duration, :_destroy]
     )
   end
 
@@ -260,6 +260,7 @@ class EventsController < ApplicationController
     if @event.recurrence_type == 'every-week'
       @event.generate_instances!
     end
+
     @event.event_instances.each do |instance|
       instance.update!(capacity: @event.capacity || @event.default_capacity)
     end

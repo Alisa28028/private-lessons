@@ -1,4 +1,13 @@
 <div class="container bg-white w-100 col-12" style="margin-bottom: 5px;">
+  <% if @event.errors.any? %>
+    <div class="alert alert-danger">
+      <ul>
+        <% @event.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <%= simple_form_for @event, html: { multipart: true } do |f| %>
     <!----Recurrence type buttons-------->
     <div data-controller="event-form" class="col-12">
@@ -66,10 +75,14 @@
     <%= simple_form_for @event, html: { multipart: true } do |f| %>
       <div data-event-form-target="everyWeekEventForm" class="d-none">
         <%= f.hidden_field :recurrence_type, value: 'every-week' %>
-        <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
-        <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+        <%= f.input :title, label: false, input_html: { placeholder: "Title..." } %>
+        <%= f.input :description, label: false, input_html: { placeholder: "Describe your event..." } %>
+        <%= f.input :cancellation_policy_duration, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
+        <%# field for event instances %>
         <%= f.fields_for :event_instances do |ei| %>
-          <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
+          <div class="event-instance-fields">
+            <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
+          </div>
         <% end %>
         <label for="date-range">Select date range</label>
         <div data-controller="datepicker">

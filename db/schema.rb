@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_14_090650) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_17_090709) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -102,6 +102,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_14_090650) do
     t.text "custom_dates"
     t.string "day_of_week"
     t.integer "default_capacity", default: 10, null: false
+    t.integer "cancellation_policy_duration"
     t.index ["location_id"], name: "index_events_on_location_id"
     t.index ["user_id"], name: "index_events_on_user_id"
   end
