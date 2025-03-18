@@ -94,17 +94,31 @@
                     <!-- ATTENDING  -->
                     <!-- Checking if current user is already attending the event -->
                     <% if instance.bookings.map {|b| b.user_id }.include?(current_user.id) %>
-                      <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
-                        Attending!
-                      </p>
-                      <!-- JOIN WAIT LIST  -->
-                      <!-- if not attending, check if the event is full. If yes, JOIN WAIT LIST -->
+                      <% if !instance.bookings.where(waitlisted: true).exists? %>
+                        <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
+                          Attending!
+                        </p>
+                      <% else %>
+                        <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
+                          On Wait List!
+                        </p>
+                      <% end %>
+                      <!-- BOOK CLASS / JOIN WAIT LIST  -->
+                      <!-- if not attending, check if the event is full. If no, BOOK CLASS. If yes, JOIN WAIT LIST -->
                     <% elsif instance.effective_capacity - instance.bookings.count <= 0 %>
-                      <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal<%= instance.id %>">
+                      <button type="button" class="btn btn-custom ml-2 mb-0 mr-0"
+                      data-bs-toggle="modal"
+                      data-bs-target="#waitinglistModal<%= instance.id %>"
+                      data-controller="modal"
+                      data-action="click->modal#handleClick">
                         Join Wait List
                       </button>
                     <% else %>
-                      <button type="button" class="btn btn-custom m-1 fs-6" data-bs-toggle="modal" data-bs-target="#bookingModal<%= instance.id %>" onclick="event.preventDefault(); event.stopPropagation();">
+                      <button type="button" class="btn btn-custom m-1 fs-6"
+                      data-bs-toggle="modal"
+                      data-bs-target="#bookingModal<%= instance.id %>"
+                      data-controller="modal"
+                      data-action="click->modal#handleClick">
                         Book Class
                       </button>
                     <% end %>
@@ -251,7 +265,7 @@
     </div>
   </div>
   <!-- Wait list Modal for the Event -->
-  <div class="modal fade" id="waitinglistModal" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
+  <div class="modal fade" id="waitinglistModal<%= instance.id %>" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -260,7 +274,7 @@
         </div>
         <div class="d-flex justify-content-between">
           <div class="modal-body">
-            <%= simple_form_for [instance.event, Booking.new] do |f| %>
+            <%= simple_form_for [instance.event, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
               <%= f.submit "Join Wait List", class: "btn btn-custom my-3" %>
             <% end %>
           </div>

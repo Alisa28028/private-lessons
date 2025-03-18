@@ -59,6 +59,9 @@
       <%= @event.event_instances.first.cancellation_policy_duration %>
       hours before event starts</p>
   <% end %>
+  <% if @event.event_instances.any? %>
+    <p>capacity:<%= @event.capacity %></p>
+  <% end %>
 </div>
 <!-- Button Row -->
 <div class="row my-4">
@@ -199,93 +202,53 @@
 <div class="row mt-3 mb-6">
   <div class="d-flex flex-column w-100">
     <h2 class="text-custom justify-content-center"><strong>Attendees</strong></h2>
+    <p>Number of bookings: <%= @bookings.where(waitlisted: false).count %></p>
     <% @bookings.each_with_index do |booking, index| %>
-      <% if index < @event_instance.capacity %>
-        <!-- Display attendees within capacity -->
+      <% if booking.waitlisted == false %>
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
             <%= link_to user_path(booking.user) do %>
-              <% if booking.user.photo.attached? %>
+              <% if booking.user&.photo.present? %>
                 <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
               <% else %>
-                <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "default avatar" %>
+                <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
               <% end %>
             <% end %>
             <span><%= booking.user.name %></span>
           </div>
-          <!-- Limit booking state view to only event's creator -->
-          <% if current_user == @event.user %>
+          <% if current_user == @event_instance.event.user %>
             <span class="<%= booking.state %>"><%= booking.state.capitalize %></span>
           <% end %>
         </div>
       <% end %>
     <% end %>
-    <div class="d-flex justify-content-between">
-      <% if @bookings.count > @event_instance.capacity %>
-        <p class="mt-2">...plus <strong><%= @bookings.count - @event_instance.capacity %></strong> more</p>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#attendeesModal" class="mt-2"><strong>See all</strong></a>
-      <% end %>
-    </div>
+    <!-- Show only attendees within capacity -->
+    <!-- If there are more bookings than capacity, show the waitlist -->
+    <h2 class="text-custom"><strong>Wait List</strong></h2>
+    <% @event_instance.bookings.where(waitlisted: true).order(:joined_at).each do |booking| %>
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <%= link_to user_path(booking.user) do %>
+            <% if booking.user&.photo.present? %>
+              <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
+            <% else %>
+              <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "default avatar" %>
+            <% end %>
+          <% end %>
+          <span><%= booking.user.name %></span>
+        </div>
+      </div>
+    <% end %>
+    <%# <% # Only show 'See all' if there are more bookings than the capacity %>
+    <%# <% if @bookings.count > capacity %>
+    <%# <div class="d-flex justify-content-between"> %>
+    <%# <p class="mt-2">...plus <strong><%= @bookings.count - capacity %>
+    <%# </strong> more</p> %>
+    <%# <a href="#" data-bs-toggle="modal" data-bs-target="#attendeesModal" class="mt-2"><strong>See all</strong></a> %>
+    <%# </div> %>
+    <%# <% end %>
     <%# END of Iterating through attending users % %>
     <!-- All Attendees Modal -->
-    <div class="modal fade" id="attendeesModal" tabindex="-1" aria-labelledby="attendeesModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-body">
-            <h1 class="modal-title fs-5 my-3 d-flex justify-content-center" id="attendeesModalLabel">All Attendees</h1>
-            <!-- Debugging: Display the number of bookings and their indices -->
-            <p>Number of bookings: <%= @bookings.count %></p>
-            <!-- Show only attendees within capacity -->
-            <% @bookings.each_with_index do |booking, index| %>
-              <!-- Debugging: Display index and state -->
-              <p>Index: <%= index %>, Booking ID: <%= booking.id %></p>
-              <% if index < @event_instance.capacity %>
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <%= link_to user_path(booking.user) do %>
-                      <% if booking.user&.photo.present? %>
-                        <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
-                      <% else %>
-                        <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
-                      <% end %>
-                    <% end %>
-                    <span><%= booking.user.name %></span>
-                  </div>
-                  <% if current_user == @event.user %>
-                    <span class="<%= booking.state %>"><%= booking.state.capitalize %></span>
-                  <% end %>
-                </div>
-              <% end %>
-            <% end %>
-            <hr>
-            <!-- If there are more bookings than capacity, show the waitlist -->
-            <% if @bookings.count > @event_instance.capacity %>
-              <h1 class="modal-title fs-5 my-3 d-flex justify-content-center" id="attendeesModalLabel">Wait List</h1>
-              <!-- Debugging: Display waitlist bookings -->
-              <p>Displaying waitlist bookings:</p>
-              <!-- Show waitlist users (those who are beyond the event's capacity) -->
-              <% @event_instance.bookings.where(waitlisted: true).order(:joined_at).each do |booking| %>
-                <!-- Debugging: Display index for waitlist -->
-                <p>Booking ID: <%= booking.id %>, Joined At: <%= booking.joined_at %></p>
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <%= link_to user_path(booking.user) do %>
-                      <%= cl_image_tag booking.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered" %>
-                    <% end %>
-                    <span><%= booking.user.name %></span>
-                  </div>
-                </div>
-              <% end %>
-            <% end %>
-            <!-- Waiting List // All Attendees Modal -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-        <!-- END of All Attendees Modal -->
-      </div>
-    </div>
   </div>
 </div>
 </div>

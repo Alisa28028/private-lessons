@@ -7,4 +7,9 @@ export default class extends Controller {
       new bootstrap.Modal(modal);
     });
   }
+
+  handleClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 }
