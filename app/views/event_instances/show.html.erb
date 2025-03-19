@@ -55,9 +55,13 @@
   <% end %>
   <p><%= @event.description %></p>
   <% if @event.event_instances.any? %>
-    <p> cancellation policy:
-      <%= @event.event_instances.first.cancellation_policy_duration %>
-      hours before event starts</p>
+    <% if @event.event_instances.first.cancellation_policy_duration != nil %>
+      <p> cancellation policy:
+        <%= @event.event_instances.first.cancellation_policy_duration %>
+        hours before event starts</p>
+    <% else %>
+      <p> cancellation policy: not provided</p>
+    <% end %>
   <% end %>
   <% if @event.event_instances.any? %>
     <p>capacity:<%= @event.capacity %></p>
