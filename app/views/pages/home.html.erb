@@ -27,7 +27,9 @@
   <% @upcoming_event_instances.each do |upcoming_event_instance| %>
     <%= render "shared/event_instances_card", instance: upcoming_event_instance, event: upcoming_event_instance.event %>
   <% end %>
-  <h4>past classes</h4>
+  <div class="d-flex justify-content-around mt-4 mb-2">
+    <h4>past classes</h4>
+  </div>
   <% @past_event_instances.each do |past_event_instance| %>
     <%= render "shared/event_instances_card", instance: past_event_instance, event: past_event_instance.event %>
   <% end %>
