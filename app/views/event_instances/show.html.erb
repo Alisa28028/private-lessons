@@ -166,13 +166,15 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="bookingModalLabel">Book <strong><%= @event.title.capitalize %></strong>?</h1>
+          <h1 class="modal-title fs-5" id="bookingModalLabel"> Book <%= @event_instance.event.title.capitalize %> class on <%= @event_instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(@event_instance.event.price) %></strong>?</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="d-flex justify-content-between">
           <div class="modal-body">
-            <%= link_to fake_event_instance_path(@event_instance), class: "btn btn-custom my-3" do %>
-              <i class="fa-solid fa-sign-in-alt"></i> Book!
+            <%= simple_form_for [@event_instance, Booking.new], url: event_instance_bookings_path(@event_instance), method: :post do |f| %>
+              <div class="d-flex justify-content-end">
+                <%= f.submit "Book!", class: "btn btn-custom my-3" %>
+              </div>
             <% end %>
           </div>
           <div class="modal-footer">
