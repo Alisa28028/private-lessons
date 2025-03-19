@@ -70,24 +70,27 @@
 <!-- Button Row -->
 <div class="row my-4">
   <% if @event.user != current_user %>
+    <% future_event = @event_instance.start_time > Time.current %>
     <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
     <% if user_booking && !user_booking.waitlisted %>
       <button type="button" style="font-size: small" class="btn btn-light-purple ml-2 mb-0 mr-0">
-        <strong>Attending!!!</strong>
+        <strong> <%= future_event ? "Attending!" : "Attended" %></strong>
       </button>
-    <% elsif user_booking && user_booking.waitlisted %>
+    <% elsif user_booking && user_booking.waitlisted && future_event %>
       <%= button_to "On Wait List (click to leave wait list)", booking_path(user_booking),
         method: :delete,
         data: { confirm: "Are you sure you want to leave the waitlist?" },
         class: "btn btn-warning ml-2 mb-0 mr-0 text-dark" %>
-    <% elsif @event_instance.effective_capacity - @event_instance.bookings.count <= 0 %>
-      <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
-        Join Wait List!
-      </button>
-    <% else %>
-      <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
-        Book this Class!
-      </button>
+    <% elsif future_event %>
+      <% if @event_instance.effective_capacity - @event_instance.bookings.count <= 0 %>
+        <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
+          Join Wait List!
+        </button>
+      <% else %>
+        <button type="button" style="font-size: small" class="btn btn-custom ml-2 mb-0 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
+          Book this Class!
+        </button>
+      <% end %>
     <% end %>
     <%= link_to new_event_post_path(@event), class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
       <i class="fa-regular fa-square-plus"></i> Add post

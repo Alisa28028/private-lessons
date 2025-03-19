@@ -2,9 +2,14 @@
 <%# check if the current user is the event creator %>
 <% if instance.event&.user != current_user %> <!-----Non creator users (show booking and wait list buttons-------->
   <%# <% if instance.event.id.present? %>
-  <div class="card-product m-1 mb-3">
+  <div class="card-product m-1 mb-3 position-relative">
+    <% past_event = instance.start_time < Time.current %> <!-- Check if event is in the past -->
     <%= link_to event_instance_path(instance), class: "text-decoration-none text-dark" do %>
       <div class="card-product m-1 mb-3 position-relative">
+        <% if past_event %>
+          <div class="past-event-overlay"></div>
+ <!-- Overlay for past events -->
+        <% end %>
         <div class="d-flex flex-column justify-content-between">
           <div class="d-flex flex-row justify-content-between p-2">
             <!-- EVENT TITLE -->
@@ -76,51 +81,58 @@
                 </div>
               </div>
               <!-- EVENT IS FULL CONDITIONAL -->
-              <div class="d-flex flex-column justify-content-end">
-                <% if instance.effective_capacity - instance.bookings.count <= 0 %>
-                  <p class="attendee-number text-end text-danger mb-2"><strong>EVENT FULL!</strong></p>
-                <% else %>
-                  <!-- REMAINING SPOTS -->
-                  <% remaining_spots = instance.effective_capacity - instance.bookings.count %>
-                  <% if remaining_spots <= 10 %>
-                    <p class="attendee-number text-end text-danger d-flex align-items-end mb-2"> <%= instance.effective_capacity - instance.bookings.count %> Spots left</p>
+              <% if instance.start_time > Time.current %>
+                <div class="d-flex flex-column justify-content-end">
+                  <% if instance.effective_capacity - instance.bookings.count <= 0 %>
+                    <p class="attendee-number text-end text-danger mb-2"><strong>EVENT FULL!</strong></p>
+                  <% else %>
+                    <!-- REMAINING SPOTS -->
+                    <% remaining_spots = instance.effective_capacity - instance.bookings.count %>
+                    <% if remaining_spots <= 10 %>
+                      <p class="attendee-number text-end text-danger d-flex align-items-end mb-2"> <%= instance.effective_capacity - instance.bookings.count %> Spots left</p>
+                    <% end %>
                   <% end %>
                 <% end %>
                 <!-- Conditional Buttons inside the card -->
                 <!---------------------------------------------->
                 <% if current_user %>
                   <div style="position: relative; display: inline-flex;">
+                    <% future_event = instance.start_time > Time.current %>
                     <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
                     <!-- ATTENDING  -->
                     <!-- Checking if current user is already attending the event -->
                     <% if instance.bookings.map {|b| b.user_id }.include?(current_user.id) %>
                       <% if !instance.bookings.where(waitlisted: true).exists? %>
                         <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
-                          Attending!
+                          <%= future_event ? "Attending!" : "Attended" %>
                         </p>
                       <% else %>
-                        <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
-                          On Wait List!
-                        </p>
+                        <% if future_event %>
+                          <p style="font-size: small color; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
+                            On Wait List!
+                          </p>
+                        <% end %>
                       <% end %>
                       <!-- BOOK CLASS / JOIN WAIT LIST  -->
                       <!-- if not attending, check if the event is full. If no, BOOK CLASS. If yes, JOIN WAIT LIST -->
-                    <% elsif instance.effective_capacity - instance.bookings.count <= 0 %>
-                      <button type="button" class="btn btn-custom ml-2 mb-0 mr-0"
+                    <% elsif future_event %>
+                      <% if instance.effective_capacity - instance.bookings.count <= 0 %>
+                        <button type="button" class="btn btn-custom ml-2 mb-0 mr-0"
                       data-bs-toggle="modal"
                       data-bs-target="#waitinglistModal<%= instance.id %>"
                       data-controller="modal"
                       data-action="click->modal#handleClick">
-                        Join Wait List
-                      </button>
-                    <% else %>
-                      <button type="button" class="btn btn-custom m-1 fs-6"
+                          Join Wait List
+                        </button>
+                      <% else %>
+                        <button type="button" class="btn btn-custom m-1 fs-6"
                       data-bs-toggle="modal"
                       data-bs-target="#bookingModal<%= instance.id %>"
                       data-controller="modal"
                       data-action="click->modal#handleClick">
-                        Book Class
-                      </button>
+                          Book Class
+                        </button>
+                      <% end %>
                     <% end %>
                   </div>
                 <% end %>
