@@ -63,23 +63,50 @@ class BookingsController < ApplicationController
 #   redirect_to event_instance_path(@event_instance)
 # end
 
+def destroy
+  @booking = Booking.find_by(id: params[:id])
 
-  def destroy
-    @booking = Booking.find_by(id: params[:id])
+  if @booking.nil?
+    flash[:alert] = "Booking not found."
+    redirect_back(fallback_location: root_path) and return
+  end
 
-    if @booking.nil?
-      flash[:alert] = "Booking not found."
-      redirect_back(fallback_location: root_path) and return
-    end
-    if @booking.waitlisted? || booking.user == current_user
+  event_instance = @booking.event_instance
+  cancellation_policy = event_instance.cancellation_policy_duration
+
+  if cancellation_policy.nil? || Time.current <= (event_instance.start_time - cancellation_policy.hours)
+    if @booking.waitlisted? || @booking.user == current_user
       @booking.destroy
-      flash[:notice] = "You have been removed from the waitlist."
+      flash[:notice] = @booking.waitlisted? ? "You have been removed from the waitlist." : "Booking canceled successfully."
     else
       flash[:alert] = "You can't remove this booking."
     end
-    redirect_to event_instance_path(@booking.event_instance)
-
+  else
+    flash[:alert] = "Cancellation is not allowed after the deadline."
   end
+
+  redirect_to event_instance_path(event_instance)
+end
+
+
+  # def destroy
+  #   @booking = Booking.find_by(id: params[:id])
+
+  #   if @booking.nil?
+  #     flash[:alert] = "Booking not found."
+  #     redirect_back(fallback_location: root_path) and return
+  #   end
+  #   if @booking.waitlisted? || booking.user == current_user
+  #     @booking.destroy
+  #     flash[:notice] = "You have been removed from the waitlist."
+  #   else
+  #     flash[:alert] = "You can't remove this booking."
+  #   end
+  #   redirect_to event_instance_path(@booking.event_instance)
+
+  # end
+
+
   #   # Redirect to the event show page with a success message
   #   redirect_to event_path(@event), notice: 'Your booking was successful! A confirmation email has been sent.'
   # rescue ActiveRecord::RecordInvalid => e
