@@ -34,36 +34,34 @@ class BookingsController < ApplicationController
     end
   end
 
-  # In BookingsController
+# def join_waitlist
+#   @event_instance = EventInstance.find(params[:event_instance_id])
+#   @booking = @event_instance.bookings.find_or_initialize_by(user: current_user)
 
-def join_waitlist
-  @event_instance = EventInstance.find(params[:event_instance_id])
-  @booking = @event_instance.bookings.find_or_initialize_by(user: current_user)
+#   if @event_instance.effective_capacity - @event_instance.bookings.count > 0
+#     # If there is space, book them normally
+#     @booking.update(waitlisted: false, joined_at: nil)
+#     flash[:notice] = "You are booked!"
+#   else
+#     # If no space, add to the waitlist
+#     @booking.update(waitlisted: true, joined_at: Time.current)
+#     flash[:notice] = "You have been added to the waitlist!"
+#   end
 
-  if @event_instance.effective_capacity - @event_instance.bookings.count > 0
-    # If there is space, book them normally
-    @booking.update(waitlisted: false, joined_at: nil)
-    flash[:notice] = "You are booked!"
-  else
-    # If no space, add to the waitlist
-    @booking.update(waitlisted: true, joined_at: Time.current)
-    flash[:notice] = "You have been added to the waitlist!"
-  end
+#   redirect_to event_instance_path(@event_instance)
+# end
 
-  redirect_to event_instance_path(@event_instance)
-end
+# def leave_waitlist
+#   @event_instance = EventInstance.find(params[:event_instance_id])
+#   @booking = @event_instance.bookings.find_by(user: current_user, waitlisted: true)
 
-def leave_waitlist
-  @event_instance = EventInstance.find(params[:event_instance_id])
-  @booking = @event_instance.bookings.find_by(user: current_user, waitlisted: true)
+#   if @booking
+#     @booking.update(waitlisted: false, joined_at: nil)
+#     flash[:notice] = "You have successfully left the waitlist."
+#   end
 
-  if @booking
-    @booking.update(waitlisted: false, joined_at: nil)
-    flash[:notice] = "You have successfully left the waitlist."
-  end
-
-  redirect_to event_instance_path(@event_instance)
-end
+#   redirect_to event_instance_path(@event_instance)
+# end
 
 
   def destroy
