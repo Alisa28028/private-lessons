@@ -89,21 +89,6 @@ class EventsController < ApplicationController
     @event = Event.new(event_params)
     @event.capacity = params[:event][:capacity].present? ? params[:event][:capacity] : @event.default_capacity
 
-  Rails.logger.debug "🛠 Raw event params: #{params[:event].inspect}"
-  Rails.logger.debug "🔍 Received start_time: #{params.dig(:event, :start_time).inspect}"
-
-    # Log the parameters for debugging
-  Rails.logger.debug "Capacity: #{params[:event][:capacity]}"
-  Rails.logger.debug "Duration: #{params[:event][:duration]}"
-
-  # Set default values for capacity and duration if blank
-  # @event.capacity = 10 if @event.capacity.blank?
-  # @event.duration = 60 if @event.duration.blank?
-
-  Rails.logger.debug "Event params: #{event_params.inspect}"
-  Rails.logger.debug "Event object: #{@event.inspect}"
-  Rails.logger.debug "Recurrence type: #{@event.recurrence_type}"
-
     # Handle the location - find by name, or create a new one if it doesn't exist
     # @location = Location.find_by(name: params[:location_name])
     # @location ||= Location.create(name: params[:location_name])
@@ -262,7 +247,10 @@ class EventsController < ApplicationController
     end
 
     @event.event_instances.each do |instance|
-      instance.update!(capacity: @event.capacity || @event.default_capacity)
+      instance.update!(
+        capacity: @event.capacity || @event.default_capacity,
+        price: instance.price.presence || @event.price || 0
+      )
     end
   end
 end
