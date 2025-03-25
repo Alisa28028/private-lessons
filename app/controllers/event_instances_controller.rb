@@ -67,6 +67,7 @@ class EventInstancesController < ApplicationController
 
   def set_event_instance
     @event_instance = EventInstance.find(params[:id])
+    @event_instance.event ||= Event.new
   end
 
   def event_instance_params

@@ -5,7 +5,7 @@ class EventInstance < ApplicationRecord
   validates :start_time, presence: true
   # validates :cancellation_policy_duration, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   has_many :videos, dependent: :destroy
-
+  monetize :price_cents, allow_nil: true
   # validates :capacity
   # validates :price
   # validates :duration
@@ -110,6 +110,10 @@ class EventInstance < ApplicationRecord
 
   def effective_capacity
     capacity || event.default_capacity
+  end
+
+  def effective_price
+    price || event.price
   end
 
   private
