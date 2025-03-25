@@ -1,8 +1,8 @@
 <%# Home page cards %>
 <%# check if the current user is the event creator %>
-<% if instance.event&.user != current_user %> <!-----Non creator users (show booking and wait list buttons-------->
-  <%# <% if instance.event.id.present? %>
-  <div class="card-product m-1 mb-3 position-relative">
+<div class="card-product m-1 mb-3 position-relative">
+  <% if instance.event&.user != current_user %> <!-----Non creator users (show booking and wait list buttons-------->
+    <%# <% if instance.event.id.present? %>
     <% past_event = instance.start_time < Time.current %> <!-- Check if event is in the past -->
     <%= link_to event_instance_path(instance), class: "text-decoration-none text-dark" do %>
       <div class="card-product m-1 mb-3 position-relative">

@@ -1,5 +1,13 @@
+.card-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap */
+  gap: 1rem; /* Spacing between cards */
+}
+
 .card-product {
-    overflow: hidden;
+    width: 100%; /* Default to full width */
+    max-width: 500px;
+  overflow: hidden;
     height: 125px;
     background: #f6f5fa;
     box-shadow: 3px 3px 5px rgba(0,0,0,0.15);

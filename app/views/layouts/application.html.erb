@@ -15,10 +15,14 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body>
+  <body data-controller="sidebar">
     <%= render "shared/navbar" %>
+    <%= render "shared/sidebar", data: { sidebar_target: "sidebar" } %>
     <%= render "shared/flashes" %>
-    <%= yield %>
+    <!-- Main content, wrapped in the div with the sidebar target -->
+    <div class="main-content" data-sidebar-target="content">
+      <%= yield %>
+    </div>
     <%= render "shared/bottomnavbar" %>
   </body>
 </html>
