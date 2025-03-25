@@ -215,8 +215,8 @@ class EventsController < ApplicationController
 
   def event_params
     params.require(:event).permit(:title, :description, :capacity, :cancellation_policy_duration, :default_capacity, :duration, :recurrence_type, :custom_dates, :start_date,
-       :end_date, :start_time, :price_cents, :day_of_week, videos: [], photos: [],
-      event_instances_attributes: [:id, :date, :start_time, :capacity , :cancellation_policy_duration, :_destroy]
+       :end_date, :start_time, :price, :day_of_week, videos: [], photos: [],
+      event_instances_attributes: [:id, :date, :start_time, :price, :capacity , :cancellation_policy_duration, :_destroy]
     )
   end
 
@@ -246,9 +246,13 @@ class EventsController < ApplicationController
       @event.generate_instances!
     end
 
+    # Assign capacity and price to event instances
+    custom_capacities = params[:event][:custom_capacities] || {}
+
+
     @event.event_instances.each do |instance|
       instance.update!(
-        capacity: @event.capacity || @event.default_capacity,
+        capacity: custom_capacities[instance.id.to_s].presence || @event.capacity || @event.default_capacity,
         price: instance.price.presence || @event.price || 0
       )
     end

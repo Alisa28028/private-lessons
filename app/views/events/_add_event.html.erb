@@ -160,6 +160,7 @@
                 </div>
                 <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
                 <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
+                <!-- Checkbox to toggle custom capacities -->
                 <%= f.input :price, placeholder: "Leave blank to use event price",
               value: @event_instance&.price || @event.price %>
                 <div class="form-group mb-8">
