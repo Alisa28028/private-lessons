@@ -1,4 +1,10 @@
 // Specific CSS for your home-page
+.limited-width {
+  max-width: 1200px; /* Adjust as needed */
+  margin: 0 auto; /* Centers the div */
+  padding: 0 200px; /* Adds small spacing on the sides */
+}
+
 .bg-custom {
     background-color: #7252F2;
     background-image: var(--bs-gradient);

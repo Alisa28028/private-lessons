@@ -1,19 +1,37 @@
+.card-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap */
+  justify-content: center;
+  gap: 1rem; /* Spacing between cards */
+}
+
 .card-product {
+    width: 100%; /* Default to full width */
+    min-width: 400px;
+    max-width: 400px;
+
     overflow: hidden;
-    height: 125px;
+    height: auto;
     background: #f6f5fa;
     box-shadow: 3px 3px 5px rgba(0,0,0,0.15);
-    // display: grid;
-    grid-template-columns: 190px auto;
-    align-items: end;
-    position: relative;
-    // border: 1px solid #DBCFE8;
     border-radius: 3px;
+    // display: flex;
+    // align-items: center;
+    // grid-template-columns: 190px auto;
+    position: relative;
   }
 
+  // .card-product-info-grid {
+  //   display: grid;
+  //   grid-template-columns: 95px auto;
+  // }
+
+
+
   .card-product-info-grid {
-    display: grid;
-    grid-template-columns: 95px auto;
+    display: flex;
+    justify-content: space-between; /* Space between the content */
+    align-items: center; /* Vertically center the items */
   }
 
   .card-product img {
@@ -64,14 +82,26 @@
 
       }
 
+  // .card-product .card-product-infos {
+  //   padding-right: 12px;
+  //   padding-left: 12px;
+  //   padding-top: 0px;
+  //   justify-content: space-between;
+  //   display: flex;
+  //   flex-direction: column;
+  // }
+
   .card-product .card-product-infos {
+    width: 100%;
     padding-right: 12px;
     padding-left: 12px;
     padding-top: 0px;
     justify-content: space-between;
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Change this from column to row for side-by-side layout */
+    align-items: stretch; /* Optional: To vertically center the items */
   }
+
 
   .card-product .card-product-infos p {
     display: -webkit-box !important;
