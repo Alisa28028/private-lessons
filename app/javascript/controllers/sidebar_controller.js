@@ -13,7 +13,7 @@ export default class extends Controller {
   toggleSidebar() {
     const width = window.innerWidth;
 
-    if (width >= 1264 && width <= 1919) {
+    if (width >= 1000 && width <= 1619) {
       // Show sidebar and hide navbars
       this.sidebarTarget.classList.add("show");
       this.contentTarget.classList.add("show-sidebar");

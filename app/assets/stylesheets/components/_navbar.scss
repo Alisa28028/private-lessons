@@ -14,8 +14,11 @@
 }
 
 .pl-top-nav {
+  position: fixed;
   padding-left: 10px;
+  display: flex;
   justify-content: space-between;
+  align-items: center;
   height: 64px;
   top: 0;
 
@@ -201,6 +204,7 @@
   display: none;
 }
 
+
 @media (max-width: 640px) {
 
   .pl-dropdown-menu .pl-dropdown-content {
@@ -235,7 +239,7 @@
 
 }
 
-@media (min-width: 1264px) and (max-width: 1919px) {
+@media (min-width: 1000px) and (max-width: 1619px) {
   /* Hide the top and bottom navbars */
   .pl-top-nav, .pl-bottom-nav {
     display: none;

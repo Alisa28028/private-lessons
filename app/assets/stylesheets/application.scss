@@ -14,9 +14,13 @@
 
 // Add custom row styles directly in application.scss
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px; /* Adjust spacing between cards */
-  justify-content: space-between; /* Optional, for spacing the cards evenly */
+// .row {
+//   display: flex;
+//   flex-wrap: wrap;
+//   gap: 20px; /* Adjust spacing between cards */
+//   justify-content: space-between; /* Optional, for spacing the cards evenly */
+// }
+
+body {
+  overflow-x: hidden;
 }
