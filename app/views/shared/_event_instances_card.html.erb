@@ -11,7 +11,7 @@
         <!-- Overlay for past events -->
       <% end %>
       <div class="d-flex flex-column justify-content-between">
-        <div class="d-flex flex-row justify-content-between p-2">
+        <div class="d-flex flex-row justify-content-between p-2 pb-1">
           <!-- EVENT TITLE -->
           <div class="d-flex flex-column">
             <h2><%= instance.event.title.upcase %></h2>
@@ -127,7 +127,7 @@
                           Join Wait List
                         </button>
                       <% else %>
-                        <button type="button" class="btn btn-custom m-1 fs-6"
+                        <button type="button" class="btn btn-custom ml-2 mb-0 mr-0"
                       data-bs-toggle="modal"
                       data-bs-target="#bookingModal<%= instance.id %>"
                       data-controller="modal"
@@ -152,10 +152,10 @@
     <%# <div class="card-product m-1 mb-3 position-relative"> %>
     <%= link_to event_instance_path(instance), class: "text-decoration-none text-dark" do %>
       <div class="d-flex flex-column justify-content-between h-100">
-        <div class="d-flex justify-content-between p-2">
+        <div class="d-flex justify-content-between p-2 pb-1">
           <!-- EVENT TITLE -->
           <div class="d-flex flex-column">
-            <h5 class="fs-6 fw-bold mb-0 ms-2"><%= instance.event.title.upcase %></h5>
+            <h5 class="fs-6 fw-bold mb-0 ms-0"><%= instance.event.title.upcase %></h5>
           </div>
           <div class="d-flex gap-2">
             <i class="fa-solid fa-person fa-sm mt-2"></i>
@@ -166,8 +166,8 @@
             <% end %>
           </div>
         </div>
-        <div class="card-product-infos mb-2">
-          <div class="ms-1">
+        <div class="card-product-infos justify-content-start mb-2 p-0">
+          <div class="ms-0">
             <% if instance.event.present? && instance.event.photos.attached? %>
               <%= cl_image_tag instance.event.photos.first.key %>
             <% else %>
