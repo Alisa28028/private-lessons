@@ -6,7 +6,11 @@
         <%# <div class="d-flex flex-row align-items-start justify-content-center"> %>
         <div class="d-flex flex-column">
           <div class="">
-            <%= image_tag(@user.photo, width: "200px", class: "avatar-large") %>
+            <% if @user.photo.attached? %>
+              <%= image_tag(@user.photo, width: "200px", class: "avatar-large") %>
+            <% else %>
+              <%= image_tag "default-avatar.png", width: "200px", class: "avatar-large" %>
+            <% end %>
             <div class="mb-0"  style="font-size: 18px;">
               <strong><%= @user.name %></strong></div>
             <%= @user.description %>
