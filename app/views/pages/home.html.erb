@@ -23,7 +23,7 @@
 </div>
 <%# <div class="container my-1"> %>
 <%# iterating through some events %>
-<div class="col-12 col-md-6 col-lg-6 mx-auto px-3">
+<div class="col-12 col-md-6 col-lg-6 mx-auto px-2">
   <div class="card-container mx-auto">
     <% @upcoming_event_instances.each do |upcoming_event_instance| %>
       <%= render "shared/event_instances_card", instance: upcoming_event_instance, event: upcoming_event_instance.event %>
