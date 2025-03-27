@@ -6,9 +6,11 @@ class User < ApplicationRecord
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
-  validates :password, presence: true, confirmation: true, length: { minimum: 6 }
-  validates :phone_number, presence: true
+  validates :password, presence: true, confirmation: true, length: { minimum: 6 }, on: :create
+  validates :phone_number, presence: true, on: :create
   validates_inclusion_of :time_zone, in: ActiveSupport::TimeZone.all.map(&:name), allow_nil: true
+  validates :tiktok, :x, :instagram, length: { maximum: 255 }, allow_nil: true
+
   has_many :events, dependent: :destroy
   has_many :event_instances, through: :events
   has_many :bookings, dependent: :destroy
@@ -16,8 +18,10 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :videos, dependent: :destroy
+
+  has_one_attached :photo
+
   def is_teacher?
     events.any?
   end
-  has_one_attached :photo
 end

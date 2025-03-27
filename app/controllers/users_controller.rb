@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :classes, :teacher_posts, :student_posts]
+  before_action :set_user, only: [:show, :edit, :update, :classes, :teacher_posts, :student_posts]
 
   def dashboard
     require 'time'
@@ -71,9 +71,18 @@ def show
 end
 
 
-  def edit
+def edit
+  # @user is already set in the before_action
+end
 
+def update
+  if @user.update(user_params)
+    redirect_to @user, notice: 'Profile updated successfully.'
+  else
+    flash.now[:alert] = "Failed to update profile."
+    render :edit, status: :unprocessable_entity
   end
+end
 
 
 
@@ -143,7 +152,7 @@ end
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :description, :photo)
+    params.require(:user).permit(:name, :email, :password, :password_confirmation, :description, :photo, :instagram, :x, :tiktok)
   end
 
   def set_user
