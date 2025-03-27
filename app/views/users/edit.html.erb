@@ -4,6 +4,9 @@
   <%= simple_form_for @user do |f| %>
     <%= f.input :name %>
     <%= f.input :description %>
+    <%= f.input :instagram, placeholder: "Enter link to profile" %>
+    <%= f.input :x %>
+    <%= f.input :tiktok %>
     <%= f.input :photo, as: :file %>
     <%= f.submit "Update your profile", class: "btn btn-custom my-3" %>
   <% end %>
