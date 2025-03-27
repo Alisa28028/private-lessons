@@ -1,61 +1,66 @@
 <div class="container my-5 w-100 bg-white mt-3">
   <div class="row">
-    <div class="column mt-4 d-flex justify-content-center">
-      <br>
-      <%# <div class="d-flex flex-row align-items-start justify-content-center"> %>
-      <div class="d-flex flex-column">
-        <%= image_tag(@user.photo, width: "200px", class: "avatar-large") %>
-        <div class="mb-0"  style="font-size: 18px;">
-          <strong><%= @user.name %></strong></div>
-        <%= @user.description %>
-        <div class="d-flex justify-content-start mt-1">
-          <% if @user.instagram.present? %>
-            <a href="<%= @user.instagram.starts_with?('http') ? @user.instagram : "https://#{@user.instagram}" %>" target="_blank" class="btn btn-link p-0 me-1">
-              <i class="fa-brands fa-square-instagram" style="font-size: 25px;"></i>
-            </a>
-          <% end %>
-          <% if @user.x.present? %>
-            <a href="<%= @user.x.starts_with?('http') ? @user.x : "https://#{@user.x}" %>" target="_blank" class="btn btn-link p-0 me-1">
-              <i class="fa-brands fa-square-x-twitter" style="font-size: 25px;"></i>
-            </a>
-          <% end %>
-          <% if @user.tiktok.present? %>
-            <a href="<%= @user.tiktok.starts_with?('http') ? @user.tiktok : "https://#{@user.tiktok}" %>" target="_blank" class="btn btn-link p-0">
-              <i class="fa-brands fa-tiktok" style="font-size: 21px; margin-top: 2px"></i>
-            </a>
-          <% end %>
-        </div>
-      </div>
-    </div>
-    <% if @user == current_user %>
-      <div class="d-flex justify-content-center mt-3 mb-5">
-        <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom-gray" %>
-        <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom-gray" %>
-      </div>
-    <% end %>
-  </div>
-  <!-- Icons section for switching content -->
-  <div data-controller="teacher" data-teacher-user-id="<%= @user.id %>">
-    <div class="row">
-      <div class="col-12 col-md-6 col-lg-6 mx-auto">
-        <div class="icon-section mt-0 ms-4 me-4">
-          <div class="d-flex justify-content-between ms-2 me-2 mb-4" data-controller="link-highlight">
-            <%= link_to "#", data: { action: "click->teacher#loadEvents", class: "icon-link" } do %>
-              <i class="fa-regular fa-calendar"></i> Classes
-            <% end %>
-            <%= link_to "#", data: { action: "click->teacher#loadPosts", class: "icon-link" } do %>
-              <i class="fa-solid fa-user"></i> My Posts
-            <% end %>
-            <%= link_to "#", data: { action: "click->teacher#loadStudentPosts", class: "icon-link" } do %>
-              <i class="fa-solid fa-user-group"></i> Student Posts
-            <% end %>
+    <div class="col-12 col-md-6 col-lg-6 mx-auto">
+      <div class="column mt-4 d-flex justify-content-center">
+        <br>
+        <%# <div class="d-flex flex-row align-items-start justify-content-center"> %>
+        <div class="d-flex flex-column">
+          <div class="">
+            <%= image_tag(@user.photo, width: "200px", class: "avatar-large") %>
+            <div class="mb-0"  style="font-size: 18px;">
+              <strong><%= @user.name %></strong></div>
+            <%= @user.description %>
+            <div class="d-flex justify-content-start mt-1">
+              <% if @user.instagram.present? %>
+                <a href="<%= @user.instagram.starts_with?('http') ? @user.instagram : "https://#{@user.instagram}" %>" target="_blank" class="btn btn-link p-0 me-1">
+                  <i class="fa-brands fa-square-instagram" style="font-size: 25px;"></i>
+                </a>
+              <% end %>
+              <% if @user.x.present? %>
+                <a href="<%= @user.x.starts_with?('http') ? @user.x : "https://#{@user.x}" %>" target="_blank" class="btn btn-link p-0 me-1">
+                  <i class="fa-brands fa-square-x-twitter" style="font-size: 25px;"></i>
+                </a>
+              <% end %>
+              <% if @user.tiktok.present? %>
+                <a href="<%= @user.tiktok.starts_with?('http') ? @user.tiktok : "https://#{@user.tiktok}" %>" target="_blank" class="btn btn-link p-0">
+                  <i class="fa-brands fa-tiktok" style="font-size: 21px; margin-top: 2px"></i>
+                </a>
+              <% end %>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center mt-3 mb-5">
+            <% if @user == current_user %>
+              <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom-gray" %>
+              <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom-gray" %>
+            </div>
           </div>
         </div>
-      </div>
-      <!-- Dynamic Content Section -->
-      <div class="teacher-content mt-4" data-teacher-target="content">
-        <%= render partial: 'users/classes', locals: { event_instances: @upcoming_event_instances } %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<!-- Icons section for switching content -->
+<div data-controller="teacher" data-teacher-user-id="<%= @user.id %>">
+  <div class="row">
+    <%# <div class="col-12 col-md-6 col-lg-6 mx-auto"> %>
+    <div class="icon-section mt-0">
+      <div class="d-flex justify-content-between ms-3 me-3 mb-4" data-controller="link-highlight">
+        <%= link_to "#", data: { action: "click->teacher#loadEvents", class: "icon-link" } do %>
+          <i class="fa-regular fa-calendar"></i> Classes
+        <% end %>
+        <%= link_to "#", data: { action: "click->teacher#loadPosts", class: "icon-link" } do %>
+          <i class="fa-solid fa-user"></i> My Posts
+        <% end %>
+        <%= link_to "#", data: { action: "click->teacher#loadStudentPosts", class: "icon-link" } do %>
+          <i class="fa-solid fa-user-group"></i> Student Posts
+        <% end %>
       </div>
     </div>
   </div>
+  <!-- Dynamic Content Section -->
+  <div class="teacher-content mt-4" data-teacher-target="content">
+    <%= render partial: 'users/classes', locals: { event_instances: @upcoming_event_instances } %>
+  </div>
+  <%# </div> %>
+</div>
 </div>
