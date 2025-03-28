@@ -1,9 +1,15 @@
 class EventInstancesController < ApplicationController
   before_action :set_event_instance, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+
 
   def new
     @event_instance = EventInstance.new
     @event = Event.find(params[:event_id])
+  end
+
+  def home
+
   end
 
   def create

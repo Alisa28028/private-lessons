@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  skip_before_action :authenticate_user!
   before_action :set_user, only: [:show, :edit, :update, :classes, :teacher_posts, :student_posts]
 
   def dashboard
@@ -70,6 +71,9 @@ def show
     .order(start_time: :asc)
 end
 
+def home
+
+end
 
 def edit
   # @user is already set in the before_action
