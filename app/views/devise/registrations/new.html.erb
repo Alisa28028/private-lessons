@@ -13,6 +13,10 @@
                 autofocus: true,
                 input_html: { autocomplete: "email" },
                 error: f.object.errors[:email].present? ? { message: f.object.errors[:email].join(', ') } : nil %>
+    <%= f.input :instagram, label: "Instagram link (Optional)" %>
+    <%= f.input :x, label: "X link (Optional)" %>
+    <%= f.input :tiktok, label: "TikTok link (Optional)" %>
+    <%= f.input :photo, as: :file %>
     <%= f.input :password,
                 required: true,
                 hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),

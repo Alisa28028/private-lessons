@@ -1,11 +1,29 @@
 <div class="container w-100 my-5 bg-white">
   <div class="row">
     <div class="column">
-      <h2 class="my-3 fw-bold d-flex justify-content-center">Welcome <%= current_user.name.capitalize %>!</h2>
-      <p class="my-2 d-flex justify-content-center mb-3">Upcoming Events</p>
+      <% if @user %>
+        <div class="col-12 col-md-6 col-lg-6 mx-auto px-2">
+          <h2 class="my-3 fw-bold d-flex justify-content-center">Welcome <%= current_user.name.capitalize %>!</h2>
+          <p class="my-2 d-flex justify-content-center mb-3">Upcoming Events</p>
+          <div class="card-container mx-auto">
+            <% @event_instances.each do |upcoming_event_instance| %>
+              <%= render "shared/event_instances_card", instance: upcoming_event_instance, event: upcoming_event_instance.event, boookings: (@user.bookings.presence || []) %>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="col-12 col-md-6 col-lg-6 mx-auto px-2">
+          <h2 class="my-3 fw-bold d-flex justify-content-center">Welcome!</h2>
+          <p class="my-2 d-flex justify-content-center mb-3">Upcoming Events</p>
+          <div class="card-container mx-auto">
+            <% @event_instances.each do |upcoming_event_instance| %>
+              <%= render "shared/event_instances_card", instance: upcoming_event_instance, event: upcoming_event_instance.event %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
       <%# Iterating through attending events %>
-      <%= render '/shared/event_card_iteration', events: @events, event_instances: @event_instances, bookings: @user.bookings %>
-
+      <%# <%= render '/shared/event_card_iteration', events: @events, event_instances: @event_instances, bookings: @user.bookings %>
     </div>
   </div>
 </div>

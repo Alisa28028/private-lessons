@@ -1,6 +1,6 @@
 class EventsController < ApplicationController
 
-  before_action :set_event, only: [:edit, :show, :update, :add_video]
+  before_action :set_event, only: [:index, :edit, :show, :update, :add_video]
 
   def index
     @user = current_user
@@ -11,7 +11,11 @@ class EventsController < ApplicationController
     @events = @event_instances.map(&:event).uniq
     @event_bookings = Booking.where(event_instance_id: @event_instances.pluck(:id))
     # Get bookings for the current user
-    @bookings = @user.bookings
+    if @user
+      @bookings = @user.bookings
+    else
+      @bookings = []
+    end
   end
 
   def new
