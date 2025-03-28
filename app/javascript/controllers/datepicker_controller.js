@@ -45,49 +45,41 @@ export default class extends Controller {
 }
 
 
-  handleRecurrenceChange(recurrenceType) {
-    console.log("Recurrence type changed to:", recurrenceType);
+handleRecurrenceChange(recurrenceType) {
+  console.log("Recurrence type changed to:", recurrenceType);
 
-    // Destroy existing Flatpickr instance if it exists
-    if (this.datePickerInstance) {
-      this.datePickerInstance.destroy();
-      this.datePickerInstance = null;
+  // Destroy existing Flatpickr instance if it exists
+  if (this.datePickerInstance) {
+    this.datePickerInstance.destroy();
+    this.datePickerInstance = null;
+  }
+
+  // Target element initialization
+  const checkTargetAndInitialize = () => {
+    let targetElement;
+
+    if (recurrenceType === "one-time") {
+      console.log("📅 Initializing Flatpickr with single mode!");
+      targetElement = document.querySelector("[data-datepicker-target='eventDate']");
+    } else if (recurrenceType === "every-week") {
+      console.log("📅 Initializing Flatpickr with range mode");
+      targetElement = document.querySelector("[data-datepicker-target='weeklyDatePicker']");
+    } else if (recurrenceType === "custom-dates") {
+      console.log("📅 Initializing Flatpickr with multiple mode");
+      targetElement = document.querySelector("[data-datepicker-target='customDatePicker']");
     }
 
-    const checkTargetAndInitialize = () => {
-      if (recurrenceType === "one-time") {
-        console.log("📅 Initializing Flatpickr with single mode!");
-        const eventDateInput = document.querySelector("[data-datepicker-target='eventDate']");
-        if (eventDateInput) {
-          this.initFlatpickrSingle(eventDateInput);
-        } else {
-          console.warn("⏳ Waiting for eventDate input to appear...");
-          setTimeout(checkTargetAndInitialize, 50);
-        }
-      } else if (recurrenceType === "every-week") {
-        console.log("📅 Initializing Flatpickr with range mode");
-        const weeklyPickerInput = document.querySelector("[data-datepicker-target='weeklyDatePicker']");
-        if (weeklyPickerInput) {
-          this.initFlatpickrRange(weeklyPickerInput);
-        } else {
-          console.warn("⏳ Waiting for weeklyDatePicker input to appear...");
-          setTimeout(checkTargetAndInitialize, 50);
-        }
-      } else if (recurrenceType === "custom-dates") {
-        console.log("📅 Initializing Flatpickr with multiple mode");
-        const customPickerInput = document.querySelector("[data-datepicker-target='customDatePicker']");
-        if (customPickerInput) {
-          this.initFlatpickrMultiple(customPickerInput);
-        } else {
-          console.warn("⏳ Waiting for customDatePicker input to appear...");
-          setTimeout(checkTargetAndInitialize, 50);
-        }
-      }
-    };
+    if (targetElement) {
+      this.initFlatpickrSingle(targetElement);  // Or appropriate flatpickr initialization based on mode
+    } else {
+      console.warn("⏳ Waiting for datepicker input to appear...");
+      setTimeout(checkTargetAndInitialize, 200);  // Delay to avoid excessive retries
+    }
+  };
 
-    // Start checking for target availability
-    setTimeout(checkTargetAndInitialize, 50);
-  }
+  // Start checking for target availability
+  checkTargetAndInitialize();
+}
 
 
   initFlatpickrSingle(target) {
