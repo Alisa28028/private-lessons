@@ -9,8 +9,10 @@ export default class extends Controller {
     "recurrenceType",
     "weeklyDatePicker",
     "customDatePicker",
-    // "eventInstances",
-    // "list",
+    "locationInput",
+    "locationList",
+    "saveLocationBtn",
+    "list"
     // "locationList"
   ];
 
@@ -20,29 +22,67 @@ export default class extends Controller {
     console.log("datepicker controller connected!");
     this.initTimePicker();
 
-
-  //   // listen for custom events
-  //   this.element.addEventListener("recurrenceTypeChanged", (event) => {
-  //     console.log("Recurrence type changed event fired!", event); // Ensure the event is firing
-
-  //     const { recurrenceType } = event.detail;
-  //     console.log(`Recurrence type changed to : ${recurrenceType}`);
-  //     this.handleRecurrenceChange(recurrenceType);
-  //   });
-  // }
+    // Listen for location input changes (and save if needed)
+    this.locationInputTarget.addEventListener("input", this.handleLocationInput.bind(this));
+    this.saveLocationBtnTarget.addEventListener("click", this.saveLocation.bind(this));
 
   /// Listen for recurrence type changes (button clicks)
   const recurrenceButtons = document.querySelectorAll('[data-recurrence-type]');
-
   recurrenceButtons.forEach(button => {
     button.addEventListener("click", (event) => {
       const recurrenceType = event.target.dataset.recurrenceType;
       console.log(`Recurrence Type Selected: ${recurrenceType}`);
-
       this.handleRecurrenceChange(recurrenceType);
     });
   });
 }
+
+  handleLocationInput() {
+    const locationInputValue = this.locationInputTarget.value.trim();
+    const locationList = this.locationListTarget;
+
+    if (locationInputValue) {
+      // Show the save button if the location input has value
+      this.saveLocationBtnTarget.style.display = "inline-block";
+    } else {
+      // Hide the save button if the location input is empty
+      this.saveLocationBtnTarget.style.display = "none";
+    }
+
+    // Update location list if there are existing saved locations (from the database or session)
+    locationList.innerHTML = ""; // Clear list before repopulating
+    this.fetchSavedLocations(); // You can implement this method to fetch from the database or wherever you're storing the locations
+  }
+
+  saveLocation(event) {
+    event.preventDefault();
+    const locationInputValue = this.locationInputTarget.value.trim();
+
+    if (locationInputValue) {
+      // Add the location to the list of saved locations
+      const newLocation = document.createElement("option");
+      newLocation.textContent = locationInputValue;
+      this.locationListTarget.appendChild(newLocation);
+
+      // Optionally save to the database via AJAX or by adding a hidden field with the new location value
+      console.log(`Location saved: ${locationInputValue}`);
+
+      // Optionally clear the input after saving
+      this.locationInputTarget.value = "";
+      this.saveLocationBtnTarget.style.display = "none";  // Hide save button
+    }
+  }
+
+  fetchSavedLocations() {
+    // This method can fetch saved locations from the server or database if applicable
+    // For now, it's just a placeholder to indicate where saved locations could be added to the list
+    const savedLocations = ["Location 1", "Location 2", "Location 3"]; // Example list of saved locations
+    savedLocations.forEach(location => {
+      const option = document.createElement("option");
+      option.textContent = location;
+      this.locationListTarget.appendChild(option);
+    });
+  }
 
 
 handleRecurrenceChange(recurrenceType) {
