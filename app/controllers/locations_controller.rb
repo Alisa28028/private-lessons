@@ -8,10 +8,10 @@ class LocationsController < ApplicationController
   def create
     @location = current_user.locations.build(location_params)
 
-    if @location.save
-      redirect_to locations_path, notice: 'Location was successfully created.'
+    if location.save
+      render json: { success: true, location: location }, status: :created
     else
-      render :new
+      render json: { success: false, errors: location.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
