@@ -38,15 +38,31 @@ export default class extends Controller {
     this.locationListTarget.classList.add('d-none');
   }
 
-  selectLocation(event) {
-    const selectedLocationId = event.target.dataset.id;
-    const selectedLocationName = event.target.textContent;
-    this.inputTarget.value = selectedLocationName;
-    // Optionally, set the hidden input to the location ID
-    const locationIdInput = document.querySelector('#event_location_id');
-    locationIdInput.value = selectedLocationId;
+  // selectLocation(event) {
+  //   const selectedLocationId = event.target.dataset.id;
+  //   const selectedLocationName = event.target.textContent;
+  //   this.inputTarget.value = selectedLocationName;
+  //   // Optionally, set the hidden input to the location ID
+  //   const locationIdInput = document.querySelector('#event_location_id');
+  //   locationIdInput.value = selectedLocationId;
 
-    this.clearLocationList(); // Hide the list after selection
+  //   this.clearLocationList(); // Hide the list after selection
+  // }
+
+  selectLocation(event) {
+    const selectedLocation = event.target;
+    const locationId = selectedLocation.getAttribute('data-id');
+    const locationName = selectedLocation.textContent;
+
+    // Set the location input value to the selected location name
+    this.inputTarget.value = locationName;
+
+    // Set the hidden location_id field value
+    const locationIdInput = document.querySelector('#event_location_id');
+    locationIdInput.value = locationId;
+
+    // Hide the location list
+    this.locationListTarget.classList.add('d-none');
   }
 
   handleBlur() {

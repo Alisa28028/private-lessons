@@ -90,19 +90,32 @@ class EventsController < ApplicationController
 
 
   def create
+
+    if params[:event][:location_name].present?
+      location_name = params[:event][:location_name]
+
+      # Find the location or create a new one and associate it with the current user
+      location = Location.find_or_create_by(name: location_name) do |loc|
+        loc.user_id = current_user.id  # Associate the location with the current user
+      end
+
+      Rails.logger.debug "Location found or created: #{location.inspect}"
+
+      # Assign the location ID to the event params
+      params[:event][:location_id] = location.id
+      Rails.logger.debug "Event Params before setting location ID: #{params[:event]}"
+    end
+
+
+        Rails.logger.debug "Event Params with Location ID: #{params[:event]}"
     # Initialize the event object
     @event = Event.new(event_params)
+     # Now assign the Location instance to the event's location association
+     @event.location = location
     @event.capacity = params[:event][:capacity].present? ? params[:event][:capacity] : @event.default_capacity
 
-      # Handle location creation or association
-    if @event.location.present?
-      # If the location doesn't exist, create a new one
-      location = Location.find_or_create_by(name: @event.location)
-      @event.location = location
-      @event.event_instances.each do |instance|
-        instance.location_id = location.id
-      end
-    end
+
+
     # Handle the location - find by name, or create a new one if it doesn't exist
     # @location = Location.find_by(name: params[:location_name])
     # @location ||= Location.create(name: params[:location_name])
@@ -230,7 +243,7 @@ class EventsController < ApplicationController
 
   def event_params
     params.require(:event).permit(:title, :description, :capacity, :cancellation_policy_duration, :default_capacity, :duration, :recurrence_type, :custom_dates, :start_date,
-       :end_date, :start_time, :location, :location_id, :price, :day_of_week, videos: [], photos: [],
+       :end_date, :start_time, :location, :location_name, :location_id, :price, :day_of_week, videos: [], photos: [],
       event_instances_attributes: [:id, :date, :start_time, :location_id, :price, :capacity , :cancellation_policy_duration, :_destroy]
     )
   end

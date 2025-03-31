@@ -37,6 +37,23 @@
         <%# <%= f.input :date, as: :date, label: "Event Date", input_html: { "data-datepicker-target" => "eventDate", "data-controller" => "datepicker" } %>
         <%# <div data-datepicker-target="eventInstances"> %>
         <!-- Location input with the new location controller -->
+        <div data-controller="location">
+          <!-- Location Input Field -->
+          <%= f.input :location_name, label: false, input_html: {
+          placeholder: "Enter location...",
+          "data-location-target": "input",
+          "data-action": "input->location#updateLocationList blur->location#handleBlur" } %>
+          <!-- Hidden input for location ID -->
+          <%= f.hidden_field :location_id, id: "event_location_id" %>
+          <!-- List of filtered locations -->
+          <%# <ul data-location-target="locationList" data-locations='<%= raw @user.locations.to_json %>
+          <%# ' class="d-none"> %>
+          <ul data-location-target="locationList"
+          data-locations="<%= @locations.to_json %>"
+          class="d-none">
+            <!-- Dynamically populated by the controller -->
+          </ul>
+        </div>
         <%= f.fields_for :event_instances do |ei| %>
           <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
           <div class="form-group" data-controller="datepicker">

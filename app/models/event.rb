@@ -2,6 +2,10 @@ class Event < ApplicationRecord
   belongs_to :user
   belongs_to :location, optional: true
 
+  attr_accessor :location_name
+
+  before_save :set_location
+
   has_many :bookings, dependent: :destroy
   has_many :users, through: :bookings
   has_many :bookings, dependent: :destroy
@@ -170,8 +174,17 @@ class Event < ApplicationRecord
 end
 
 private
+
 def recurring_weekly?
   recurrence_type == "every-week"
+end
+
+def set_location
+  if location_name.present?
+    # Find or create a location by name
+    location = Location.find_or_create_by(name: location_name)
+    self.location = location
+  end
 end
 
 end
