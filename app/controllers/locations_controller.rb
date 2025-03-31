@@ -3,7 +3,17 @@ class LocationsController < ApplicationController
 
 
   def index
-    @locations = current_user.locations
+    # @locations = current_user.locations
+    @locations = Location.where(user_id: current_user.id)
+                          .where('name LIKE ?', "%#{params[:query]}%")
+    render json: @locations
+  end
+
+  def search
+    # Retrieve the locations associated with the current user and match the query
+    query = params[:query].downcase
+    locations = Location.where('LOWER(name) LIKE ?', "%#{query}%")
+    render json: locations
   end
 
   def new

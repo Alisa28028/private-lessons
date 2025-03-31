@@ -9,29 +9,57 @@ export default class extends Controller {
     console.log("location controller connected!")
   }
 
+  // When user focuses on the input, show the associated locations
+  showUserLocations() {
+    const locations = JSON.parse(this.locationListTarget.dataset.locations); // Get locations associated with the user
+    console.log("User's Associated Locations: ", locations);
+
+    this.populateLocationList(locations); // Populate the list with those locations
+  }
 
   updateLocationList(event) {
     const locationInput = event.target.value;
 
     if (locationInput.length > 0) {
-      this.filterLocationList(locationInput);
+      this.fetchLocationSuggestions(locationInput);
     } else {
       this.clearLocationList();
     }
   }
 
-  filterLocationList(locationInput) {
-    const locationList = this.locationListTarget;
-    const locations = JSON.parse(locationList.dataset.locations); // Load user locations dynamically
-    const filteredLocations = locations.filter(location =>
-      location.name.toLowerCase().includes(locationInput.toLowerCase())
-    );
-
-    locationList.innerHTML = filteredLocations.map(location =>
-      `<li data-action="click->location#selectLocation" data-id="${location.id}">${location.name}</li>`
-    ).join('');
-    locationList.classList.remove('d-none');
+  fetchLocationSuggestions(locationInput) {
+    // Make an AJAX request to fetch locations matching the input
+    fetch(`/locations/search?query=${locationInput}`, {
+      method: 'GET',
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.populateLocationList(data);
+      })
+      .catch(error => {
+        console.error("Error fetching locations:", error);
+      });
   }
+
+  populateLocationList(locations) {
+    const locationList = this.locationListTarget;
+    // Clear any previous suggestions
+    locationList.innerHTML = '';
+
+    if (locations.length > 0) {
+      locations.forEach(location => {
+        locationList.innerHTML += `
+          <li data-action="click->location#selectLocation" data-id="${location.id}">
+            ${location.name}
+          </li>
+        `;
+      });
+      locationList.classList.remove('d-none');
+    } else {
+      locationList.classList.add('d-none'); // Hide if no matches
+    }
+  }
+
 
   clearLocationList() {
     this.locationListTarget.innerHTML = '';
@@ -68,25 +96,4 @@ export default class extends Controller {
   handleBlur() {
     this.clearLocationList();
     }
-
-
-  saveLocation(locationInput) {
-    if (locationInput) {
-      fetch('/locations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ location: { name: locationInput } }),
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-             // Set the hidden input value to the newly created location's ID
-             const locationIdInput = document.querySelector('#event_location_id');
-             locationIdInput.value = data.location.id;
-           }
-        });
-    }
-  }
 }

@@ -104,7 +104,13 @@ class EventsController < ApplicationController
 
       # Set the location ID in event params
       params[:event][:location_id] = location.id
-
+       # Add location_id to event_instances_attributes
+    if params[:event][:event_instances_attributes].present?
+      params[:event][:event_instances_attributes].each do |_, event_instance_params|
+        event_instance_params[:location_id] = location.id
+      end
+    end
+      Rails.logger.debug "Location ID in Params: #{params[:event][:location_id]}"
       Rails.logger.debug "Event Params with Location ID: #{params[:event]}"
     end
 
