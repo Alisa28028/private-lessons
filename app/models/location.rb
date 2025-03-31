@@ -1,4 +1,7 @@
 class Location < ApplicationRecord
-  validates :name, presence: true
+  belongs_to :user
+  validates :name, presence: true, uniqueness: true
+
+  has_many :events
   # validates :address, presence: true
 end

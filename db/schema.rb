@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_27_041747) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_28_051549) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -115,6 +115,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_27_041747) do
     t.float "longitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_locations_on_user_id"
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -179,6 +181,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_27_041747) do
   add_foreign_key "event_instances", "locations"
   add_foreign_key "events", "locations"
   add_foreign_key "events", "users"
+  add_foreign_key "locations", "users"
   add_foreign_key "notifications", "users"
   add_foreign_key "posts", "events"
   add_foreign_key "posts", "users"

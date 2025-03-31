@@ -43,6 +43,9 @@ Rails.application.routes.draw do
     end
   end
 
+    # locations routes
+    resources :locations
+
     # booking routes
     resources :bookings, only: [:index, :destroy] do
       resources :payments, only: [:new]
