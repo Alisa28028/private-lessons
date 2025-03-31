@@ -132,6 +132,23 @@
             <%# placeholder: "Capacity...", %>
             <%# value: f.object.capacity || f.object.default_capacity } %>
             <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
+            <div data-controller="location">
+              <!-- Location Input Field -->
+              <%= f.input :location_name, label: false, input_html: {
+                placeholder: "Enter location...",
+                "data-location-target": "input",
+                "data-action": "input->location#updateLocationList blur->location#handleBlur" } %>
+              <!-- Hidden input for location ID -->
+              <%= f.hidden_field :location_id, id: "event_location_id" %>
+              <!-- List of filtered locations -->
+              <%# <ul data-location-target="locationList" data-locations='<%= raw @user.locations.to_json %>
+              <%# ' class="d-none"> %>
+              <ul data-location-target="locationList"
+                data-locations="<%= @locations.to_json %>"
+                class="d-none">
+                <!-- Dynamically populated by the controller -->
+              </ul>
+            </div>
             <%= f.input :price, placeholder: "Leave blank to use event price",
               value: @event_instance&.price || @event.price %>
             <div class="form-group mb-8">
@@ -178,6 +195,23 @@
                 </div>
                 <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
                 <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
+                <div data-controller="location">
+                  <!-- Location Input Field -->
+                  <%= f.input :location_name, label: false, input_html: {
+                    placeholder: "Enter location...",
+                    "data-location-target": "input",
+                    "data-action": "input->location#updateLocationList blur->location#handleBlur" } %>
+                  <!-- Hidden input for location ID -->
+                  <%= f.hidden_field :location_id, id: "event_location_id" %>
+                  <!-- List of filtered locations -->
+                  <%# <ul data-location-target="locationList" data-locations='<%= raw @user.locations.to_json %>
+                  <%# ' class="d-none"> %>
+                  <ul data-location-target="locationList"
+                    data-locations="<%= @locations.to_json %>"
+                    class="d-none">
+                    <!-- Dynamically populated by the controller -->
+                  </ul>
+                </div>
                 <!-- Checkbox to toggle custom capacities -->
                 <%= f.input :price, placeholder: "Leave blank to use event price",
               value: @event_instance&.price || @event.price %>

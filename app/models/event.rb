@@ -74,6 +74,7 @@ class Event < ApplicationRecord
       instance.start_time = start_datetime
       instance.end_time = start_datetime + (self.duration || 0).minutes
       instance.date = parsed_date
+      instance.location_id = self.location_id
 
       if instance.save
         Rails.logger.info("Event instance saved successfully with start_time: #{instance.start_time}")
@@ -115,7 +116,8 @@ class Event < ApplicationRecord
     event_instances.create!(
       date: date,
       start_time: start_time_utc,
-      cancellation_policy_duration: cancellation_policy_duration
+      cancellation_policy_duration: cancellation_policy_duration,
+      location_id: location_id
     )
 
     end
@@ -163,7 +165,8 @@ class Event < ApplicationRecord
         start_time: start_time_utc,
         end_time: start_time_utc + self.duration.minutes,
         date: parsed_date,
-        cancellation_policy_duration: cancellation_policy_duration
+        cancellation_policy_duration: cancellation_policy_duration,
+        location_id: location_id
       )
     rescue JSON::ParserError
       self.errors.add(:custom_dates, "Invalid format for custom dates.")

@@ -18,7 +18,7 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :videos, dependent: :destroy
-  has_many :locations
+  has_and_belongs_to_many :locations
 
   has_one_attached :photo
 

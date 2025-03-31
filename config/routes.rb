@@ -43,8 +43,16 @@ Rails.application.routes.draw do
     end
   end
 
-    # locations routes
-    resources :locations
+   # locations routes
+   resources :locations
+
+  #  ---------for autocomplete------------
+    # # locations routes
+    # resources :locations do
+    #   collection do
+    #     get :autocomplete
+    #   end
+    # end
 
     # booking routes
     resources :bookings, only: [:index, :destroy] do
