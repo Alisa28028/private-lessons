@@ -21,8 +21,13 @@ class EventsController < ApplicationController
   def new
     @event = Event.new
     @locations = current_user.locations
-    @event.event_instances.build if @event.event_instances.empty?
+    Rails.logger.debug "User's locations: #{@locations.inspect}"
 
+    # Map the locations to a simpler format, extracting only the 'id' and 'name' attributes
+  @location_data = @locations.map { |location| { id: location.id, name: location.name } }
+    Rails.logger.debug "User's location data: #{@location_data.inspect}"
+
+  @event.event_instances.build if @event.event_instances.empty?
     # @locations = Location.all.map(&:name)
     # if params[:start_time].present? && params[:end_time].present?
     #   @studiolist = StudioFetcher.fetch_studiolist(params[:start_time], params[:end_time])
@@ -94,25 +99,31 @@ class EventsController < ApplicationController
     if params[:event][:location_name].present?
       location_name = params[:event][:location_name]
 
-      # Find the location or create a new one and associate it with the current user
-      location = Location.find_or_create_by(name: location_name) do |loc|
-        loc.user_id = current_user.id  # Associate the location with the current user
-      end
+      # # Find or create the location
+      location = Location.find_or_create_by(name: location_name)
+
+      # Associate the location with the current user
+      location.users << current_user unless location.users.include?(current_user)
 
       Rails.logger.debug "Location found or created: #{location.inspect}"
 
-      # Assign the location ID to the event params
+      # Set the location ID in event params
       params[:event][:location_id] = location.id
-      Rails.logger.debug "Event Params before setting location ID: #{params[:event]}"
+       # Add location_id to event_instances_attributes
+    if params[:event][:event_instances_attributes].present?
+      params[:event][:event_instances_attributes].each do |_, event_instance_params|
+        event_instance_params[:location_id] = location.id
+      end
+    end
+      Rails.logger.debug "Location ID in Params: #{params[:event][:location_id]}"
+      Rails.logger.debug "Event Params with Location ID: #{params[:event]}"
     end
 
-
-        Rails.logger.debug "Event Params with Location ID: #{params[:event]}"
     # Initialize the event object
     @event = Event.new(event_params)
      # Now assign the Location instance to the event's location association
      @event.location = location
-    @event.capacity = params[:event][:capacity].present? ? params[:event][:capacity] : @event.default_capacity
+     @event.capacity = params[:event][:capacity].present? ? params[:event][:capacity] : @event.default_capacity
 
 
 
@@ -123,6 +134,13 @@ class EventsController < ApplicationController
 
     # Associate the current user with the event
     @event.user = current_user
+
+    # Add location_id to event instances (make sure it's added to each event instance)
+    # if params[:event][:event_instances_attributes].present?
+    #   params[:event][:event_instances_attributes].each do |_, event_instance_params|
+    #     event_instance_params[:location_id] = location.id
+    #   end
+    # end
 
     if @event.save
       handle_event_instances_creation
@@ -281,7 +299,8 @@ class EventsController < ApplicationController
     @event.event_instances.each do |instance|
       instance.update!(
         capacity: custom_capacities[instance.id.to_s].presence || @event.capacity || @event.default_capacity,
-        price: instance.price.presence || @event.price || 0
+        price: instance.price.presence || @event.price || 0,
+        location_id: @event.location_id
       )
     end
   end

@@ -1,5 +1,6 @@
 class EventInstance < ApplicationRecord
   belongs_to :event
+  belongs_to :location
   has_many :bookings
   validates :date, presence: true
   validates :start_time, presence: true
