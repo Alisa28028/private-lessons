@@ -21,8 +21,13 @@ class EventsController < ApplicationController
   def new
     @event = Event.new
     @locations = current_user.locations
-    @event.event_instances.build if @event.event_instances.empty?
+    Rails.logger.debug "User's locations: #{@locations.inspect}"
 
+    # Map the locations to a simpler format, extracting only the 'id' and 'name' attributes
+  @location_data = @locations.map { |location| { id: location.id, name: location.name } }
+    Rails.logger.debug "User's location data: #{@location_data.inspect}"
+
+  @event.event_instances.build if @event.event_instances.empty?
     # @locations = Location.all.map(&:name)
     # if params[:start_time].present? && params[:end_time].present?
     #   @studiolist = StudioFetcher.fetch_studiolist(params[:start_time], params[:end_time])

@@ -3,6 +3,34 @@
   margin: 0 auto;  /* Center the form */
 }
 
+/* Remove bullets from list items */
+[data-location-target="locationList"] {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+  background-color: rgb(210, 185, 218); /* Default background for the list */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+[data-location-target="locationList"] li {
+  padding: 8px; /* Add space around the text */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+/* Hover effect when hovering over an item */
+[data-location-target="locationList"] li:hover {
+  background-color: #b392b7; /* Hover background color */
+}
+
+/* Selected item remains highlighted */
+[data-location-target="locationList"] li.selected {
+  background-color: #b392b7; /* Selected background color */
+  border-radius: 4px;
+}
+
+
+
 /* Make the form wider on small screens */
 @media (max-width: 769px) {
   .custom-form-container {
