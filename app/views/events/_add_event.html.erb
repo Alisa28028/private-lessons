@@ -43,7 +43,7 @@
               placeholder: "Enter location...",
               "data-location-target": "input",
               "data-action":
-              "focus->location#showUserLocations  input->location#updateLocationList  blur->location#handleBlur"
+              "focus->location#showUserLocations  input->location#updateLocationList blur->location#handleBlur"
           } %>
           <!-- Hidden input for location ID -->
           <%= f.hidden_field :location_id, id: "event_location_id" %>
@@ -133,19 +133,17 @@
             <div data-controller="location">
               <!-- Location Input Field -->
               <%= f.input :location_name, label: false, input_html: {
-                placeholder: "Enter location...",
-                "data-location-target": "input",
-                "data-action": "input->location#updateLocationList blur->location#handleBlur" } %>
+              placeholder: "Enter location...",
+              "data-location-target": "input",
+              "data-action":
+              "focus->location#showUserLocations  input->location#updateLocationList blur->location#handleBlur"
+          } %>
               <!-- Hidden input for location ID -->
               <%= f.hidden_field :location_id, id: "event_location_id" %>
               <!-- List of filtered locations -->
-              <%# <ul data-location-target="locationList" data-locations='<%= raw @user.locations.to_json %>
-              <%# ' class="d-none"> %>
               <ul data-location-target="locationList"
-                data-locations="<%= @locations.to_json %>"
-                class="d-none">
-                <!-- Dynamically populated by the controller -->
-              </ul>
+      data-locations='<%= @location_data.to_json.html_safe if @location_data.present? %>'
+      class="d-none"></ul>
             </div>
             <%= f.input :price, placeholder: "Leave blank to use event price",
               value: @event_instance&.price || @event.price %>
@@ -196,19 +194,17 @@
                 <div data-controller="location">
                   <!-- Location Input Field -->
                   <%= f.input :location_name, label: false, input_html: {
-                    placeholder: "Enter location...",
-                    "data-location-target": "input",
-                    "data-action": "input->location#updateLocationList blur->location#handleBlur" } %>
+              placeholder: "Enter location...",
+              "data-location-target": "input",
+              "data-action":
+              "focus->location#showUserLocations  input->location#updateLocationList blur->location#handleBlur"
+          } %>
                   <!-- Hidden input for location ID -->
                   <%= f.hidden_field :location_id, id: "event_location_id" %>
                   <!-- List of filtered locations -->
-                  <%# <ul data-location-target="locationList" data-locations='<%= raw @user.locations.to_json %>
-                  <%# ' class="d-none"> %>
                   <ul data-location-target="locationList"
-                    data-locations="<%= @locations.to_json %>"
-                    class="d-none">
-                    <!-- Dynamically populated by the controller -->
-                  </ul>
+      data-locations='<%= @location_data.to_json.html_safe if @location_data.present? %>'
+      class="d-none"></ul>
                 </div>
                 <!-- Checkbox to toggle custom capacities -->
                 <%= f.input :price, placeholder: "Leave blank to use event price",

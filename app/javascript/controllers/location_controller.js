@@ -33,13 +33,13 @@ export default class extends Controller {
       li.textContent = location.name;  // Set the location name
 
       // Add hover effect (mouseenter and mouseleave)
-    li.addEventListener('mouseenter', () => {
-      li.style.backgroundColor = 'lightgray'; // Change color on hover
-  });
+      li.addEventListener('mouseenter', () => {
+        li.style.backgroundColor = 'lightgray'; // Change color on hover
+      });
 
-  li.addEventListener('mouseleave', () => {
-      li.style.backgroundColor = ''; // Reset color on mouse leave
-  });
+      li.addEventListener('mouseleave', () => {
+        li.style.backgroundColor = ''; // Reset color on mouse leave
+      });
 
       // Add click event listener to each list item
       li.addEventListener('click', () => {
