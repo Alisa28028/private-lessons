@@ -6,6 +6,11 @@ export default class extends Controller {
   connect() {
     console.log("location controller connected!");
     console.log("Location List Target:", this.locationListTarget);
+
+    // If the location input already has a value (on page load), we can populate the list
+    if (this.inputTarget.value.length > 0) {
+      this.fetchLocationSuggestions(this.inputTarget.value);  // Fetch matching locations
+    }
   }
 
   showUserLocations() {

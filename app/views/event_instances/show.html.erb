@@ -19,7 +19,9 @@
   </div>
   <!-- Cover Image and Instructor Name-->
   <div class="row mt-2 mx-auto">
-    <% if @event.photos.attached? %>
+    <% if @event_instance.photos.attached? %>
+      <%= cl_image_tag(@event_instance.photos.first.key, width: 450, height: 150, crop: "fill", radius: 10) %>
+    <% elsif @event.photos.attached? %>
       <%= cl_image_tag(@event.photos.first.key, width: 450, height: 150, crop: "fill", radius: 10) %>
     <% else %>
       <%= image_tag "sexy_lady.jpg", style: "width: 100%; height: 100%; object-fit: cover; display: block;", alt: "Default Photo"  %>
@@ -40,8 +42,9 @@
   </div>
   <!-- Description Row -->
   <div class="flex row rounded-4 px-2 bg-warning shadow mt-3">
-    <p class="mb-0 mt-3"><strong>Time: </strong>
-      <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%D at %H:%M %p") %>
+    <p class="mb-0 mt-3"><strong>Date and Time: </strong>
+      <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%B %d, %Y at %H:%M")
+ %>
     </p>
     <p><strong>Location: </strong>
       <% if @event_instance.location.present? %>
@@ -51,18 +54,25 @@
     <% else %>
       <p>No location yet</p>
     <% end %>
-    <p><%= @event.description %></p>
+    <p><strong>Description: </strong><%= @event.description %></p>
     <% if @event.event_instances.any? %>
       <% if @event.event_instances.first.cancellation_policy_duration != nil %>
-        <p> cancellation policy:
+        <p><strong>Cancellation policy: </strong>
           <%= @event.event_instances.first.cancellation_policy_duration %>
           hours before event starts</p>
       <% else %>
-        <p> cancellation policy: not provided</p>
+        <p class="mb-0"> Cancellation policy: not provided</p>
       <% end %>
     <% end %>
     <% if @event.event_instances.any? %>
-      <p>capacity:<%= @event.capacity %></p>
+      <p><strong>Capacity: </strong><%= @event_instance.capacity %></p>
+    <% end %>
+    <% if @event_instance.price_cents.present? && @event_instance.price_cents > 0 %>
+      <p><strong>Price: </strong><%= number_to_currency(@event_instance.price_cents, unit: "¥", delimiter: ",", precision: 0) %></p>
+    <% elsif @event.price_cents.present? && @event.price_cents > 0 %>
+      <p><strong>Price: </strong><%= number_to_currency(@event.price_cents, unit: "¥", delimiter: ",", precision: 0) %></p>
+    <% else %>
+      <p><strong>Price: </strong>¥0</p>
     <% end %>
   </div>
   <!-- Button Row -->

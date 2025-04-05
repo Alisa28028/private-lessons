@@ -31,16 +31,54 @@ class EventInstancesController < ApplicationController
   end
 
   def edit
+    @event_instance = EventInstance.find(params[:id])
     @event = @event_instance.event
+    @event_instance.start_time = @event_instance.start_time.in_time_zone('Asia/Tokyo') if @event_instance.start_time.present?
+
   end
 
+  # def update
+  #   if @event_instance.update(event_instance_params)
+  #     redirect_to event_path(@event_instance.event), notice: "Event sucessfully updated."
+  #   else
+  #     render :edit, status: :unprocessable_entity
+  #   end
+  # end
+
   def update
-    if @event_instance.update(event_instance_params)
-      redirect_to event_path(@event_instance.event), notice: "Event sucessfully updated."
-    else
-      render :edit,  status: :unprocessable_entity
+    @event_instance = EventInstance.find(params[:id])
+    @event = @event_instance.event # Fetch the associated event
+
+      # Check if location was provided as a string, and if so, assign the corresponding Location object
+    if params[:event_instance][:location_id].present?
+      # location = Location.find_by(name: params[:event_instance][:location])
+      # @event_instance.location = location if location
+      @event_instance.location = Location.find(params[:event_instance][:location_id])
     end
-  end
+    # Begin a transaction to ensure both the EventInstance and Event are updated together
+    ActiveRecord::Base.transaction do
+      # Handle the start_time conversion if it's being updated
+      if params[:event_instance][:start_time].present?
+        # Convert the start_time to Asia/Tokyo time if necessary
+        @event_instance.start_time = params[:event_instance][:start_time].in_time_zone('Asia/Tokyo')
+      end
+
+      # Update the EventInstance with the new parameters
+      if @event_instance.update(event_instance_params)
+        Rails.logger.debug "EventInstance after update: #{@event_instance.inspect}"
+
+        # Only update the event's attributes if the event_instance is updated successfully
+        if @event.update(event_params)
+          # Redirect to the event instance page if both are successful
+          redirect_to @event_instance, notice: 'Event instance successfully updated.'
+        else
+          render :edit, alert: 'Failed to update event.'
+        end
+      else
+        render :edit, alert: 'Failed to update event instance.'
+      end
+    end
+
 
   def destroy
     @event_instance = EventInstance.find_by(id: params[:id])
@@ -67,6 +105,7 @@ class EventInstancesController < ApplicationController
       redirect_to root_path, notice: notice_message # Fallback in case event was nil
     end
   end
+end
 
 
   private
@@ -77,6 +116,19 @@ class EventInstancesController < ApplicationController
   end
 
   def event_instance_params
-    params.require(:event_instance).permit(:date, :start_time, :end_time, :capacity, :duration, :price, :cancellation_policy_duration)
+    params.require(:event_instance).permit(
+      :start_time, :end_time, :start_date, :end_date, :duration, :capacity, :price, :cancellation_policy_duration,
+      :location_id, :location,
+      photos: [],
+      videos: [],
+      # Nested attributes for event
+      event_attributes: [:id, :title, :description, :location]
+    )
+  end
+
+  def event_params
+    params.require(:event_instance).permit(
+      event_attributes: [:id, :title, :description, :location_id]  # Add other attributes you want to permit
+    )[:event_attributes]  # Extract the `event_attributes` hash from the params
   end
 end
