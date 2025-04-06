@@ -11,7 +11,7 @@
   <%# </div> %>
   <%# <% end %>
   <div class="container d-flex justify-content-center mt-6 mb-6">
-    <%= simple_form_for @event_instance, html: { multipart: true } do |f| %>
+    <%= simple_form_for @event_instance, html: { multipart: true, data: { controller: "file-preview" } } do |f| %>
       <div>
         <!-- Nested form for the associated event -->
         <%= f.fields_for :event do |event_fields| %>
@@ -29,11 +29,27 @@
         <%= f.input :price %>
       </div>
       <!-- File upload fields -->
-      <div class="form-group mb-8">
-        <%= f.input :photos, as: :file, input_html: { multiple: true } %>
+      <div class="form-group">
+        <%= f.label :photos, "Photo" %>
+        <!-- Display current photo or default image if none is attached -->
+        <div id="current-photo">
+          <% if @event_instance.photos.attached? %>
+            <%= image_tag @event_instance.photos.first, style: "width: 100px; height: auto; object-fit: cover;" %>
+          <% elsif %>
+            <%= image_tag @event.photos.first, style: "width: 100px; height: auto; object-fit: cover;" %>
+          <% else %>
+            <%= image_tag "sexy_lady.jpg", style: "width: 100px; height: auto; object-fit: cover;", alt: "Default Photo" %>
+          <% end %>
+          <!-- File input for new photo -->
+          <!-- Preview the new photo here -->
+        </div>
+        <div id="photo-previews" data-target="file-preview.photosPreview" style="display: flex; margin-top: 10px; margin-bottom: 10px;"></div>
+        <%= f.input :photos, label: false, as: :file, input_html: { multiple: true, data: { target: "file-preview.photosInput", action: "change->file-preview#showPhotoPreviews" } } %>
       </div>
-      <div class="form-group mb-8">
-        <%= f.input :videos, as: :file, input_html: { multiple: true } %>
+      <div class="form-group mt-3">
+        <%= f.label :videos, "Upload Videos" %>
+        <%= f.input :videos, as: :file, input_html: { multiple: true, data: { target: "file-preview.videosInput", action: "change->file-preview#showVideoPreviews" } } %>
+        <div id="video-previews" data-target="file-preview.videosPreview" style="margin-top: 10px;"></div>
       </div>
       <!-- Conditional fields for different event recurrence types -->
       <% if @event.recurrence_type == 'one-time' %>

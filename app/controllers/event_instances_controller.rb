@@ -6,6 +6,7 @@ class EventInstancesController < ApplicationController
   def new
     @event_instance = EventInstance.new
     @event = Event.find(params[:event_id])
+    @event_photos = @event.photos
   end
 
   def home
@@ -48,6 +49,13 @@ class EventInstancesController < ApplicationController
   def update
     @event_instance = EventInstance.find(params[:id])
     @event = @event_instance.event # Fetch the associated event
+
+
+    # Handle photo upload, ensuring that new photos are added to existing ones
+    if params[:event_instance][:photos].present?
+      # Append new photos to existing ones
+      @event_instance.photos.attach(params[:event_instance][:photos])
+    end
 
       # Check if location was provided as a string, and if so, assign the corresponding Location object
     if params[:event_instance][:location_id].present?

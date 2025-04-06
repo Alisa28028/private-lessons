@@ -17,9 +17,15 @@ class EventInstance < ApplicationRecord
 
 
   before_validation :apply_default_cancellation_policy
+  # Set default price from event if price is not provided for event instance
+  before_validation :set_default_price, on: :create
 
   def apply_default_cancellation_policy
     self.cancellation_policy_duration ||= event.cancellation_policy_duration
+  end
+
+  def set_default_price
+    self.price_cents ||= event.price_cents if event
   end
 
   before_save :set_end_time_from_duration
