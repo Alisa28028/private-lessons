@@ -11,7 +11,7 @@
   <%# </div> %>
   <%# <% end %>
   <div class="container d-flex justify-content-center mt-6 mb-6">
-    <%= simple_form_for @event_instance, html: { multipart: true, data: { controller: "file-preview" } } do |f| %>
+    <%= simple_form_for @event_instance, html: { multipart: true, data: { controller: "file-preview edit-form" } } do |f| %>
       <div>
         <!-- Nested form for the associated event -->
         <%= f.fields_for :event do |event_fields| %>
@@ -22,11 +22,43 @@
         <% end %>
       </div>
       <!-- Common fields for the event instance -->
+      <div data-controller="location">
+        <!-- Current Location (Display as text) -->
+        <div>
+          <strong>Current Location:</strong>
+          <span><%= @event_instance.location&.name || "No location assigned" %></span>
+        </div>
+        <!-- Existing Locations to Choose From -->
+        <div>
+          <strong>Choose a different Location:</strong>
+          <!-- Input field for choosing a location with a target for Stimulus -->
+          <%= f.input :location_id, as: :select, collection: Location.all.collect { |l| [l.name, l.id] }, label: false, input_html: { "data-location-target": "input" } %>
+        </div>
+        <!-- List of Locations (hidden by default) -->
+        <ul data-location-target="locationList" class="d-none">
+          <% Location.all.each do |location| %>
+            <li><%= location.name %></li>
+          <% end %>
+        </ul>
+        <!-- Button to Show New Location Input -->
+        <div>
+          <button type="button" data-action="click->location#showNewLocationForm">Create New Location</button>
+        </div>
+        <!-- New Location Input Form (Initially hidden) -->
+        <div data-location-target="newLocationForm" style="display: none;">
+          <%= f.input :location_name, label: "New Location", input_html: { placeholder: "Enter new location name", "data-location-target": "newLocationInput" } %>
+        </div>
+        <!-- Hidden Location ID Input -->
+        <%= f.hidden_field :location_id, id: "event_location_id" %>
+      </div>
       <div class="form-group">
         <%= f.input :capacity %>
       </div>
       <div class="form-group">
         <%= f.input :price %>
+      </div>
+      <div class="form-group">
+        <%= f.input :cancellation_policy_duration %>
       </div>
       <!-- File upload fields -->
       <div class="form-group">
@@ -43,108 +75,14 @@
           <!-- File input for new photo -->
           <!-- Preview the new photo here -->
         </div>
-        <div id="photo-previews" data-target="file-preview.photosPreview" style="display: flex; margin-top: 10px; margin-bottom: 10px;"></div>
+        <div id="photo-previews" data-file-preview-target="photosPreview" style="display: flex; margin-top: 10px; margin-bottom: 10px;"></div>
         <%= f.input :photos, label: false, as: :file, input_html: { multiple: true, data: { target: "file-preview.photosInput", action: "change->file-preview#showPhotoPreviews" } } %>
       </div>
       <div class="form-group mt-3">
-        <%= f.label :videos, "Upload Videos" %>
+        <%# <%= f.label :videos, "Upload Videos" %>
         <%= f.input :videos, as: :file, input_html: { multiple: true, data: { target: "file-preview.videosInput", action: "change->file-preview#showVideoPreviews" } } %>
         <div id="video-previews" data-target="file-preview.videosPreview" style="margin-top: 10px;"></div>
       </div>
-      <!-- Conditional fields for different event recurrence types -->
-      <% if @event.recurrence_type == 'one-time' %>
-        <!-- Single Event Fields (e.g., Date and Time) -->
-        <%= f.hidden_field :start_time, id: "event_start_time" %>
-        <%= f.hidden_field :start_date, id: "event_start_date" %>
-        <p>
-          <strong>Event Start Date:</strong>
-          <%= @event_instance.start_time.in_time_zone('Asia/Tokyo').strftime('%B %d, %Y') %>
-          <%= link_to 'Edit Date', '#', class: 'edit-date-btn' %>
-        </p>
-        <div id="edit-date-form" style="display:none;">
-          <%= f.input :start_time, as: :date, label: "New Date", input_html: { data: { datepicker_target: "start", action: "change->datepicker#initFlatpickrSingle" } } %>
-          <%= f.submit 'Save Date' %>
-        </div>
-        <p>
-          <strong>Event Start Time:</strong>
-          <%= @event_instance.start_time.in_time_zone('Asia/Tokyo').strftime('%H:%M') %>
-          <%= link_to 'Edit Time', '#', class: 'edit-time-btn' %>
-        </p>
-        <div id="edit-time-form" style="display:none;">
-          <%= f.input :start_time, as: :time, label: "New Time", input_html: { data: { datepicker_target: "start", action: "change->datepicker#initTimePicker" } } %>
-          <%= f.submit 'Save Time' %>
-        </div>
-        <!-- JavaScript for showing and hiding the edit forms -->
-        <script>
-          document.addEventListener("DOMContentLoaded", function() {
-            // Show or hide the edit date form
-            document.querySelector(".edit-date-btn").addEventListener("click", function(event) {
-              event.preventDefault();
-              document.getElementById("edit-date-form").style.display = "block";
-              document.getElementById("edit-time-form").style.display = "none"; // Hide time form
-              initializeDatepicker(); // Initialize Flatpickr for the date input when the form is shown
-            });
-
-            // Show or hide the edit time form
-            document.querySelector(".edit-time-btn").addEventListener("click", function(event) {
-              event.preventDefault();
-              document.getElementById("edit-time-form").style.display = "block";
-              document.getElementById("edit-date-form").style.display = "none"; // Hide date form
-              initializeTimepicker(); // Initialize Flatpickr for the time input when the form is shown
-            });
-          });
-
-          // Function to initialize Flatpickr for the date input
-          function initializeDatepicker() {
-            const dateInput = document.querySelector("[data-datepicker-target='eventDate']");
-            if (dateInput && !dateInput._flatpickr) { // Avoid initializing more than once
-              flatpickr(dateInput, {
-                dateFormat: "Y-m-d",
-                minDate: "today", // Disable past dates
-                onChange: function(selectedDates) {
-                  const selectedDate = selectedDates[0] ? selectedDates[0].toISOString().split("T")[0] : "";
-                  document.getElementById("event_start_date").value = selectedDate;  // Update hidden date field
-                }
-              });
-            }
-          }
-
-          // Function to initialize Flatpickr for the time input
-          function initializeTimepicker() {
-            const timeInput = document.querySelector("[data-datepicker-target='eventTime']");
-            if (timeInput && !timeInput._flatpickr) { // Avoid initializing more than once
-              flatpickr(timeInput, {
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i",
-                onChange: function(selectedDates) {
-                  const selectedTime = selectedDates[0] ? selectedDates[0].toTimeString().split(" ")[0] : "";
-                  document.getElementById("event_start_time").value = selectedTime;  // Update hidden time field
-                }
-              });
-            }
-          }
-        </script>
-      <% elsif @event.recurrence_type == 'every-week' %>
-        <!-- Weekly Event Fields -->
-        <div class="form-group">
-          <%= f.input :start_date, as: :string, input_html: { data: { datepicker_target: "start", action: "change->datepicker#fetchStudios" } } %>
-        </div>
-        <div class="form-group">
-          <%= f.input :end_date, as: :string, input_html: { data: { datepicker_target: "end", action: "change->datepicker#fetchStudios" } } %>
-        </div>
-      <% elsif @event.recurrence_type == 'custom-dates' %>
-        <!-- Custom Event Fields -->
-        <div class="form-group">
-          <%= f.input :custom_start_date, as: :string, input_html: { data: { datepicker_target: "start", action: "change->datepicker#fetchStudios" } } %>
-        </div>
-        <div class="form-group">
-          <%= f.input :custom_end_date, as: :string, input_html: { data: { datepicker_target: "end", action: "change->datepicker#fetchStudios" } } %>
-        </div>
-        <div class="form-group">
-          <%= f.input :additional_notes, as: :text, label: "Additional Notes (for custom events)" %>
-        </div>
-      <% end %>
       <!-- Submit Button -->
       <%= f.submit "Save Changes", class: "btn btn-custom my-3 btn-right" %>
     <% end %>

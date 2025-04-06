@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "locationList"]
+  static targets = ["input", "locationList", "newLocationForm", "newLocationInput"]
 
   connect() {
     console.log("location controller connected!");
@@ -159,6 +159,11 @@ export default class extends Controller {
     setTimeout(() => {
         this.clearLocationList();
     }, 200);  // Adjust the delay (in milliseconds) as needed
+}
+
+// Show the form to create a new location
+showNewLocationForm() {
+  this.newLocationFormTarget.style.display = 'block';
 }
 
 }

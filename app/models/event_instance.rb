@@ -11,6 +11,8 @@ class EventInstance < ApplicationRecord
   has_many_attached :photos
   has_many_attached :videos
 
+  attr_accessor :location_name
+
   # validates :capacity
   # validates :price
   # validates :duration

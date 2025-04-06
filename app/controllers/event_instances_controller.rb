@@ -18,6 +18,15 @@ class EventInstancesController < ApplicationController
     @event = Event.find(params[:event_id])
     @event_instance.event = @event
 
+    # if params[:add_new_location] == 'true' && params[:event_instance][:new_location_name].present?
+    #   # Create a new location if the user entered a new location name
+    #   new_location = Location.create(name: params[:event_instance][:new_location_name])
+    #   @event_instance.location = new_location
+    # else
+    #   # Assign an existing location if selected
+    #   @event_instance.location_id = params[:event_instance][:location_id]
+    # end
+
     if @event_instance.save
       redirect_to event_path(@event), notice: "Event(s) successfully created."
     else
@@ -35,6 +44,8 @@ class EventInstancesController < ApplicationController
     @event_instance = EventInstance.find(params[:id])
     @event = @event_instance.event
     @event_instance.start_time = @event_instance.start_time.in_time_zone('Asia/Tokyo') if @event_instance.start_time.present?
+    # Set the location_name to the name of the associated location
+    @event_instance.location_name = @event_instance.location&.name
 
   end
 
@@ -50,6 +61,14 @@ class EventInstancesController < ApplicationController
     @event_instance = EventInstance.find(params[:id])
     @event = @event_instance.event # Fetch the associated event
 
+    # Check if location was provided, either via location_id or location_name
+  if params[:event_instance][:location_id].present?
+    @event_instance.location = Location.find(params[:event_instance][:location_id])
+  elsif params[:event_instance][:location_name].present?
+    # If a new location name was provided, find or create the location and associate it
+    location = Location.find_or_create_by(name: params[:event_instance][:location_name])
+    @event_instance.location = location
+  end
 
     # Handle photo upload, ensuring that new photos are added to existing ones
     if params[:event_instance][:photos].present?
@@ -57,12 +76,7 @@ class EventInstancesController < ApplicationController
       @event_instance.photos.attach(params[:event_instance][:photos])
     end
 
-      # Check if location was provided as a string, and if so, assign the corresponding Location object
-    if params[:event_instance][:location_id].present?
-      # location = Location.find_by(name: params[:event_instance][:location])
-      # @event_instance.location = location if location
-      @event_instance.location = Location.find(params[:event_instance][:location_id])
-    end
+
     # Begin a transaction to ensure both the EventInstance and Event are updated together
     ActiveRecord::Base.transaction do
       # Handle the start_time conversion if it's being updated
@@ -126,17 +140,15 @@ end
   def event_instance_params
     params.require(:event_instance).permit(
       :start_time, :end_time, :start_date, :end_date, :duration, :capacity, :price, :cancellation_policy_duration,
-      :location_id, :location,
+      :location_id, :location_name,  # Permit location_id and location_name here
       photos: [],
-      videos: [],
-      # Nested attributes for event
-      event_attributes: [:id, :title, :description, :location]
+      videos: []
     )
   end
 
   def event_params
     params.require(:event_instance).permit(
-      event_attributes: [:id, :title, :description, :location_id]  # Add other attributes you want to permit
+      event_attributes: [:id, :title, :description, :location_id, :location_name]  # Permit location_id and location_name here too if updating Event attributes
     )[:event_attributes]  # Extract the `event_attributes` hash from the params
   end
 end
