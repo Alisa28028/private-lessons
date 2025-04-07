@@ -44,8 +44,11 @@ class Event < ApplicationRecord
   }
 
   monetize :price_cents
+  # Callbacks to set price for all event instances
+  after_create :set_price_for_all_instances
 
   after_initialize :set_default_cancellation_policy, if: :new_record?
+  after_update :update_event_instance_prices
 
   def set_default_cancellation_policy
     self.cancellation_policy_duration ||= 24
@@ -75,6 +78,7 @@ class Event < ApplicationRecord
       instance.end_time = start_datetime + (self.duration || 0).minutes
       instance.date = parsed_date
       instance.location_id = self.location_id
+      instance.price_cents = self.price_cents
 
       if instance.save
         Rails.logger.info("Event instance saved successfully with start_time: #{instance.start_time}")
@@ -117,7 +121,8 @@ class Event < ApplicationRecord
       date: date,
       start_time: start_time_utc,
       cancellation_policy_duration: cancellation_policy_duration,
-      location_id: location_id
+      location_id: location_id,
+      price_cents: price_cents
     )
 
     end
@@ -166,7 +171,8 @@ class Event < ApplicationRecord
         end_time: start_time_utc + self.duration.minutes,
         date: parsed_date,
         cancellation_policy_duration: cancellation_policy_duration,
-        location_id: location_id
+        location_id: location_id,
+        price_cents: price_cents
       )
     rescue JSON::ParserError
       self.errors.add(:custom_dates, "Invalid format for custom dates.")
@@ -187,6 +193,20 @@ def set_location
     # Find or create a location by name
     location = Location.find_or_create_by(name: location_name)
     self.location = location
+  end
+end
+
+def set_price_for_all_instances
+  # Update all EventInstances that do not have a price
+  event_instances.where(price_cents: nil).each do |instance|
+    instance.update(price_cents: self.price_cents)
+  end
+end
+
+def update_event_instance_prices
+  # Only apply the price update if the event price has changed
+  if saved_change_to_price_cents? # This checks if the price has changed
+    event_instances.where(price_cents: nil).update_all(price_cents: self.price_cents)
   end
 end
 

@@ -21,18 +21,31 @@ class LocationsController < ApplicationController
   end
 
   def create
-    # @location = current_user.locations.build(location_params)
     @location = Location.new(location_params)
     @location.users << current_user
 
     if @location.save
-      redirect_to @location
-      # render json: { success: true, location: location }, status: :created
+      # Instead of redirecting, send back the location ID and name as JSON
+      render json: { location_id: @location.id, location_name: @location.name }, status: :created
     else
-      render :new
-      # render json: { success: false, errors: location.errors.full_messages }, status: :unprocessable_entity
+      # If there's an error, send the error messages back as JSON
+      render json: { success: false, errors: @location.errors.full_messages }, status: :unprocessable_entity
     end
   end
+
+  # def create
+  #   # @location = current_user.locations.build(location_params)
+  #   @location = Location.new(location_params)
+  #   @location.users << current_user
+
+  #   if @location.save
+  #     redirect_to @location
+  #     # render json: { success: true, location: location }, status: :created
+  #   else
+  #     render :new
+  #     # render json: { success: false, errors: location.errors.full_messages }, status: :unprocessable_entity
+  #   end
+  # end
 
   # def autocomplete
   #   query = params[:query]

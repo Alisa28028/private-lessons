@@ -1,21 +1,33 @@
 class EventInstance < ApplicationRecord
   belongs_to :event
-  belongs_to :location
+  belongs_to :location, optional: true
   has_many :bookings
   validates :date, presence: true
   validates :start_time, presence: true
   # validates :cancellation_policy_duration, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   has_many :videos, dependent: :destroy
   monetize :price_cents, allow_nil: true
+  accepts_nested_attributes_for :event
+  has_many_attached :photos
+  has_many_attached :videos
+
+  attr_accessor :location_name
+
   # validates :capacity
   # validates :price
   # validates :duration
 
 
   before_validation :apply_default_cancellation_policy
+  # Set default price from event if price is not provided for event instance
+  before_validation :set_default_price, on: :create
 
   def apply_default_cancellation_policy
     self.cancellation_policy_duration ||= event.cancellation_policy_duration
+  end
+
+  def set_default_price
+    self.price_cents ||= event.price_cents if event
   end
 
   before_save :set_end_time_from_duration

@@ -1,64 +1,94 @@
-<div class="container d-flex justify-content-center mt-6 mb-6">
-  <div data-controller="datepicker">
-    <!-- Displaying validations for errors -->
-    <% if @event_instance.errors.any? %>
-      <div class="alert alert-danger">
-        <h4>There are errors with your submission:</h4>
-        <ul>
-          <% @event_instance.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
+  <%# <div data-controller="datepicker">
+  <!-- Displaying validations for errors -->
+  <% if @event_instance.errors.any? %>
+<%# <div class="alert alert-danger">
+    <h4>There are errors with your submission:</h4>
+    <ul>
+      <% @event_instance.errors.full_messages.each do |msg| %>
+  <%# <li><%= msg</li>  %>
+  <%# <% end %>
+  <%# </ul> %>
+  <%# </div> %>
+  <%# <% end %>
+  <div class="container d-flex justify-content-center mt-6 mb-6">
+    <%= simple_form_for @event_instance, html: { multipart: true, data: { controller: "file-preview edit-form" } } do |f| %>
+      <div>
+        <!-- Nested form for the associated event -->
+        <%= f.fields_for :event do |event_fields| %>
+          <%= event_fields.input :title, label: "Event Title", input_html: { placeholder: "Event title (this will apply to all instances)" } %>
+          <%= event_fields.input :description, label: "Description", input_html: { placeholder: "Description (this will apply to all instances)" } %>
+          <!-- Hidden field for location, if needed later -->
+          <%# <%= event_fields.input :location_id, as: :hidden %>
+        <% end %>
+      </div>
+      <!-- Common fields for the event instance -->
+      <div data-controller="location">
+        <!-- Current Location (Display as text) -->
+        <div>
+          <strong>Current Location:</strong>
+          <span><%= @event_instance.location&.name || "No location assigned" %></span>
+        </div>
+        <!-- Existing Locations to Choose From -->
+        <div>
+          <strong>Choose a different Location:</strong>
+          <!-- Input field for choosing a location with a target for Stimulus -->
+          <%= f.input :location_id, as: :select, collection: Location.all.collect { |l| [l.name, l.id] }, label: false, input_html: { "data-location-target": "input" } %>
+        </div>
+        <!-- List of Locations (hidden by default) -->
+        <ul data-location-target="locationList" class="d-none">
+          <% Location.all.each do |location| %>
+            <li><%= location.name %></li>
           <% end %>
         </ul>
+        <!-- Button to Show New Location Input -->
+        <div>
+          <div data-location-target="locationSavedMessage" style="display: none;">
+            <p>Location Saved!</p>
+          </div>
+          <button type="button" data-action="click->location#showNewLocationForm">Create New Location</button>
+        </div>
+        <!-- New Location Input Form (Initially hidden) -->
+        <div data-location-target="newLocationForm" style="display: none;">
+          <%= f.input :location_name, label: false, input_html: { placeholder: "Enter new location name", id: "new_location_name", "data-location-target": "newLocationInput" } %>
+          <button type="button" data-action="click->location#saveLocation", data-location-target="saveLocationButton", style="display: none;">Save Location</button>  <!-- Save Location button -->
+          <button type="button" data-action="click->location#cancelNewLocationForm", data-location-target="cancelButton">Cancel</button>
+        </div>
+        <!-- Hidden Location ID Input -->
+        <%# <%= f.hidden_field :location_id, id: "event_location_id" %>
       </div>
+      <div class="form-group">
+        <%= f.input :capacity %>
+      </div>
+      <div class="form-group">
+        <%= f.input :price %>
+      </div>
+      <div class="form-group">
+        <%= f.input :cancellation_policy_duration %>
+      </div>
+      <!-- File upload fields -->
+      <div class="form-group">
+        <%= f.label :photos, "Photo" %>
+        <!-- Display current photo or default image if none is attached -->
+        <div id="current-photo">
+          <% if @event_instance.photos.attached? %>
+            <%= image_tag @event_instance.photos.first, style: "width: 100px; height: auto; object-fit: cover;" %>
+          <% elsif @event.photos.first %>
+            <%= image_tag @event.photos.first, style: "width: 100px; height: auto; object-fit: cover;" %>
+          <% else %>
+            <%= image_tag "sexy_lady.jpg", style: "width: 100px; height: auto; object-fit: cover;", alt: "Default Photo" %>
+          <% end %>
+          <!-- File input for new photo -->
+          <!-- Preview the new photo here -->
+        </div>
+        <div id="photo-previews" data-file-preview-target="photosPreview" style="display: flex; margin-top: 10px; margin-bottom: 10px;"></div>
+        <%= f.input :photos, label: false, as: :file, input_html: { multiple: true, data: { target: "file-preview.photosInput", action: "change->file-preview#showPhotoPreviews" } } %>
+      </div>
+      <%# <div class="form-group mt-3">
+        <%# <%= f.label :videos, "Upload Videos" %>
+      <%# <%= f.input :videos, as: :file, input_html: { multiple: true, data: { target: "file-preview.videosInput", action: "change->file-preview#showVideoPreviews" } } %>
+      <%# <div id="video-previews" data-file-preview-target="videosPreview" style="margin-top: 10px;"></div> %>
+      <%# </div> %>
+      <!-- Submit Button -->
+      <%= f.submit "Save Changes", class: "btn btn-custom my-3 btn-right" %>
     <% end %>
-    <%= simple_form_for @event, html: { multipart: true } do |f| %>
-      <div>
-        <%= f.input :title, label: "Title", input_html: { placeholder: "Title..." } %>
-        <%= f.input :description, label: "Description", input_html: { placeholder: "Describe your event..." } %>
-        <%= f.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (hours)", input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
-      <% end %>
-    </div>
-    <%= simple_form_for @event_instance do |f| %>
-      <!-- Manually adding datetime-local input for end_date -->
-      <div class="form-group">
-        <%= f.input :start_date,
-            as: :string,
-            input_html: { data: { datepicker_target: "start", action: "change->datepicker#fetchStudios" } } %>
-      </div>
-      <!-- Manually adding datetime-local input for end_date -->
-      <div class="form-group">
-        <%= f.input :end_date,
-            as: :string,
-            input_html: { data: { datepicker_target: "end", action: "change->datepicker#fetchStudios" } } %>
-      </div>
-      <%= f.input :capacity %>
-      <%= f.input :price %>
-      <% if @locations.present? %>
-        <select class="form-select mb-3" name="location_name" data-datepicker-target="locationList">
-          <option value="">Choose a location</option>
-          <% @locations.each do |name| %>
-            <option value="<%= name %>" <%= "selected" if name == @event.location&.name %>><%= name %></option>
-            <% end %>
-          </select>
-        <% else %>
-          <p>No locations available. Please add some locations first.</p>
-        <% end %>
-        <!-- Add picture or video upload -->
-        <div class="form-group mb-8">
-          <%= f.input :photos, as: :file, input_html: { multiple: true } %>
-        </div>
-        <div class="form-group mb-8">
-          <%= f.input :videos, as: :file, input_html: { multiple: true } %>
-        </div>
-        <%=
-  if params[:duplicate] # On the edit page for a specific event
-    f.submit "Save Class", class: "btn btn-custom my-3 btn-right"
-  else
-    f.submit "Save Changes", class: "btn btn-custom my-3 btn-right"
-  end
-%>
-      <% end %>
-      <div id="studiolist" data-datepicker-target="list" class="container" style="margin-top: 6rem;">
-      </div>
-    </div>
   </div>
