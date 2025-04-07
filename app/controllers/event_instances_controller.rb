@@ -58,16 +58,20 @@ class EventInstancesController < ApplicationController
   # end
 
   def update
+    Rails.logger.debug "Incoming parameters: #{params.inspect}"
+
     @event_instance = EventInstance.find(params[:id])
     @event = @event_instance.event # Fetch the associated event
 
     # Check if location was provided, either via location_id or location_name
   if params[:event_instance][:location_id].present?
     @event_instance.location = Location.find(params[:event_instance][:location_id])
+    Rails.logger.debug "Using existing location with ID: #{@event_instance.location.inspect}"
   elsif params[:event_instance][:location_name].present?
     # If a new location name was provided, find or create the location and associate it
     location = Location.find_or_create_by(name: params[:event_instance][:location_name])
     @event_instance.location = location
+     Rails.logger.debug "New location created with name: #{location.inspect}"
   end
 
     # Handle photo upload, ensuring that new photos are added to existing ones
@@ -90,7 +94,7 @@ class EventInstancesController < ApplicationController
         Rails.logger.debug "EventInstance after update: #{@event_instance.inspect}"
 
         # Only update the event's attributes if the event_instance is updated successfully
-        if @event.update(event_params)
+        if @event.update(event_instance_params[:event_attributes])
           # Redirect to the event instance page if both are successful
           redirect_to @event_instance, notice: 'Event instance successfully updated.'
         else
@@ -140,15 +144,17 @@ end
   def event_instance_params
     params.require(:event_instance).permit(
       :start_time, :end_time, :start_date, :end_date, :duration, :capacity, :price, :cancellation_policy_duration,
-      :location_id, :location_name,  # Permit location_id and location_name here
+      :location_id, :location_name,
       photos: [],
-      videos: []
+      videos: [],
+      event_attributes: [:id, :title, :description, :location_id, :location_name] # Permit event attributes here
     )
   end
 
-  def event_params
-    params.require(:event_instance).permit(
-      event_attributes: [:id, :title, :description, :location_id, :location_name]  # Permit location_id and location_name here too if updating Event attributes
-    )[:event_attributes]  # Extract the `event_attributes` hash from the params
-  end
+
+  # def event_params
+  #   params.require(:event_instance).permit(
+  #     event_attributes: [:id, :title, :description, :location_id, :location_name]  # Permit location_id and location_name here too if updating Event attributes
+  #   )[:event_attributes]  # Extract the `event_attributes` hash from the params
+  # end
 end

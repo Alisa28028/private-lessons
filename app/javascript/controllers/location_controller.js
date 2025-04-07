@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "locationList", "newLocationForm", "newLocationInput"]
+  static targets = ["input", "locationList", "newLocationForm", "newLocationInput", "saveLocationButton", "cancelButton", "locationSavedMessage"]
 
   connect() {
     console.log("location controller connected!");
@@ -93,6 +93,58 @@ export default class extends Controller {
   });
   }
 
+  // Method to save the new location
+  saveLocation(event) {
+    event.preventDefault();
+
+    // Get the location name from the input field
+    const locationName = this.newLocationFormTarget.querySelector('#new_location_name').value;
+
+    // Send an AJAX request to create the location
+    fetch('/locations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content, // Ensure CSRF token is included
+      },
+      body: JSON.stringify({ location: { name: locationName } })
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Check if the response contains location_id and location_name
+        if (data.location_id && data.location_name) {
+          console.log("Location created:", data);
+
+          // Find the select dropdown and create a new option
+          const selectDropdown = this.inputTarget;  // This is the select element
+
+          // Create a new option for the select dropdown with the new location name
+          const newOption = document.createElement('option');
+          newOption.value = data.location_id;  // Set the value to the new location's ID
+          newOption.textContent = data.location_name;  // Set the text to the new location's name
+
+          // Add the new option to the select dropdown
+          selectDropdown.appendChild(newOption);
+
+          // Set the newly created location as the selected option
+          selectDropdown.value = data.location_id;
+
+          // Hide the save and cancel buttons
+          this.saveLocationButtonTarget.style.display = 'none';
+          this.cancelButtonTarget.style.display = 'none';
+          this.newLocationInputTarget.style.display = 'none';
+
+          // Show the "Location Saved" message
+          this.locationSavedMessageTarget.style.display = 'block';
+        } else {
+          console.error('Failed to save the location:', data);
+        }
+      })
+      .catch(error => {
+        console.error('Error saving location:', error);
+      });
+  }
+
   // Handle input change to filter location list
   updateLocationList(event) {
     const locationInput = event.target.value;
@@ -164,6 +216,13 @@ export default class extends Controller {
 // Show the form to create a new location
 showNewLocationForm() {
   this.newLocationFormTarget.style.display = 'block';
+// Show the save location button
+this.saveLocationButtonTarget.style.display = 'inline-block'; // or 'block', depending on your layout
 }
 
+// Cancel new location creation (if the user wants to return to selecting an existing location)
+cancelNewLocationForm() {
+  this.newLocationFormTarget.style.display = 'none';  // Hide the new location form
+  this.locationListTarget.classList.remove('d-none');  // Show the location suggestion list again
+  }
 }

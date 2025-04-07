@@ -42,14 +42,19 @@
         </ul>
         <!-- Button to Show New Location Input -->
         <div>
+          <div data-location-target="locationSavedMessage" style="display: none;">
+            <p>Location Saved!</p>
+          </div>
           <button type="button" data-action="click->location#showNewLocationForm">Create New Location</button>
         </div>
         <!-- New Location Input Form (Initially hidden) -->
         <div data-location-target="newLocationForm" style="display: none;">
-          <%= f.input :location_name, label: "New Location", input_html: { placeholder: "Enter new location name", "data-location-target": "newLocationInput" } %>
+          <%= f.input :location_name, label: false, input_html: { placeholder: "Enter new location name", id: "new_location_name", "data-location-target": "newLocationInput" } %>
+          <button type="button" data-action="click->location#saveLocation", data-location-target="saveLocationButton", style="display: none;">Save Location</button>  <!-- Save Location button -->
+          <button type="button" data-action="click->location#cancelNewLocationForm", data-location-target="cancelButton">Cancel</button>
         </div>
         <!-- Hidden Location ID Input -->
-        <%= f.hidden_field :location_id, id: "event_location_id" %>
+        <%# <%= f.hidden_field :location_id, id: "event_location_id" %>
       </div>
       <div class="form-group">
         <%= f.input :capacity %>
@@ -67,7 +72,7 @@
         <div id="current-photo">
           <% if @event_instance.photos.attached? %>
             <%= image_tag @event_instance.photos.first, style: "width: 100px; height: auto; object-fit: cover;" %>
-          <% elsif %>
+          <% elsif @event.photos.first %>
             <%= image_tag @event.photos.first, style: "width: 100px; height: auto; object-fit: cover;" %>
           <% else %>
             <%= image_tag "sexy_lady.jpg", style: "width: 100px; height: auto; object-fit: cover;", alt: "Default Photo" %>
@@ -78,11 +83,11 @@
         <div id="photo-previews" data-file-preview-target="photosPreview" style="display: flex; margin-top: 10px; margin-bottom: 10px;"></div>
         <%= f.input :photos, label: false, as: :file, input_html: { multiple: true, data: { target: "file-preview.photosInput", action: "change->file-preview#showPhotoPreviews" } } %>
       </div>
-      <div class="form-group mt-3">
+      <%# <div class="form-group mt-3">
         <%# <%= f.label :videos, "Upload Videos" %>
-        <%= f.input :videos, as: :file, input_html: { multiple: true, data: { target: "file-preview.videosInput", action: "change->file-preview#showVideoPreviews" } } %>
-        <div id="video-previews" data-target="file-preview.videosPreview" style="margin-top: 10px;"></div>
-      </div>
+      <%# <%= f.input :videos, as: :file, input_html: { multiple: true, data: { target: "file-preview.videosInput", action: "change->file-preview#showVideoPreviews" } } %>
+      <%# <div id="video-previews" data-file-preview-target="videosPreview" style="margin-top: 10px;"></div> %>
+      <%# </div> %>
       <!-- Submit Button -->
       <%= f.submit "Save Changes", class: "btn btn-custom my-3 btn-right" %>
     <% end %>
