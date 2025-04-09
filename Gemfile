@@ -55,6 +55,8 @@ gem 'ostruct'
 gem 'cloudinary', '~> 1.16.0'
 gem 'faker'
 gem 'pg_search'
+gem 'rails_12factor', group: :production
+
 
 
 group :development, :test do
@@ -90,3 +92,5 @@ gem "money-rails"
 gem "stripe"
 gem "stripe_event"
 gem "sidekiq"
+
+gem 'ruby-vips', '~> 2.1'
