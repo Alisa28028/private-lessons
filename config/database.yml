@@ -79,6 +79,5 @@ test:
 #
 production:
   <<: *default
-  database: private_lessons_production
-  username: private_lessons
-  password: <%= ENV["PRIVATE_LESSONS_DATABASE_PASSWORD"] %>
+  url: <%= ENV['DATABASE_URL'] %>
+  pool: 5
