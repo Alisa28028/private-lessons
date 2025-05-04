@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_14_184539) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_04_090702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,7 +49,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_14_184539) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "event_instance_id"
-    t.boolean "waitlisted"
+    t.boolean "waitlisted", default: false, null: false
     t.datetime "joined_at"
     t.index ["user_id", "event_instance_id"], name: "index_bookings_on_user_id_and_event_instance_id", unique: true
     t.index ["user_id"], name: "index_bookings_on_user_id"
@@ -74,11 +74,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_14_184539) do
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "location_id"
     t.integer "duration"
     t.integer "capacity"
     t.integer "cancellation_policy_duration"
     t.integer "price_cents", default: 0, null: false
+    t.bigint "location_id"
     t.index ["event_id"], name: "index_event_instances_on_event_id"
     t.index ["location_id"], name: "index_event_instances_on_location_id"
   end
@@ -94,10 +94,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_14_184539) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "price_cents", default: 0, null: false
-    t.string "recurrence_type"
-    t.text "recurrence_details"
-    t.integer "duration"
-    t.date "date"
     t.time "start_time"
     t.time "end_time"
     t.text "custom_dates"
