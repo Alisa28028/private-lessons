@@ -22,187 +22,187 @@ puts "there are now #{Location.count} locations, nerds..."
 
 puts "making users who can't wait to move their body"
 
-denis = User.create!(name: "Denis", email: "denis@clownpenis.fart", is_teacher: true, description: "I'm a shoe maker for donkeys", password: "123456")
+denis = User.create!(name: "Denis", email: "denis@clownpenis.fart", phone_number: "090-2222-3333", is_teacher: true, description: "I'm a shoe maker for donkeys", password: "123456")
 file = File.open("app/assets/images/denis.jpg")
 denis.photo.attach(io: file, filename: "denis.jpg", content_type: "image/jpg")
 denis.save
 
-mitsuki = User.create!(name: "Mitsuki", email: "mitsuki@email.com", is_teacher: true, description: "I'm a popular heels dance teacher", password: "123456")
+mitsuki = User.create!(name: "Mitsuki", email: "mitsuki@email.com", phone_number: "090-2222-3333", is_teacher: true, description: "I'm a popular heels dance teacher", password: "123456")
 file = File.open("app/assets/images/mitsuki.jpg")
 mitsuki.photo.attach(io: file, filename: "mitsuki.jpg", content_type: "image/jpg")
 mitsuki.save
 
-anri = User.create!(name: "Anri", email: "anri@email.com", is_teacher: true, description: "I'm a popular jazz hiphop teacher", password: "123456")
+anri = User.create!(name: "Anri", email: "anri@email.com", phone_number: "090-2222-3333", is_teacher: true, description: "I'm a popular jazz hiphop teacher", password: "123456")
 file = File.open("app/assets/images/anri.jpg")
 anri.photo.attach(io: file, filename: "anri.jpg", content_type: "image/jpg")
 anri.save
 
-yann = User.create!(name: "Yann", email: "yann@email.com", is_teacher: true, description: "I'm a salsa/tap/tango/zumba/hiphop/ballet/house instructor", password: "123456")
+yann = User.create!(name: "Yann", email: "yann@email.com", phone_number: "090-2222-3333", is_teacher: true, description: "I'm a salsa/tap/tango/zumba/hiphop/ballet/house instructor", password: "123456")
 file = File.open("app/assets/images/yann.png")
 yann.photo.attach(io: file, filename: "yann.png", content_type: "image/jpg")
 yann.save
 
-stuart_student = User.create!(name: "Stuart", email: "stuart@clownpenis.fart", is_teacher: false, description: "I want to learn how to prance practically", password: "123456")
+stuart_student = User.create!(name: "Stuart", email: "stuart@clownpenis.fart", phone_number: "090-2222-3333", is_teacher: false, description: "I want to learn how to prance practically", password: "123456")
 file = File.open("app/assets/images/stuart.jpg")
 stuart_student.photo.attach(io: file, filename: "stuart.jpg", content_type: "image/jpg")
 stuart_student.save
 
-doug_student = User.create!(name: "Doug", email: "doug@email.com", is_teacher: false, description: "professional beginner", password: "123456")
+doug_student = User.create!(name: "Doug", email: "doug@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "professional beginner", password: "123456")
 file = File.open("app/assets/images/doug.png")
 doug_student.photo.attach(io: file, filename: "doug.png", content_type: "image/png")
 doug_student.save
 
-celso_student = User.create!(name: "Celso", email: "celso@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+celso_student = User.create!(name: "Celso", email: "celso@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/celso1.png")
 celso_student.photo.attach(io: file, filename: "celso1.png", content_type: "image/png")
 celso_student.save
 
-will = User.create!(name: "Will", email: "will@clownpenis.fart", is_teacher: false, description: "ranked 3rd in Meguro belly dance contest 2020, but 1st in 'most sexy dancer'", password: "123456")
+will = User.create!(name: "Will", email: "will@clownpenis.fart", phone_number: "090-2222-3333", is_teacher: false, description: "ranked 3rd in Meguro belly dance contest 2020, but 1st in 'most sexy dancer'", password: "123456")
 file = File.open("app/assets/images/will.png")
 will.photo.attach(io: file, filename: "will.png", content_type: "image/png")
 will.save
 
-alisa = User.create!(name: "Alisa", email: "alisa@email.com", is_teacher: true, description: "I'm a dance teacher and I can code as well too now as well", password: "123456")
+alisa = User.create!(name: "Alisa", email: "alisa@email.com", phone_number: "090-2222-3333", is_teacher: true, description: "I'm a dance teacher and I can code as well too now as well", password: "123456")
 file = File.open("app/assets/images/alisa.png")
 alisa.photo.attach(io: file, filename: "alisa.png", content_type: "image/png")
 alisa.save
 
-bear_student = User.create!(name: "Kumamon", email: "bear@honey.com", is_teacher: false, description: "Does you has honey?", password: "123456")
+bear_student = User.create!(name: "Kumamon", email: "bear@honey.com", phone_number: "090-2222-3333", is_teacher: false, description: "Does you has honey?", password: "123456")
 file = File.open("app/assets/images/bear.jpg")
 bear_student.photo.attach(io: file, filename: "bear.jpg", content_type: "image/jpg")
 bear_student.save
 
-polish = User.create!(name: "Joshel Dovic", email: "bigjd@clownpenis.fart", is_teacher: false, description: "Very nice!", password: "123456")
+polish = User.create!(name: "Joshel Dovic", email: "bigjd@clownpenis.fart", phone_number: "090-2222-3333", is_teacher: false, description: "Very nice!", password: "123456")
 file = File.open("app/assets/images/bartek.jpg")
 polish.photo.attach(io: file, filename: "bartek.jpg", content_type: "image/jpg")
 polish.save
 
-esteban_student = User.create!(name: "Esteban", email: "esteban@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+esteban_student = User.create!(name: "Esteban", email: "esteban@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/001.png")
 esteban_student.photo.attach(io: file, filename: "001.png", content_type: "image/png")
 esteban_student.save
 
-chafique_student = User.create!(name: "Chafique", email: "chafique@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+chafique_student = User.create!(name: "Chafique", email: "chafique@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/002.png")
 chafique_student.photo.attach(io: file, filename: "002.png", content_type: "image/png")
 chafique_student.save
 
-tristan_student = User.create!(name: "Tristan", email: "tristan@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+tristan_student = User.create!(name: "Tristan", email: "tristan@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/003.png")
 tristan_student.photo.attach(io: file, filename: "003.png", content_type: "image/png")
 tristan_student.save
 
-adam_student = User.create!(name: "Adam", email: "adam@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+adam_student = User.create!(name: "Adam", email: "adam@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/004.png")
 adam_student.photo.attach(io: file, filename: "004.png", content_type: "image/png")
 adam_student.save
 
-roman_student = User.create!(name: "Roman", email: "roman@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+roman_student = User.create!(name: "Roman", email: "roman@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/005.png")
 roman_student.photo.attach(io: file, filename: "005.png", content_type: "image/png")
 roman_student.save
 
-mark_student = User.create!(name: "Mark", email: "mark@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+mark_student = User.create!(name: "Mark", email: "mark@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/006.png")
 mark_student.photo.attach(io: file, filename: "006.png", content_type: "image/png")
 mark_student.save
 
-phyuphyu_student = User.create!(name: "Phyu Phyu", email: "phyuphyu@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+phyuphyu_student = User.create!(name: "Phyu Phyu", email: "phyuphyu@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/007.png")
 phyuphyu_student.photo.attach(io: file, filename: "007.png", content_type: "image/png")
 phyuphyu_student.save
 
-mason_student = User.create!(name: "Mason", email: "mason@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+mason_student = User.create!(name: "Mason", email: "mason@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/008.png")
 mason_student.photo.attach(io: file, filename: "008.png", content_type: "image/png")
 mason_student.save
 
-brian_student = User.create!(name: "Brian", email: "brian@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+brian_student = User.create!(name: "Brian", email: "brian@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/009.png")
 brian_student.photo.attach(io: file, filename: "009.png", content_type: "image/png")
 brian_student.save
 
-dylan_student = User.create!(name: "Dylan", email: "dylan@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+dylan_student = User.create!(name: "Dylan", email: "dylan@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/010.png")
 dylan_student.photo.attach(io: file, filename: "010.png", content_type: "image/png")
 dylan_student.save
 
-jarod_student = User.create!(name: "Jarod", email: "jarod@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+jarod_student = User.create!(name: "Jarod", email: "jarod@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/012.png")
 jarod_student.photo.attach(io: file, filename: "012.png", content_type: "image/png")
 jarod_student.save
 
-loris_student = User.create!(name: "Loris", email: "loris@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+loris_student = User.create!(name: "Loris", email: "loris@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/013.png")
 loris_student.photo.attach(io: file, filename: "013.png", content_type: "image/png")
 loris_student.save
 
-claudia_student = User.create!(name: "Claudia", email: "claudia@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+claudia_student = User.create!(name: "Claudia", email: "claudia@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/014.png")
 claudia_student.photo.attach(io: file, filename: "014.png", content_type: "image/png")
 claudia_student.save
 
-toby_student = User.create!(name: "Toby", email: "toby@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+toby_student = User.create!(name: "Toby", email: "toby@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/015.png")
 toby_student.photo.attach(io: file, filename: "015.png", content_type: "image/png")
 toby_student.save
 
-henry_student = User.create!(name: "Henry", email: "henry@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+henry_student = User.create!(name: "Henry", email: "henry@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/016.png")
 henry_student.photo.attach(io: file, filename: "016.png", content_type: "image/png")
 henry_student.save
 
-steven_student = User.create!(name: "Steven", email: "steven@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+steven_student = User.create!(name: "Steven", email: "steven@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/017.png")
 steven_student.photo.attach(io: file, filename: "017.png", content_type: "image/png")
 steven_student.save
 
-christian_student = User.create!(name: "Christian", email: "christian@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+christian_student = User.create!(name: "Christian", email: "christian@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/018.png")
 christian_student.photo.attach(io: file, filename: "018.png", content_type: "image/png")
 christian_student.save
 
-aya_student = User.create!(name: "Aya", email: "aya@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+aya_student = User.create!(name: "Aya", email: "aya@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/019.png")
 aya_student.photo.attach(io: file, filename: "019.png", content_type: "image/png")
 aya_student.save
 
-barry_student = User.create!(name: "Barry", email: "barry@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+barry_student = User.create!(name: "Barry", email: "barry@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/020.png")
 barry_student.photo.attach(io: file, filename: "020.png", content_type: "image/png")
 barry_student.save
 
-chieri_student = User.create!(name: "Chieri", email: "chieri@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+chieri_student = User.create!(name: "Chieri", email: "chieri@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/021.png")
 chieri_student.photo.attach(io: file, filename: "021.png", content_type: "image/png")
 chieri_student.save
 
-eri_student = User.create!(name: "Eri", email: "eri@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+eri_student = User.create!(name: "Eri", email: "eri@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/022.png")
 eri_student.photo.attach(io: file, filename: "022.png", content_type: "image/png")
 eri_student.save
 
-gary_student = User.create!(name: "Gary", email: "gary@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+gary_student = User.create!(name: "Gary", email: "gary@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/023.png")
 gary_student.photo.attach(io: file, filename: "023.png", content_type: "image/png")
 gary_student.save
 
-james_student = User.create!(name: "James", email: "james@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+james_student = User.create!(name: "James", email: "james@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/024.png")
 james_student.photo.attach(io: file, filename: "024.png", content_type: "image/png")
 james_student.save
 
-noemi_student = User.create!(name: "Noemi", email: "noemi@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+noemi_student = User.create!(name: "Noemi", email: "noemi@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/025.png")
 noemi_student.photo.attach(io: file, filename: "025.png", content_type: "image/png")
 noemi_student.save
 
-sasha_student = User.create!(name: "Sasha", email: "sasha@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+sasha_student = User.create!(name: "Sasha", email: "sasha@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/026.png")
 sasha_student.photo.attach(io: file, filename: "026.png", content_type: "image/png")
 sasha_student.save
 
-trouni_student = User.create!(name: "Trouni", email: "trouni@email.com", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
+trouni_student = User.create!(name: "Trouni", email: "trouni@email.com", phone_number: "090-2222-3333", is_teacher: false, description: "Always dreamed of dancing in Swan Lake", password: "123456")
 file = File.open("app/assets/images/027.png")
 trouni_student.photo.attach(io: file, filename: "027.png", content_type: "image/png")
 trouni_student.save
@@ -211,7 +211,7 @@ users = [aya_student, barry_student, chieri_student, eri_student, gary_student, 
 
 n = 0
 while n < 10
-  newuser= User.create!(name: "#{Faker::Name.name}", email: "#{Faker::Name.first_name}+#{rand(1..2500)}@mail.com", is_teacher: false, description: "#{Faker::Quote.mitch_hedberg}", password: "123456")
+  newuser= User.create!(name: "#{Faker::Name.name}", email: "#{Faker::Name.first_name}+#{rand(1..2500)}@mail.com", phone_number: "090-2222-3333", is_teacher: false, description: "#{Faker::Quote.mitch_hedberg}", password: "123456")
   file = File.open("app/assets/images/unknownpic.jpg")
   newuser.photo.attach(io: file, filename: "unknownpic.jpg", content_type: "image/jpg")
   newuser.save
