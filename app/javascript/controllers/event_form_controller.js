@@ -4,6 +4,19 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["oneTimeEventForm", "recurringOptions", "everyWeekEventForm", "customRecurrence"];
 
+  connect() {
+    // Automatically detect and set the user's time zone
+    this.setUserTimeZone();
+  }
+
+  setUserTimeZone() {
+    const tzInput = document.getElementById('user-time-zone');
+    if (tzInput && typeof Intl !== "undefined") {
+      // Set the time zone value to the hidden field
+      tzInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+  }
+
   selectEventType(event) {
     const eventType = event.target.dataset.eventType;
     console.log(`Event Type Selected: ${eventType}`);

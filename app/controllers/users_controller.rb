@@ -156,7 +156,7 @@ end
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :description, :photo, :instagram, :x, :tiktok)
+    params.require(:user).permit(:name, :email, :password, :time_zone, :password_confirmation, :description, :photo, :instagram, :x, :tiktok)
   end
 
   def set_user
