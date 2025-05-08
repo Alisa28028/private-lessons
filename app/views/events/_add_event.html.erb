@@ -9,6 +9,7 @@
     </div>
   <% end %>
   <%= simple_form_for @event, html: { multipart: true } do |f| %>
+    <%= f.hidden_field :time_zone, id: 'user-time-zone', value: current_user.time_zone %>
     <!----Recurrence type buttons-------->
     <div data-controller="event-form" class="col-12">
       <div class="recurrence-buttons d-flex justify-content-center mb-3">
@@ -90,6 +91,7 @@
     </div>
     <!------Weekly recurrence form-------->
     <%= simple_form_for @event, html: { multipart: true } do |f| %>
+      <%= f.hidden_field :time_zone, id: 'user-time-zone', value: current_user.time_zone %>
       <div data-event-form-target="everyWeekEventForm" class="d-none">
         <%= f.hidden_field :recurrence_type, value: 'every-week' %>
         <%= f.input :title, label: false, input_html: { placeholder: "Title..." } %>
@@ -158,6 +160,7 @@
         </div>
         <!-----Custom dates input (hidden by default)--------->
         <%= simple_form_for @event, html: { multipart: true } do |f| %>
+          <%= f.hidden_field :time_zone, id: 'user-time-zone', value: current_user.time_zone %>
           <div data-event-form-target="customRecurrence" class="d-none">
             <%= f.hidden_field :recurrence_type, value: 'custom-dates' %>
             <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>

@@ -44,13 +44,6 @@ class EventsController < ApplicationController
 
   def show
 
-    # if @events.present?
-    # @upcoming_events = @events.where("start_date >= ?", Date.today).order(start_date: :asc)
-    # @past_events = @events.where("start_date < ?", Date.today).order(start_date: :desc)
-    # else @upcoming_events = []
-    #   @past_events = []
-
-    # end
     # Set default time zone to JST (Asia/Tokyo)
     jst_time_zone = 'Asia/Tokyo'
 
@@ -141,6 +134,21 @@ class EventsController < ApplicationController
     #     event_instance_params[:location_id] = location.id
     #   end
     # end
+    tz = @event.time_zone.presence || "UTC"
+    tz_obj = ActiveSupport::TimeZone[tz]
+
+    @event.event_instances.each do |instance|
+      if instance.start_time.present?
+        instance.start_time = tz_obj.parse(instance.start_time.to_s).utc
+      end
+      if instance.end_time.present?
+        instance.end_time = tz_obj.parse(instance.end_time.to_s).utc
+      end
+    end
+
+    Rails.logger.debug "Event Time Zone: #{@event.time_zone}"
+    Rails.logger.debug "Params Time Zone: #{params[:event][:time_zone]}"
+
 
     if @event.save
       handle_event_instances_creation
@@ -260,7 +268,7 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :description, :capacity, :cancellation_policy_duration, :default_capacity, :duration, :recurrence_type, :custom_dates, :start_date,
+    params.require(:event).permit(:title, :description, :capacity, :time_zone, :cancellation_policy_duration, :default_capacity, :duration, :recurrence_type, :custom_dates, :start_date,
        :end_date, :start_time, :location, :location_name, :location_id, :price, :day_of_week, videos: [], photos: [],
       event_instances_attributes: [:id, :date, :start_time, :location_id, :price, :capacity , :cancellation_policy_duration, :_destroy]
     )

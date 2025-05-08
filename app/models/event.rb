@@ -6,9 +6,7 @@ class Event < ApplicationRecord
 
   before_save :set_location
 
-  has_many :bookings, dependent: :destroy
   has_many :users, through: :bookings
-  has_many :bookings, dependent: :destroy
   has_many :posts, dependent: :destroy
   has_many :event_instances, dependent: :destroy
   has_many :attendees, through: :bookings, source: :user
