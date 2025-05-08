@@ -94,3 +94,4 @@ gem "stripe_event"
 gem "sidekiq"
 
 gem 'ruby-vips', '~> 2.1'
+gem 'sendgrid-ruby'
