@@ -1,7 +1,23 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  config.action_mailer.default_url_options = { host: "http://TODO_PUT_YOUR_DOMAIN_HERE" }
+  config.action_mailer.default_url_options = {
+    host: 'private-dance-lessons-6173cbb7a1bd.herokuapp.com',
+    protocol: 'https'
+  }
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.sendgrid.net',
+    port: 587,
+    domain: 'private-dance-lessons-6173cbb7a1bd.herokuapp.com',
+    user_name: 'apikey', # This must literally be 'apikey'
+    password: ENV['SENDGRID_API_KEY'], # Set this in Heroku Config Vars
+    authentication: 'plain',
+    enable_starttls_auto: true
+  }
+
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
