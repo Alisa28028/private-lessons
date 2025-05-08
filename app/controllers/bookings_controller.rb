@@ -19,6 +19,7 @@ class BookingsController < ApplicationController
     # Determine if the booking should be waitlisted
     is_full = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).count
     @booking = @event_instance.bookings.new(user: current_user, waitlisted: is_full, joined_at: is_full ? Time.current : nil)
+    puts "Sending confirmation to #{current_user.email}"
 
     if @booking.save
       BookingMailer.booking_confirmation(current_user, @booking).deliver_now unless @booking.waitlisted?

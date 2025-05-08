@@ -17,6 +17,9 @@ Rails.application.configure do
     enable_starttls_auto: true
   }
 
+  config.action_mailer.default_options = {
+    from: 'arisa.segawa@gmail.com' # <- this must match what you verified in SendGrid
+  }
 
   # Settings specified here will take precedence over those in config/application.rb.
 
