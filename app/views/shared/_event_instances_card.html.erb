@@ -40,7 +40,6 @@
                 <% time_zone_str = instance.event.time_zone.presence || "UTC" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
                 <% if instance.event.recurrence_type == "one-time" %>
-                  (<%= friendly_time_zone_name(time_zone.name) %>)
                   <% if instance.date.present? %>
                     <p class="justify-content-end date-text"><%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
                     <div class="d-flex align-items-center gap-1">
