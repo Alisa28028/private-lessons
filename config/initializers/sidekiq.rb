@@ -1,5 +1,6 @@
 Sidekiq.configure_server do |config|
-  config.redis = { url: ENV['REDIS_URL'], ssl: { verify: false } }
+  redis_url = ENV['REDIS_URL'] # Get the Redis URL from environment variables
+  config.redis = { url: redis_url, ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE } }
 
   # Debugging the CLOUDINARY_URL environment variable
   uri = URI.parse(ENV['CLOUDINARY_URL'])
