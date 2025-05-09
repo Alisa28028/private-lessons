@@ -15,7 +15,7 @@
                   <p class="mb-0"><%= post.user.name %></p>
                   <div class="d-flex flex-row align-items-center w-100">
                     <p class="mb-0"><%= post.event ? post.event.title : "No event associated" %></p>
-                    <% if post.event.present? %>
+                    <% if post.event.present? && post.event.start_date.present? %>
                       <p class="mb-0 ms-2"> - <%= post.event.start_date.strftime("%Y/%m/%d %H:%M") %></p>
                     <% end %>
                     <!-- ICON TO DELETE POST -->
