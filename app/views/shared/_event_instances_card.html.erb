@@ -22,12 +22,15 @@
         <div class="card-product-info-grid mb-2">
           <!-- EVENT PHOTO -->
           <div>
-            <% if instance.event.photos.attached? %>
+            <% if instance.photos.attached? %>
+              <%= cl_image_tag instance.photos.first.key %>
+            <% elsif instance.event.photos.attached? %>
               <%= cl_image_tag instance.event.photos.first.key %>
             <% else %>
-              <% if event.user.photo.attached? %>
-                <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
-              <% end %>
+              <%# <% if event.user.photo.attached? %>
+              <%# <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+              <%# <% end %>
+              <%= image_tag "sexy_lady.jpg", alt: "Default Photo"  %>
             <% end %>
           </div>
           <div class="card-product-infos d-flex flex-row">
@@ -174,12 +177,15 @@
         </div>
         <div class="card-product-infos justify-content-start mb-2 p-0">
           <div class="ms-0">
-            <% if instance.event.present? && instance.event.photos.attached? %>
+            <% if instance.photos.attached? %>
+              <%= cl_image_tag instance.photos.first.key %>
+            <% elsif instance.event.photos.attached? %>
               <%= cl_image_tag instance.event.photos.first.key %>
             <% else %>
-              <% if instance.event.present? && instance.event.user.photo.attached? %>
-                <%= cl_image_tag(instance.event.user.photo.key, class: "pl-avatar") %>
-              <% end %>
+              <%# <% if event.user.photo.attached? %>
+              <%# <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+              <%# <% end %>
+              <%= image_tag "sexy_lady.jpg", alt: "Default Photo"  %>
             <% end %>
           </div>
           <div class="d-flex justify-content-between ms-3">
