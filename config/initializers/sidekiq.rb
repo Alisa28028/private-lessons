@@ -10,3 +10,10 @@ Sidekiq.configure_server do |config|
   Rails.logger.debug("API Key: #{uri.user}")
   Rails.logger.debug("API Secret: #{uri.password}")
 end
+
+Sidekiq.configure_client do |config|
+  config.redis = {
+    url: ENV['REDIS_URL'],
+    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+  }
+end
