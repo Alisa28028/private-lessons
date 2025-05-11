@@ -138,11 +138,11 @@ class EventsController < ApplicationController
     tz_obj = ActiveSupport::TimeZone[tz]
 
     @event.event_instances.each do |instance|
-      if instance.start_time.present?
-        instance.start_time = tz_obj.parse(instance.start_time.to_s).utc
+      if instance.start_time.present? && instance.start_time.is_a?(String)
+        instance.start_time = tz_obj.parse(instance.start_time).utc
       end
-      if instance.end_time.present?
-        instance.end_time = tz_obj.parse(instance.end_time.to_s).utc
+      if instance.end_time.present? && instance.end_time.is_a?(String)
+        instance.end_time = tz_obj.parse(instance.end_time).utc
       end
     end
 
@@ -290,7 +290,6 @@ class EventsController < ApplicationController
       Rails.logger.debug "🛠 Params received in controller: #{params.inspect}"
 
       @event.update!(start_time: params[:event][:start_time]) # Ensure start_time is set
-
       @event.reload
       @event.handle_custom_dates_event(params[:event][:custom_dates])
     end
