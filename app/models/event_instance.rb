@@ -69,15 +69,15 @@ class EventInstance < ApplicationRecord
 
     # Method for handling weekly events
   def generate_instances!
+    return unless start_date && end_date && day_of_week
     start_date = self.start_date.to_date
     end_date = self.end_date.to_date
-    return unless start_date && end_date && day_of_week
-
-    # Convert the day of the week (e.g., "Tuesday") into an integer (0 = Sunday, 1 = Monday, etc.)
     day_of_week_index = Date::DAYNAMES.index(day_of_week)
 
     # Debug log to check inputs
     Rails.logger.debug { "Start date: #{start_date}, End date: #{end_date}, Day of week: #{day_of_week} (index: #{day_of_week_index})" }
+
+    tz = self.time_zone.presence || self.user&.time_zone || 'UTC'
 
     # Collect matching dates for the specified day of the week
     matching_dates = (start_date..end_date).select { |date| date.wday == day_of_week_index }
@@ -87,28 +87,41 @@ class EventInstance < ApplicationRecord
 
     # Iterate over the matching dates and create instances
     matching_dates.each do |date|
-      start_time_utc = date.to_time.change(hour: start_time.hour, min: start_time.min).in_time_zone("Asia/Tokyo").utc
-      event_instances.create!(date: date, start_time: start_time_utc)
+      start_time_local = Time.use_zone(tz) do
+      Time.zone.local(date.year, date.month, date.day, start_time.hour, start_time.min)
     end
+
+    start_time_utc = start_time_local.utc
+
+    self.event_instances.create!(
+      date: date,
+      start_time: start_time_utc,
+      end_time: start_time_utc + self.duration.minutes
+    )
   end
+end
 
   # Method for handling custom dates
   def handle_custom_dates_event(custom_dates)
      # Ensure custom_dates is a string, then split it by commas to get an array
     custom_dates = custom_dates.split(',') if custom_dates.is_a?(String)
 
+    tz = self.time_zone.presence || self.user&.time_zone || 'UTC'
+
     custom_dates.each do |custom_date|
       begin
         # Parse the date string
         parsed_date = Date.parse(custom_date)
 
-        start_time_jst = parsed_date.in_time_zone('Asia/Tokyo').beginning_of_day # Assuming the event starts at midnight JST
-        start_time_utc = start_time_jst.utc
+        start_time_local = Time.use_zone(tz) do
+        Time.zone.parse("#{parsed_date} #{self.start_time.strftime('%H:%M')}")
+      end
+
+      start_time_utc = start_time_local.utc
 
         # Create an event instance for each date
         self.event_instances.create!(
           start_time: start_time_utc, # Now this is in UTC
-          # end_time: parsed_date.to_time + self.duration.minutes, # Duration-based end time
           end_time: start_time_utc + self.duration.minutes,
           date: parsed_date # Store the date for reference
         )
