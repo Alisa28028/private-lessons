@@ -107,13 +107,17 @@ class Event < ApplicationRecord
 
     # Iterate over the matching dates and create instances
     matching_dates.each do |date|
-      # Correctly setting the date and time in Asia/Tokyo first
-    start_time_jst = ActiveSupport::TimeZone["Asia/Tokyo"].local(date.year, date.month, date.day, start_time.hour, start_time.min)
+     # Use the user's time zone, or fallback to UTC
+      user_tz = ActiveSupport::TimeZone[user.time_zone.presence || "UTC"]
 
-    # Convert to UTC
-    start_time_utc = start_time_jst.utc
+      # Set the date and time in the user's local time zone
+      start_time_local = user_tz.local(date.year, date.month, date.day, start_time.hour, start_time.min)
 
-    Rails.logger.debug { "Creating instance - Date: #{date}, Start Time JST: #{start_time_jst}, Start Time UTC: #{start_time_utc}" }
+      # Convert to UTC for storage
+      start_time_utc = start_time_local.utc
+
+      Rails.logger.debug { "Creating instance - Date: #{date}, Start Time Local: #{start_time_local}, Start Time UTC: #{start_time_utc}" }
+
 
     event_instances.create!(
       date: date,

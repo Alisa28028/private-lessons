@@ -46,11 +46,11 @@
   </div>
   <!-- Description Row -->
   <div class="flex row rounded-4 px-2 bg-warning shadow mt-3">
-    <% time_zone_str = @event_instance.event.time_zone.presence || "UTC" %>
+    <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
     <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
     <p class="mb-0 mt-3"><strong>Date and Time: </strong>
-      <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%B %d, %Y at %H:%M")
- %> (<%= friendly_time_zone_name(time_zone.name) %>)
+      <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%B %d, %Y at %H:%M") %>
+      (<%= friendly_time_zone_name(time_zone.name) %>)
     </p>
     <p><strong>Location: </strong>
       <% if @event_instance.location.present? %>
