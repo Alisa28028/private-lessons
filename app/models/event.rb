@@ -145,6 +145,8 @@ class Event < ApplicationRecord
     return
   end
 
+  user_tz = ActiveSupport::TimeZone[user&.time_zone.presence || "UTC"]
+
   custom_dates.each do |custom_date|
     begin
       # Parse the date string
@@ -153,19 +155,14 @@ class Event < ApplicationRecord
       # Log the selected start time
       Rails.logger.debug "🔎 Using start_time: #{start_time_str} for date: #{custom_date}"
 
-       # Correctly setting the date and time in Asia/Tokyo first
-      start_time_jst = ActiveSupport::TimeZone["Asia/Tokyo"].local(parsed_date.year, parsed_date.month, parsed_date.day, start_time.hour, start_time.min)
+      start_time_local = user_tz.local(parsed_date.year, parsed_date.month, parsed_date.day, start_time.hour, start_time.min)
 
       # Convert to UTC
-      start_time_utc = start_time_jst.utc
-
-
-      puts "Start Time JST: #{start_time_jst}"
-      puts "Start Time UTC: #{start_time_utc}"
+      start_time_utc = start_time_local.utc
 
       # Debugging logs
       Rails.logger.debug { "📅 Custom Date: #{custom_date}, Parsed Date: #{parsed_date}" }
-      Rails.logger.debug { "⏰ Start Time JST: #{start_time_jst}, Start Time UTC: #{start_time_utc}" }
+      Rails.logger.debug { "⏰ Start Time Local: #{start_time_local}, Start Time UTC: #{start_time_utc}" }
 
       # Create an event instance for each date
       self.event_instances.create!(
