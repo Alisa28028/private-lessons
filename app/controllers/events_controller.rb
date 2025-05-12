@@ -88,14 +88,13 @@ class EventsController < ApplicationController
 
 
   def create
+    location = nil
 
+    # ---- LOCATION SETUP ------
     if params[:event][:location_name].present?
       location_name = params[:event][:location_name]
-
-      # # Find or create the location
       location = Location.find_or_create_by(name: location_name)
 
-      # Associate the location with the current user
       location.users << current_user unless location.users.include?(current_user)
 
       Rails.logger.debug "Location found or created: #{location.inspect}"
@@ -103,30 +102,25 @@ class EventsController < ApplicationController
       # Set the location ID in event params
       params[:event][:location_id] = location.id
        # Add location_id to event_instances_attributes
-    if params[:event][:event_instances_attributes].present?
-      params[:event][:event_instances_attributes].each do |_, event_instance_params|
-        event_instance_params[:location_id] = location.id
+      if params[:event][:event_instances_attributes].present?
+        params[:event][:event_instances_attributes].each do |_, event_instance_params|
+          event_instance_params[:location_id] = location.id
+        end
       end
-    end
       Rails.logger.debug "Location ID in Params: #{params[:event][:location_id]}"
       Rails.logger.debug "Event Params with Location ID: #{params[:event]}"
     end
 
-    # Initialize the event object
+    # ------ EVENT SETUP ---------
     @event = Event.new(event_params)
-     # Now assign the Location instance to the event's location association
-     @event.location = location
-     @event.capacity = params[:event][:capacity].present? ? params[:event][:capacity] : @event.default_capacity
-
-
+    @event.location = location if location
+    @event.user = current_user
+    @event.capacity = params[:event][:capacity].presence || @event.default_capacity
 
     # Handle the location - find by name, or create a new one if it doesn't exist
     # @location = Location.find_by(name: params[:location_name])
     # @location ||= Location.create(name: params[:location_name])
     # @event.location = @location
-
-    # Associate the current user with the event
-    @event.user = current_user
 
     # Add location_id to event instances (make sure it's added to each event instance)
     # if params[:event][:event_instances_attributes].present?
@@ -134,25 +128,13 @@ class EventsController < ApplicationController
     #     event_instance_params[:location_id] = location.id
     #   end
     # end
-    tz = @event.time_zone.presence || "UTC"
-    tz_obj = ActiveSupport::TimeZone[tz]
-
-    @event.event_instances.each do |instance|
-      if instance.start_time.present? && instance.start_time.is_a?(String)
-        instance.start_time = tz_obj.parse(instance.start_time).utc
-      end
-      if instance.end_time.present? && instance.end_time.is_a?(String)
-        instance.end_time = tz_obj.parse(instance.end_time).utc
-      end
-    end
 
     Rails.logger.debug "Event Time Zone: #{@event.time_zone}"
     Rails.logger.debug "Params Time Zone: #{params[:event][:time_zone]}"
 
-
     if @event.save
       handle_event_instances_creation
-      redirect_to dashboard_path, notice: "Event(s) were sucessfully created."
+      redirect_to dashboard_path, notice: "Event(s) were successfully created."
     else
       render :new, status: :unprocessable_entity
     end

@@ -11,7 +11,7 @@ export default class extends Controller {
 
   setUserTimeZone() {
     const tzInput = document.getElementById('user-time-zone');
-    if (tzInput && typeof Intl !== "undefined") {
+    if (tzInput && !tzInput.value && typeof Intl !== "undefined") {
       // Set the time zone value to the hidden field
       tzInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     }
