@@ -199,7 +199,7 @@
                     <span class="text-custom">~</span>
                     <% if instance.end_time.present? %>
                       <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-                        (<%= friendly_time_zone_name(time_zone.name) %>)
+                        <%# (<%= friendly_time_zone_name(time_zone.name) %>
                       </p>
                     <% else %>
                       <p class="justify-content-end date-text text-custom">End time not available</p>
@@ -250,8 +250,8 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-        <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+        <% user_time_zone_str = current_user&.time_zone.presence || "UTC" %>
+        <% time_zone = ActiveSupport::TimeZone[user_time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
         <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
           Book <%= instance.event.title.capitalize %> class on <%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
         </h1>
