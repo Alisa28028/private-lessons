@@ -37,7 +37,7 @@
             <!-- EVENT DATE AND TIME / INSTRUCTOR-->
             <div class="d-flex justify-content-between">
               <div>
-                <% time_zone_str = instance.event.time_zone.presence || "UTC" %>
+                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
                 <% if instance.event.recurrence_type == "one-time" %>
                   <% if instance.date.present? %>
@@ -189,7 +189,7 @@
           </div>
           <div class="d-flex justify-content-between ms-3">
             <div>
-              <% time_zone_str = instance.event.time_zone.presence || "UTC" %>
+              <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
               <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
               <% if instance.event.recurrence_type == "one-time" %>
                 <% if instance.date.present? %>
@@ -250,7 +250,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <% time_zone_str = instance.event.time_zone.presence || "UTC" %>
+        <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
         <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
         <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
           Book <%= instance.event.title.capitalize %> class on <%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
