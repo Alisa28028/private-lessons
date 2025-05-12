@@ -58,22 +58,24 @@ class Event < ApplicationRecord
 
     # Extract user inputs for date and time
     event_attributes = params[:event][:event_instances_attributes]["0"]
+
     user_date = event_attributes[:date]
     start_time_string = event_attributes[:start_time]
 
     if user_date.present? && start_time_string.present?
-      # Parse the user's date
-      parsed_date = Date.parse(user_date)
+      user_tz = ActiveSupport::TimeZone[self.user&.time_zone.presence || "UTC"]
 
-      # Parse the user's time (e.g., "14:00") into a Time object
+      parsed_date = Date.parse(user_date)
       parsed_time = Time.strptime(start_time_string, "%H:%M")
 
-      # Combine the date and time into a DateTime object
-      start_datetime = parsed_date.to_time.change(hour: parsed_time.hour, min: parsed_time.min)
+      start_time_local = user_tz.local(parsed_date.year, parsed_date.month, parsed_date.day, parsed_time.hour, parsed_time.min)
+
+      # Convert to UTC for storage
+      start_time_utc = start_time_local.utc
 
       # Assign the attributes to the instance
-      instance.start_time = start_datetime
-      instance.end_time = start_datetime + (self.duration || 0).minutes
+      instance.start_time = start_time_utc
+      instance.end_time = start_time_utc + (self.duration || 0).minutes
       instance.date = parsed_date
       instance.location_id = self.location_id
       instance.price_cents = self.price_cents
@@ -93,19 +95,12 @@ class Event < ApplicationRecord
     end_date = self.end_date.to_date
     return unless start_date && end_date && day_of_week
 
-    # Convert the day of the week (e.g., "Tuesday") into an integer (0 = Sunday, 1 = Monday, etc.)
     day_of_week_index = Date::DAYNAMES.index(day_of_week)
-
-    # Debug log to check inputs
     Rails.logger.debug { "Start date: #{start_date}, End date: #{end_date}, Day of week: #{day_of_week} (index: #{day_of_week_index})" }
 
-    # Collect matching dates for the specified day of the week
     matching_dates = (start_date..end_date).select { |date| date.wday == day_of_week_index }
-
-    # Debug log to check the generated dates
     Rails.logger.debug { "Matching dates for instances: #{matching_dates.inspect}" }
 
-    # Iterate over the matching dates and create instances
     matching_dates.each do |date|
      # Use the user's time zone, or fallback to UTC
       user_tz = ActiveSupport::TimeZone[user.time_zone.presence || "UTC"]
