@@ -9,8 +9,10 @@
 <p>Here are the details of your booking:</p>
 <ul>
   <li><strong>Class:</strong> <%= @event_instance.event.title %></li>
-  <li><strong>Date:</strong> <%= @event_instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %></li>
-  <li><strong>Time:</strong> <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %></li>
+  <% time_zone_str = @user&.time_zone.presence || "UTC" %>
+  <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+  <li><strong>Date:</strong> <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></li>
+  <li><strong>Time:</strong> <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></li>
   <%# <li><strong>Location:</strong> <%= @event.location.name %>
   <li><strong>Instructor:</strong> <%= @event_instance.event.user.name %></li>
 </ul>
