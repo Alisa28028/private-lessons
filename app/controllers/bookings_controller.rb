@@ -82,15 +82,20 @@ def destroy
     end
 
     @booking.destroy
-      # **Check and move first waitlisted user if a spot opens**
-      next_in_line = event_instance.bookings.where(waitlisted: true).order(:joined_at).first
-      open_spots_available = event_instance.effective_capacity - event_instance.bookings.where(waitlisted: false).count > 0
-      if next_in_line && open_spots_available
-        next_in_line.update(waitlisted: false, joined_at: nil) # Move to attendee
+    # ✅ Only here, after the destroy:
+    next_in_line = event_instance.bookings.where(waitlisted: true).order(:joined_at).first
+    open_spots_available = event_instance.effective_capacity - event_instance.bookings.where(waitlisted: false).count > 0
+
+    if next_in_line && open_spots_available
+      if next_in_line.update(waitlisted: false, joined_at: nil)
         BookingMailer.booking_confirmation(next_in_line.user, next_in_line, moved_from_waitlist: true).deliver_now
         flash[:notice] += " A waitlisted user has been moved to the event!"
+      else
+        Rails.logger.error "⚠️ Failed to move waitlisted user: #{next_in_line.errors.full_messages}"
       end
+    end
   end
+
   redirect_to event_instance_path(event_instance)
 end
 

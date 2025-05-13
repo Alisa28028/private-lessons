@@ -9,7 +9,9 @@ class Booking < ApplicationRecord
   private
 
   def unique_booking_per_event_instance
-    existing_booking = Booking.find_by(user_id: user_id, event_instance_id: event_instance_id)
+    existing_booking = Booking.where(user_id: user_id, event_instance_id: event_instance_id)
+                              .where.not(id: id)
+                              .first
 
     if existing_booking
       if existing_booking.waitlisted?

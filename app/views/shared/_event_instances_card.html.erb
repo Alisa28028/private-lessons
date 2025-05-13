@@ -47,7 +47,7 @@
                       <span class="text-custom">~</span>
                       <% if instance.end_time.present? %>
                         <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-                          <%= friendly_time_zone_name(time_zone.name) %></p>
+                        </p>
                       <% else %>
                         <p class="justify-content-end date-text text-custom">End time not available</p>
                       <% end %>
@@ -77,7 +77,6 @@
                       <span class="text-custom">~</span>
                       <% if instance.end_time.present? %>
                         <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-                          (<%= friendly_time_zone_name(instance.event.time_zone) %>)
                         </p>
                       <% else %>
                         <p class="justify-content-end date-text text-custom">End time not available</p>
