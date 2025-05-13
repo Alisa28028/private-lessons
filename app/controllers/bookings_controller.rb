@@ -31,28 +31,37 @@ class BookingsController < ApplicationController
     redirect_back fallback_location: event_instance_path(@event_instance)
   end
 
-def destroy
-  @booking = Booking.find_by(id: params[:id])
+  def destroy
+    @booking = Booking.find_by(id: params[:id])
 
-  if @booking.nil?
-    flash[:alert] = "Booking not found."
-    redirect_back(fallback_location: root_path) and return
-  end
+    if @booking.nil?
+      flash[:alert] = "Booking not found."
+      redirect_back(fallback_location: root_path) and return
+    end
 
-  event_instance = @booking.event_instance
-  cancellation_cutoff = event_instance.start_time - event_instance.cancellation_policy_duration.to_i.hours if event_instance.cancellation_policy_duration.present?
+    event_instance = @booking.event_instance
+    was_waitlisted = @booking.waitlisted?
+    # Skip cutoff check if waitlisted
+    if !was_waitlisted
+      cancellation_cutoff = if event_instance.cancellation_policy_duration.present?
+        event_instance.start_time - event_instance.cancellation_policy_duration.to_i.hours
+      end
 
-  if cancellation_cutoff.present? && Time.current > cancellation_cutoff
-    flash[:alert] = "Cancellation is not allowed after the deadline. Please contact the teacher"
-  else
-    if @booking.waitlisted?
-      flash[:notice] = "You have been removed from the waitlist."
-    else
-      flash[:notice] = "Booking canceled successfully."
+      if cancellation_cutoff.present? && Time.current > cancellation_cutoff
+        flash[:alert] = "Cancellation is not allowed after the deadline. Please contact the teacher"
+        return redirect_to event_instance_path(event_instance)
+      end
     end
 
     @booking.destroy
-    BookingMailer.cancellation_confirmation(current_user, @booking).deliver_now
+
+    if was_waitlisted
+      flash[:notice] = "You have been removed from the waitlist."
+    else
+      flash[:notice] = "Booking canceled successfully."
+      BookingMailer.cancellation_confirmation(current_user, @booking).deliver_now
+    end
+
     next_in_line = event_instance.bookings.where(waitlisted: true).order(:joined_at).first
     open_spots_available = event_instance.effective_capacity - event_instance.bookings.where(waitlisted: false).count > 0
 
@@ -64,10 +73,8 @@ def destroy
         Rails.logger.error "⚠️ Failed to move waitlisted user: #{next_in_line.errors.full_messages}"
       end
     end
+    redirect_to event_instance_path(event_instance)
   end
-
-  redirect_to event_instance_path(event_instance)
-end
 
 
   # def destroy

@@ -11,7 +11,7 @@ class BookingMailer < ApplicationMailer
     subject = moved_from_waitlist ? "A spot opened for #{@event_instance.event.title}" : "Booking Confirmation for #{@event_instance.event.title}"
 
     mail(to: @booking.user.email, subject: subject)
-    end
+  end
 
     def cancellation_confirmation(user, booking)
       @user = user
