@@ -40,8 +40,8 @@
                 <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
                 <% if instance.event.recurrence_type == "one-time" %>
-                  <% if instance.date.present? %>
-                    <p class="justify-content-end date-text"><%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                  <% if instance.start_time.present? %>
+                    <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
                     <div class="d-flex align-items-center gap-1">
                       <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
                       <span class="text-custom">~</span>
@@ -57,7 +57,7 @@
                   <% end %>
                   <p><%= instance.event.user.name %></p>
                 <% elsif instance.event.recurrence_type == "every-week" %>
-                  <p class="justify-content-end date-text"><%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                  <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
                   <div class="d-flex align-items-center gap-1">
                     <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
                     <span class="text-custom">~</span>
@@ -70,8 +70,8 @@
                   </div>
                   <p><%= instance.event.user.name %></p>
                 <% elsif instance.event.recurrence_type == "custom-dates" %>
-                  <% if instance.date.present? %>
-                    <p class="justify-content-end date-text"><%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                  <% if instance.start_time.present? %>
+                    <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
                     <div class="d-flex align-items-center gap-1">
                       <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
                       <span class="text-custom">~</span>
@@ -192,8 +192,8 @@
               <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
               <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
               <% if instance.event.recurrence_type == "one-time" %>
-                <% if instance.date.present? %>
-                  <p class="justify-content-end date-text"><%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                <% if instance.start_time.present? %>
+                  <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
                   <div class="d-flex align-items-center gap-1">
                     <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
                     <span class="text-custom">~</span>
@@ -209,7 +209,7 @@
                   <p>No valid date or time available.</p>
                 <% end %>
               <% elsif instance.event.recurrence_type == "every-week" %>
-                <p class="justify-content-end date-text"><%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
                 <div class="d-flex align-items-center gap-1">
                   <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
                   <span class="text-custom">~</span>
@@ -220,7 +220,7 @@
                   <% end %>
                 </div>
               <% elsif instance.event.recurrence_type == "custom-dates" %>
-                <p class="justify-content-end date-text"><%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
                 <div class="d-flex align-items-center gap-1">
                   <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
                   <span class="text-custom">~</span>
@@ -253,7 +253,7 @@
         <% user_time_zone_str = current_user&.time_zone.presence || "UTC" %>
         <% time_zone = ActiveSupport::TimeZone[user_time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
         <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
-          Book <%= instance.event.title.capitalize %> class on <%= instance.date.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
+          Book <%= instance.event.title.capitalize %> class on <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
         </h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
