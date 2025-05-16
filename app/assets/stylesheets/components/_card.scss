@@ -1,33 +1,159 @@
-// NOT BEING USED
-// .card {
-//     // box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
-//     // transition: 0.3s;
-//     // border-radius: 2px; /* 5px rounded corners */
-//     // height: 120px;
-//     // width: 120px;
-//     // background-color: white;
-//   }
+.card-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap */
+  justify-content: center;
+  gap: 1rem; /* Spacing between cards */
+}
 
-//   /* Add rounded corners to the top left and the top right corner of the image */
+.card {
+    width: 100%; /* Default to full width */
+    max-width: 400px;
+    flex: 1 1 300px;
+    height: auto;
+    background: #FFFFFF;
+    border-radius: 10px;
+    position: relative;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  // .card-product-info-grid {
+  //   display: grid;
+  //   grid-template-columns: 95px auto;
+  // }
 
 
-//   .card h1 {
-//     font-size: 48px;
-//     display: flex;
-//     justify-content: center;
-//   }
 
-//   .card h2 {
-//     font-size: 20px;
-//     display: flex;
-//     justify-content: center;
-//   }
+  .card-info-grid {
+    display: flex;
+    justify-content: space-between; /* Space between the content */
+    align-items: center; /* Vertically center the items */
+  }
 
-//   .card p {
-//     font-size: 12px;
-//     display: flex;
-//     align-items: end;
-//     justify-content: center;
-//     margin-top: 8px;
-//     margin-bottom: 8px;
-//   }
+  .card img {
+    height: 82px;
+    width: 119px;
+    object-fit: cover;
+    border-radius: 4px;
+
+  }
+
+  .card h3 {
+    font-size: 22px;
+    font-weight: 900;
+    margin: 0;
+    margin-bottom: 1px;
+  }
+
+  .card h4 {
+    font-size: 12px;
+    font-weight: light;
+    margin: 0;
+    margin-bottom: 8px;
+  }
+
+  .card p {
+    font-size: 12px;
+    line-height: 1.2;
+    // opacity: .7;f
+    margin-bottom: 0;
+    // margin-top: 4px;
+    // position: absolute;
+    // top: 24px;
+  }
+
+  // .past-event-overlay {
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: 100%;
+  //   background-color: rgba(0,0,0,0.2);
+  // // backdrop-filter: blur(2px); /* Slight blur effect */
+  // pointer-events: none; /* Allow clicks to pass through */
+  //   border-radius: 4px; /* Keep the rounded corners of the card */
+  // }
+
+
+  .card .attendee-number {
+    color: #AA83D7;
+    font-size: 10px;
+
+      }
+
+  // .card-product .card-product-infos {
+  //   padding-right: 12px;
+  //   padding-left: 12px;
+  //   padding-top: 0px;
+  //   justify-content: space-between;
+  //   display: flex;
+  //   flex-direction: column;
+  // }
+
+  .card .card-infos {
+    width: 100%;
+    padding-right: 12px;
+    padding-top: 0px;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row; /* Change this from column to row for side-by-side layout */
+    align-items: stretch; /* Optional: To vertically center the items */
+  }
+
+
+  .card .card-infos p {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    // overflow: hidden;
+  }
+
+
+  .card-link {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: -10 !important;
+
+  }
+
+  .studio-image {
+    width: 100%; /* Makes the image fill the width of its container */
+    height: auto; /* Keeps the aspect ratio of the image intact */
+  }
+
+  .no-padding-right {
+    padding-right: 0 !important;
+  }
+
+  .no-margin {
+    margin: 0 !important; /* Removes all margins */
+  }
+
+.card-sums {
+  // overflow: hidden;
+  background: white;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  // display: grid;
+  // grid-template-columns: 190px auto;
+  // align-items: end;
+  position: relative;
+  border: 1px solid #DBCFE8;
+  border-radius: 5px;
+}
+
+.card-sums p {
+  padding: 4px;
+  margin: 4px;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .card {
+    max-width: 100%;
+  }
+}

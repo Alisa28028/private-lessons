@@ -1,9 +1,21 @@
 .btn-custom {
     background-color: #543A70;
     color: white;
+    width: 50%;
+    border-radius: 5px;
 
 }
 
+.btn-card {
+  background-color: #543A70;
+  color: white;
+  font-size: small;
+  width: 100%;
+  border-radius: 5px;
+  margin-top: 7px;
+  margin-bottom: 3px;
+
+}
 
 .btn-custom-gray {
   margin-left: auto; /* Flexbox way */
