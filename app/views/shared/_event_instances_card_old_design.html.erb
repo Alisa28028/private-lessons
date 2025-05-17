@@ -1,0 +1,292 @@
+<%# KEEPING OLD DESIGN HERE!!! Home page cards %>
+<%# check if the current user is the event creator %>
+<div class="card-product position-relative">
+  <%# <%= instance.event.time_zone %>
+  <% if instance.event&.user != current_user %> <!-----Non creator users (show booking and wait list buttons-------->
+    <%# <% if instance.event.id.present? %>
+    <%= link_to event_instance_path(instance), class: "text-decoration-none text-dark" do %>
+      <% past_event = instance.start_time < Time.current %> <!-- Check if event is in the past -->
+      <%# <div class="card-product m-1 mb-3 position-relative"> %>
+      <% if past_event %>
+        <div class="past-event-overlay"></div>
+        <!-- Overlay for past events -->
+      <% end %>
+      <div class="d-flex flex-column justify-content-between">
+        <div class="d-flex flex-row justify-content-between p-2 pb-1">
+          <!-- EVENT TITLE -->
+          <h2><%= instance.event.title.upcase %></h2>
+        </div>
+        <!-- EVENT LOCATION -->
+        <%# <div class="d-flex flex-column text-end">
+              <p class="text-custom d-flex justify-content-end"><strong><%= event.location.address</strong></p> %>
+        <div class="card-product-info-grid mb-2">
+          <!-- EVENT PHOTO -->
+          <div>
+            <% if instance.photos.attached? %>
+              <%= cl_image_tag instance.photos.first.key %>
+            <% elsif instance.event.photos.attached? %>
+              <%= cl_image_tag instance.event.photos.first.key %>
+            <% else %>
+              <%# <% if event.user.photo.attached? %>
+              <%# <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+              <%# <% end %>
+              <%= image_tag "sexy_lady.jpg", alt: "Default Photo"  %>
+            <% end %>
+          </div>
+          <div class="card-product-infos d-flex flex-row">
+            <!-- EVENT DATE AND TIME / INSTRUCTOR-->
+            <div class="d-flex justify-content-between">
+              <div>
+                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+                <% if instance.event.recurrence_type == "one-time" %>
+                  <% if instance.start_time.present? %>
+                    <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                    <div class="d-flex align-items-center gap-1">
+                      <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
+                      <span class="text-custom">~</span>
+                      <% if instance.end_time.present? %>
+                        <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                        </p>
+                      <% else %>
+                        <p class="justify-content-end date-text text-custom">End time not available</p>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <p>No valid date or time available.</p>
+                  <% end %>
+                  <p><%= instance.event.user.name %></p>
+                <% elsif instance.event.recurrence_type == "every-week" %>
+                  <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                  <div class="d-flex align-items-center gap-1">
+                    <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
+                    <span class="text-custom">~</span>
+                    <% if instance.end_time.present? %>
+                      <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                      </p>
+                    <% else %>
+                      <p class="justify-content-end date-text text-custom">End time not available</p>
+                    <% end %>
+                  </div>
+                  <p><%= instance.event.user.name %></p>
+                <% elsif instance.event.recurrence_type == "custom-dates" %>
+                  <% if instance.start_time.present? %>
+                    <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                    <div class="d-flex align-items-center gap-1">
+                      <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
+                      <span class="text-custom">~</span>
+                      <% if instance.end_time.present? %>
+                        <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                        </p>
+                      <% else %>
+                        <p class="justify-content-end date-text text-custom">End time not available</p>
+                      <% end %>
+                    </div>
+                  <% end %>
+                  <p><%= instance.event.user.name %></p>
+                <% end %>
+              </div>
+            </div>
+            <!-- EVENT IS FULL CONDITIONAL -->
+            <div class="card-product-info">
+              <% if instance.start_time > Time.current %>
+                <div class="d-flex flex-column justify-content-end">
+                  <% if instance.effective_capacity - instance.bookings.count <= 0 %>
+                    <p class="attendee-number text-end text-danger mb-2"><strong>EVENT FULL!</strong></p>
+                  <% else %>
+                    <!-- REMAINING SPOTS -->
+                    <% remaining_spots = instance.effective_capacity - instance.bookings.count %>
+                    <% if remaining_spots <= 10 %>
+                      <p class="attendee-number text-end text-danger d-flex align-items-end mb-2"> <%= instance.effective_capacity - instance.bookings.count %> Spots left</p>
+                    <% end %>
+                  <% end %>
+                <% end %>
+                <!-- Conditional Buttons inside the card -->
+                <!---------------------------------------------->
+                <% if current_user %>
+                  <div style="position: relative; display: inline-flex;">
+                    <% future_event = instance.start_time > Time.current %>
+                    <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
+                    <!-- ATTENDING  -->
+                    <!-- Checking if current user is already attending the event -->
+                    <% user_booking = instance.bookings.find_by(user_id: current_user.id) %>
+                    <% if user_booking %>
+                      <% if user_booking.waitlisted? %>
+                        <% if future_event %>
+                          <p style="font-size: small; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
+                            On Wait List!
+                          </p>
+                        <% end %>
+                      <% else %>
+                        <p style="font-size: small; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px;">
+                          <%= future_event ? "Attending!" : "Attended" %>
+                        </p>
+                      <% end %>
+                      <!-- BOOK CLASS / JOIN WAIT LIST  -->
+                      <!-- if not attending, check if the event is full. If no, BOOK CLASS. If yes, JOIN WAIT LIST -->
+                    <% elsif future_event %>
+                      <% if instance.effective_capacity - instance.bookings.count <= 0 %>
+                        <button type="button" class="btn btn-custom ml-2 mb-0 mr-0"
+                      data-bs-toggle="modal"
+                      data-bs-target="#waitinglistModal<%= instance.id %>"
+                      data-controller="modal"
+                      data-action="click->modal#handleClick">
+                          Join Wait List
+                        </button>
+                      <% else %>
+                        <button type="button" class="btn btn-custom ml-2 mb-0 mr-0"
+                      data-bs-toggle="modal"
+                      data-bs-target="#bookingModal<%= instance.id %>"
+                      data-controller="modal"
+                      data-action="click->modal#handleClick">
+                          Book Class
+                        </button>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <%# <% end %>
+      <%# </div> %>
+    <% end %>
+    <%# --------------------NEW BLOCK----------------------------------------- %>
+  <% else %> <!-- For event creators (show edit, duplicate, delete buttons) -->
+    <!-- EVENT CREATOR LAYOUT (DASHBOARD CARD) -->
+    <%# <div class="card-product m-1 mb-3 position-relative"> %>
+    <%= link_to event_instance_path(instance), class: "text-decoration-none text-dark" do %>
+      <div class="d-flex flex-column justify-content-between">
+        <div class="d-flex flex-row justify-content-between p-2 pb-1">
+          <!-- EVENT TITLE -->
+          <div class="d-flex flex-column">
+            <h5 class="fs-6 fw-bold mb-0 ms-0"><%= instance.event.title.upcase %></h5>
+          </div>
+          <div class="d-flex gap-2">
+            <i class="fa-solid fa-person fa-sm mt-2"></i>
+            <% if (instance.effective_capacity || 0) - instance.bookings.count <= 0 %>
+              <p class="attendee-number text-dark fs-6"><strong><%= instance.effective_capacity %>/<%= instance.effective_capacity %></strong></p>
+            <% else %>
+              <p class="attendee-number text-dark fs-6"><%= instance.bookings.count %>/<%= instance.effective_capacity %></p>
+            <% end %>
+          </div>
+        </div>
+        <div class="card-product-infos justify-content-start mb-2 p-0">
+          <div class="ms-0">
+            <% if instance.photos.attached? %>
+              <%= cl_image_tag instance.photos.first.key %>
+            <% elsif instance.event.photos.attached? %>
+              <%= cl_image_tag instance.event.photos.first.key %>
+            <% else %>
+              <%# <% if event.user.photo.attached? %>
+              <%# <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
+              <%# <% end %>
+              <%= image_tag "sexy_lady.jpg", alt: "Default Photo"  %>
+            <% end %>
+          </div>
+          <div class="d-flex justify-content-between ms-3">
+            <div>
+              <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+              <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+              <% if instance.event.recurrence_type == "one-time" %>
+                <% if instance.start_time.present? %>
+                  <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                  <div class="d-flex align-items-center gap-1">
+                    <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
+                    <span class="text-custom">~</span>
+                    <% if instance.end_time.present? %>
+                      <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                        <%# (<%= friendly_time_zone_name(time_zone.name) %>
+                      </p>
+                    <% else %>
+                      <p class="justify-content-end date-text text-custom">End time not available</p>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <p>No valid date or time available.</p>
+                <% end %>
+              <% elsif instance.event.recurrence_type == "every-week" %>
+                <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                <div class="d-flex align-items-center gap-1">
+                  <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
+                  <span class="text-custom">~</span>
+                  <% if instance.end_time.present? %>
+                    <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
+                  <% else %>
+                    <p class="justify-content-end date-text text-custom">End time not available</p>
+                  <% end %>
+                </div>
+              <% elsif instance.event.recurrence_type == "custom-dates" %>
+                <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
+                <div class="d-flex align-items-center gap-1">
+                  <p class="justify-content-end date-text text-custom"><%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
+                  <span class="text-custom">~</span>
+                  <% if instance.end_time.present? %>
+                    <p class="justify-content-end date-text text-custom"><%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %></p>
+                  <% else %>
+                    <p class="justify-content-end date-text text-custom">End time not available</p>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="stretched-link"></span>
+      <%# </div> %>
+    <% end %>
+  <% end %>
+</div>
+<%# --------------------END OF NEW BLOCK----------------------------------------- %>
+<%# <% end %>
+<%# <% end %>
+<!-- END of Conditional Buttons inside the card -->
+<!---------------------------------------------->
+<!-- Booking Modal for the Event !-->
+<div class="modal fade" id="bookingModal<%= instance.id %>" tabindex="-1" aria-labelledby="bookingModalLabel<%= instance.id %>" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <% user_time_zone_str = current_user&.time_zone.presence || "UTC" %>
+        <% time_zone = ActiveSupport::TimeZone[user_time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+        <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
+          Book <%= instance.event.title.capitalize %> class on <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= simple_form_for [instance, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
+          <div class="d-flex justify-content-end">
+            <%= f.submit "Book!", class: "btn btn-custom my-3" %>
+          </div>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Wait list Modal for the Event -->
+<div class="modal fade" id="waitinglistModal<%= instance.id %>" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= instance.event.title.capitalize %></strong> Wait List</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="d-flex justify-content-between">
+        <div class="modal-body">
+          <%= simple_form_for [instance.event, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
+            <%= f.submit "Join Wait List", class: "btn btn-custom my-3" %>
+          <% end %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
