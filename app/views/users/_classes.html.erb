@@ -2,7 +2,7 @@
   <%# ---------Rendering events the teacher has created---------- %>
   <% if @upcoming_event_instances.present? %>
     <%# <h6 class="d-flex justify-content-center mb-3">Your Events</h6> %>
-    <div class="col-12 col-md-6 col-lg-6 mx-auto px-2">
+    <div class="col-12 col-md-6 col-lg-6 mx-auto px-3">
       <div class="card-container mx-auto">
         <%# <%= render "shared/event_card_iteration", event_instances: @all_event_instances.select { |instance| instance.start_time >= Time.now } %>
         <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances %>

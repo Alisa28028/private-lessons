@@ -58,7 +58,6 @@ class Event < ApplicationRecord
 
     # Extract user inputs for date and time
     event_attributes = params[:event][:event_instances_attributes]["0"]
-
     user_date = event_attributes[:date]
     start_time_string = event_attributes[:start_time]
 
