@@ -22,6 +22,7 @@
   align-items: center;
   height: 64px;
   top: 0;
+  box-sizing: border-box;
 
   .pl-nav-item {
     display: flex;
@@ -62,6 +63,8 @@
   bottom: 0;
   display: flex;
   z-index: 1000;
+  box-sizing: border-box;
+
 
   .pl-nav-item {
     display: flex;
@@ -150,17 +153,24 @@
   position: relative;
   display: inline-block;
   margin-left: 12px;
+
 }
 
 .pl-dropdown-content {
   position: absolute;
   display: none;
-  top: -100%;
+  top: -163%;
   left: -20px;
   background-color: $pl-white;
-  min-width: 100px;
+  width: 122px;
+  padding: 7px 12px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  z-index: 1000;
+  white-space: normal !important; // OR use wrap, depending on your goal
+  overflow: visible !important;
+  text-overflow: unset !important;
+  max-width: 300px;
+  border-radius: 3px;
 }
 
 .pl-sidebar {
@@ -189,25 +199,37 @@
 }
 
 .pl-dropdown-content a {
+  display: block;               // ✅ Ensures the full row is clickable
   color: $pl-black;
-  font-size: .8rem;
-  padding: .5rem 1rem;
+  font-size: 0.8rem;
+  padding: 0.3rem 1rem;      // ✅ Balanced padding
   text-decoration: none;
-  display: block;
   font-weight: normal;
+  white-space: nowrap;          // Prevents weird wrapping
 }
 
 .pl-dropdown-content a:hover {
-  background-color: $pl-grey;
+  background-color: #cac3e4;
 }
 
-.pl-dropdown-menu:hover .pl-dropdown-content {
-  display: block;
-}
+
+// .pl-dropdown-menu:hover .pl-dropdown-content {
+//   display: block;
+// }
 
 .pl-nav-btn {
   display: none;
 }
+
+.pl-top-nav .nav-item,
+.pl-bottom-nav .nav-item {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
 
 
 @media (max-width: 640px) {

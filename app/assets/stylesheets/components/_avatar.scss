@@ -23,6 +23,22 @@
   border: white 1px solid;
 }
 
+.avatar-showpage {
+  width: 22px;
+  height: 22px;
+  object-fit: cover;
+  border-radius: 50%;
+  vertical-align: top;
+}
+
+.avatar-attendee-showpage {
+  width: 23px;
+  height: 23px;
+  object-fit: cover;
+  border-radius: 50%;
+  vertical-align: top;
+}
+
 // .pl-avatar-frame img {
 //   width: 44px;
 //   height: 44px;
