@@ -13,15 +13,29 @@
 
     }
 
-h3 {
-      font-size: 16px;
+    h2 {
+      font-size: 22px;
       font-weight: 900;
       margin-bottom: -1px;
     }
 
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: -1px;
+    }
+
+    h4 {
+
+      font-size: 14px;
+      // margin-left: -2px;
+      color: black;
+      margin-bottom: -4px;
+    }
+
     .tight-row {
       padding-top: 2px;
-      padding-bottom: 2px;
+      padding-bottom: 5px;
       margin-top: 4px;
       margin-right: 5px;
       margin-left: 5px;
