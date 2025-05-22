@@ -72,7 +72,15 @@
           (<%= friendly_time_zone_name(time_zone.name) %>)
         </h4>
       </div>
-      <i class="fa-regular fa-heart" style="color: #AA83D7; padding-top: 5px;"></i>
+      <% if @event_instance.likes.exists?(user: current_user) %>
+        <%= button_to event_instance_like_path(@event_instance), method: :delete, class: "btn p-0 border-0 bg-transparent" do %>
+          <i class="fa-solid fa-heart" style="color: #9062c6; padding-top: 5px;"></i>
+        <% end %>
+      <% else %>
+        <%= button_to event_instance_like_path(@event_instance), method: :post, class: "btn p-0 border-0 bg-transparent" do %>
+          <i class="fa-regular fa-heart" style="color: #AA83D7; padding-top: 5px;"></i>
+        <% end %>
+      <% end %>
     </div>
     <div class="d-flex justify-content-between">
       <% capacity = @event_instance.respond_to?(:capacity) ? @event_instance.capacity : @event.capacity %>

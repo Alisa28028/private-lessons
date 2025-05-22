@@ -2,6 +2,9 @@ class EventInstance < ApplicationRecord
   belongs_to :event
   belongs_to :location, optional: true
   has_many :bookings
+  has_many :likes, dependent: :destroy
+  has_many :liked_users, through: :likes, source: :user
+
   validates :date, presence: true
   validates :start_time, presence: true
   # validates :cancellation_policy_duration, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
