@@ -1,22 +1,73 @@
-<div class="container px-4 bg-white">
+<div class="container px-2 bg-white">
   <div class="row tight-row mt-2">
     <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
-    <div class="d-flex align-items-center mb-1">
-      <%= link_to user_path(@event.user), class: "d-flex align-items-center gap-1" do %>
-        <% if @event.user.photo.present? %>
-          <%= cl_image_tag @event.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
-        <% else %>
-          <%= image_tag "default-avatar.png", width: "200px", class: "avatar-large" %>
-        <% end %>
-        <h4 class="show"><%= @event.user.name %></h4>
+    <% if user_signed_in? %>
+      <% if current_user == @event.user %>
+        <div class="d-flex justify-content-between">
+          <div class="event-buttons mb-2 d-flex justify-content-start" style="margin-left: -3px;">
+            <!-- Buttons for the event creator (teacher) -->
+            <div class="d-flex flex-end" style="margin-left: 3px;">
+              <%= link_to "#", class: "btn btn-outline-primary btn-sm rounded-3", id: "copy-url-button" do %>
+                <i class="fa-solid fa-download"></i> copy url
+              <% end %>
+              <script>
+                document.getElementById('copy-url-button').addEventListener('click', function() {
+                  // Get the current URL
+                  const currentUrl = window.location.href;
+
+                  // Create a temporary textarea element to copy the text
+                  const textarea = document.createElement('textarea');
+                  textarea.value = currentUrl;
+                  document.body.appendChild(textarea);
+
+                  // Select and copy the text
+                  textarea.select();
+                  document.execCommand('copy');
+
+                  // Remove the temporary textarea
+                  document.body.removeChild(textarea);
+
+                  // Optional: Provide feedback to the user
+                  alert('URL copied to clipboard!');
+                });
+              </script>
+            </div>
+            <div class="d-flex flex-end" style="margin-left: 3px;">
+              <!-- ICON TO ADD VIDEO -->
+              <%= link_to '#', class: "btn btn-outline-primary btn-sm rounded-3 me-1", data: { bs_toggle: "modal", bs_target: "#addVideoModal" } do %>
+                <i class="fa-regular fa-file-video"></i>
+              <% end %>
+              <%= render 'events/event_video_modal', event_instance: @event_instance, event: @event %>
+              <!-- ICON TO EDIT EVENT -->
+              <%= link_to edit_event_instance_path(@event_instance), class: "btn btn-outline-primary btn-sm rounded-3 me-1" do %>
+                <i class="fa-regular fa-pen-to-square"></i>
+              <% end %>
+              <!-- ICON TO DUPLICATE EVENT -->
+              <%= link_to duplicate_event_path(@event), class: "btn btn-outline-primary btn-sm rounded-3 me-1" do %>
+                <i class="fa-regular fa-copy"></i>
+              <% end %>
+              <!-- ICON TO DELETE EVENT -->
+              <%= button_to event_path(@event), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn btn-outline-primary btn-sm rounded-3" do %>
+                <i class="fa-regular fa-trash-can"></i>
+              <% end %>
+            </div>
+          </div>
+        </div>
       <% end %>
-    </div>
-    <div class="d-flex justify-content-between mb-4">
+    <% else %>
+      <!-- Button for unauthenticated users -->
+      <div class="event-buttons mt-3">
+        <%= link_to new_user_session_path, class: "btn btn-warning btn-sm rounded-3" do %>
+          <i class="fa-solid fa-sign-in-alt"></i> Login to Book
+        <% end %>
+      </div>
+    <% end %>
+    <div class="d-flex justify-content-between" style="margin-bottom: 5px;">
       <div class="d-flex align-items-center gap-2">
         <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
         <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-        <i class="fa-regular fa-calendar text-custom" style="font-size: 16px; margin-left: 3px;"></i>
-        <h4 class="show mb-0">
+        <i class="fa-regular fa-calendar text-custom" style="font-size: 17px;margin-left: 1px;color: black;margin-top: 1px;"></i>
+        <h4 class="show" style="margin-top: 1px;">
           <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%B %d, %Y at %H:%M") %>
           (<%= friendly_time_zone_name(time_zone.name) %>)
         </h4>
@@ -28,9 +79,9 @@
       <% bookings_count = @event_instance.respond_to?(:bookings) ? @event_instance.bookings.count : @event.bookings.count %>
       <% if capacity.present? && bookings_count.present? %>
         <% if capacity - bookings_count <= 0 %>
-          <h4 class="show" style="font-weight: 700; margin-bottom: 2px"> EVENT FULL!!</h4>
+          <h4 class="show" style="font-weight: 700; margin-bottom: 2px; color: #786490;"> EVENT FULL!!</h4>
         <% else %>
-          <h4 class="show mb-2"> Spots left: <%= capacity - bookings_count %></h4>
+          <h4 class="show" style="font-weight: 700; color: #786490; margin-bottom: 2px;"> Spots left: <%= capacity - bookings_count %></h4>
         <% end %>
       <% end %>
       <% if @event_instance.price_cents.present? && @event_instance.price_cents > 0 %>
@@ -46,7 +97,7 @@
           <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
           <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
           <% if future_event && Time.current > cancellation_cutoff && user_booking && !user_booking.waitlisted%>
-            <h4 class="show" style="color: #8b6ab6">Cancellation not possible.
+            <h4 class="show" style="color: #786490">Cancellation not possible.
             </h4>
           <% end %>
         <% end %>
@@ -86,14 +137,14 @@
                 <%= button_to "On Waitlist (click to leave waitlist)", booking_path(user_booking),
         method: :delete,
         data: { confirm: "Are you sure you want to leave the waitlist?" },
-        class: "btn btn-card mt-0" %>
+        class: "btn btn-card mt-1" %>
               </div>
             <% elsif future_event %>
               <% if @event_instance.effective_capacity - @event_instance.bookings.count <= 0 %>
                 <div class="col-12 px-0">
                   <button type="button" style="font-size: small"
 
-                    class="btn btn-card w-100 m-0" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
+                    class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
                     Join Waitlist!
                   </button>
                 </div>
@@ -108,13 +159,19 @@
           <% end %>
         </div>
       </div>
+      <!-- Button Row -->
+      <!-------------------------------------------------->
       <div class="d-flex justify-content-center">
-        <%= link_to new_event_post_path(@event),  style: "font-size: small; border: 1px solid #000; padding: 5px; margin-left: 15px; margin-right: 15px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: black; text-decoration: none;", id: "copy-url-button" do %>
-          <i class="fa-regular fa-square-plus"></i> Add post!
+        <% if user_signed_in? %>
+          <% if current_user != @event.user %>
+            <%= link_to new_event_post_path(@event),  style: "font-size: small; border: 1px solid #000; padding: 5px; margin-left: 15px; margin-right: 15px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: black; text-decoration: none;", id: "copy-url-button" do %>
+              <i class="fa-regular fa-square-plus"></i> Add post!
+            <% end %>
+          <% end %>
         <% end %>
       </div>
     </div>
-    <div class="row g-0 mt-4 mx-4">
+    <div class="row g-0 mt-3 mx-4">
       <div class="col-12">
         <% if @event_instance.photos.attached? %>
           <%= cl_image_tag(@event_instance.photos.first.key, class: "image") %>
@@ -130,7 +187,20 @@
         <%# <p>no videos</p> %>
       <% end %>
       <!-- Description Row -->
-      <div class="mt-3 mx-2">
+      <div class="mt-3">
+        <div class="mb-3 me-2">
+          <h3 class="show">Teacher</h3>
+          <div class="d-flex align-items-center mb-1" style="margin-top: 1px;">
+            <%= link_to user_path(@event.user), class: "d-flex align-items-center gap-1" do %>
+              <% if @event.user.photo.present? %>
+                <%= cl_image_tag @event.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+              <% else %>
+                <%= image_tag "default-avatar.png", width: "200px", class: "avatar-large" %>
+              <% end %>
+              <h4 class="show"><%= @event.user.name %></h4>
+            <% end %>
+          </div>
+        </div>
         <div class="mb-3 me-2">
           <h3 class="show">Description</h3>
           <h4 class="show"> <%= @event.description %></h4>
@@ -152,7 +222,7 @@
             <h4 class="show"><%= @event_instance.capacity %></h4>
           <% end %>
         </div>
-        <div class="mb-3">
+        <div class="mb-2">
           <h3 class="show">Location </h3>
           <% if @event_instance.location.present? %>
             <div class="d-flex align-items-center">
@@ -166,73 +236,6 @@
           <% end %>
         </div>
       </div>
-      <!-- Button Row -->
-      <!-------------------------------------------------->
-      <% if user_signed_in? %>
-        <% if current_user == @event.user %>
-          <div class="event-buttons mt-1 d-flex justify-content-between">
-            <!-- Buttons for the event creator (teacher) -->
-            <div>
-              <%= link_to "#", class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
-                <i class="fa-solid fa-download"></i> copy url
-              <% end %>
-              <script>
-                document.getElementById('copy-url-button').addEventListener('click', function() {
-                  // Get the current URL
-                  const currentUrl = window.location.href;
-
-                  // Create a temporary textarea element to copy the text
-                  const textarea = document.createElement('textarea');
-                  textarea.value = currentUrl;
-                  document.body.appendChild(textarea);
-
-                  // Select and copy the text
-                  textarea.select();
-                  document.execCommand('copy');
-
-                  // Remove the temporary textarea
-                  document.body.removeChild(textarea);
-
-                  // Optional: Provide feedback to the user
-                  alert('URL copied to clipboard!');
-                });
-              </script>
-            </div>
-            <div>
-              <!-- ICON TO CREATE A POST -->
-              <%= link_to new_event_post_path(@event), class: "btn btn-outline-primary btn-sm", id: "copy-url-button" do %>
-                <i class="fa-regular fa-square-plus"></i> Add post
-              <% end %>
-            </div>
-            <div class="d-flex flex-end" style="margin-left: 3px;">
-              <!-- ICON TO ADD VIDEO -->
-              <%= link_to '#', class: "btn btn-outline-primary btn-sm me-1", data: { bs_toggle: "modal", bs_target: "#addVideoModal" } do %>
-                <i class="fa-regular fa-file-video"></i>
-              <% end %>
-              <%= render 'events/event_video_modal', event_instance: @event_instance, event: @event %>
-              <!-- ICON TO EDIT EVENT -->
-              <%= link_to edit_event_instance_path(@event_instance), class: "btn btn-outline-primary btn-sm me-1" do %>
-                <i class="fa-regular fa-pen-to-square"></i>
-              <% end %>
-              <!-- ICON TO DUPLICATE EVENT -->
-              <%= link_to duplicate_event_path(@event), class: "btn btn-outline-primary btn-sm me-1" do %>
-                <i class="fa-regular fa-copy"></i>
-              <% end %>
-              <!-- ICON TO DELETE EVENT -->
-              <%= button_to event_path(@event), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn btn-outline-primary btn-sm" do %>
-                <i class="fa-regular fa-trash-can"></i>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-      <% else %>
-        <!-- Button for unauthenticated users -->
-        <div class="event-buttons mt-3">
-          <%= link_to new_user_session_path, class: "btn btn-warning btn-sm" do %>
-            <i class="fa-solid fa-sign-in-alt"></i> Login to Book
-          <% end %>
-        </div>
-      <% end %>
       <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -280,7 +283,8 @@
         </div>
       </div>
       <!-- END of Waiting List Modal -->
-      <div class="mt-3 mx-2">
+      <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
+      <div class="mt-1 mb-4">
         <div class="d-flex flex-column w-100">
           <div class="mb-3">
             <h3 class="show">Attendees</h3>
