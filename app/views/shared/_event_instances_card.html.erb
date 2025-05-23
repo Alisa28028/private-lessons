@@ -124,8 +124,8 @@
         <% if user_booking %>
           <% if user_booking.waitlisted? %>
             <% if future_event %>
-              <p style="font-size: small; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px">
-                On Wait List!
+              <p style="font-size: small; border: 1px solid #8d76a7; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px; color: #8d76a7">
+                On Waitlist!
               </p>
             <% end %>
           <% else %>
@@ -137,12 +137,12 @@
           <!-- if not attending, check if the event is full. If no, BOOK CLASS. If yes, JOIN WAIT LIST -->
         <% elsif future_event %>
           <% if instance.effective_capacity - instance.bookings.count <= 0 %>
-            <button type="button" class="btn btn-card ml-2 mr-0"
+            <button type="button" class="btn btn-card ml-2 mr-0" style="background-color: #8d76a7;"
                       data-bs-toggle="modal"
                       data-bs-target="#waitinglistModal<%= instance.id %>"
                       data-controller="modal"
                       data-action="click->modal#handleClick">
-              Join Wait List
+              Join Waitlist
             </button>
           <% else %>
             <button type="button" class="btn btn-card ml-2 mr-0"
@@ -292,7 +292,7 @@
       <div class="d-flex justify-content-between">
         <div class="modal-body">
           <%= simple_form_for [instance.event, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
-            <%= f.submit "Join Wait List", class: "btn btn-custom my-3" %>
+            <%= f.submit "Join Waitlist", class: "btn btn-custom my-3", style: "background-color: #8d76a7" %>
           <% end %>
         </div>
         <div class="modal-footer">

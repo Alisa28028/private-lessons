@@ -150,7 +150,7 @@
             <% elsif future_event %>
               <% if @event_instance.effective_capacity - @event_instance.bookings.count <= 0 %>
                 <div class="col-12 px-0">
-                  <button type="button" style="font-size: small"
+                  <button type="button" style="font-size: small; background-color: #8d76a7;"
 
                     class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
                     Join Waitlist!
@@ -279,7 +279,7 @@
               <div class="modal-body">
                 <%= simple_form_for [@event_instance, @new_booking] do |f| %>
                   <div class="col-12">
-                    <%= f.submit "Join Waitlist", class: "btn btn-custom my-3" %>
+                    <%= f.submit "Join Waitlist", class: "btn btn-custom my-3", style: "background-color: #8d76a7;" %>
                   <% end %>
                 </div>
               </div>
