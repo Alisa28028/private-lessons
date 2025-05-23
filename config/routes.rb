@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       get :duplicate
       post :add_video
     end
+
     resources :bookings, only: [:create]
     #  Nested posts for events, including edit and update
     resources :posts, only: [:new, :create, :edit, :update, :index, :show] do
@@ -23,6 +24,12 @@ Rails.application.routes.draw do
     end
     resources :videos, only: [:create, :destroy]
   end
+
+  resources :event_instances, only: [] do
+    resource :like, only: [:create, :destroy], controller: 'likes'
+  end
+
+
   # Standalone video routes (for independent uploads)
   resources :videos, only: [:create, :index, :show, :destroy]
    # Routes for managing event instances independently

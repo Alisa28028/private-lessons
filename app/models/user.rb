@@ -18,6 +18,8 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :videos, dependent: :destroy
+  has_many :likes, dependent: :destroy
+  has_many :liked_event_instances, through: :likes, source: :event_instance
   has_and_belongs_to_many :locations, join_table: 'locations_users'
 
   has_one_attached :photo

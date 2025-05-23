@@ -234,6 +234,8 @@ class EventsController < ApplicationController
     (start_time + duration.minutes).strftime("%H:%M")
   end
 
+
+
   private
 
   def set_event
