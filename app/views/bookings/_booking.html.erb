@@ -1,20 +1,19 @@
-<turbo-frame id="booking_<%= booking.id %>">
-  <div>
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <div>
-        <strong><%= booking.user.name %></strong> - <%= booking.state %>
-      </div>
-      <div>
-        <% if booking.state != "paid" %>
-          <%= button_to update_state_booking_path(booking), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm btn-success" do %>
-            Mark as Paid
-          <% end %>
-        <% else %>
-          <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, remote: true, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; color: white;" do %>
-            Mark as Unpaid
-          <% end %>
+<div>
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <div style="margin-top: -6px;">
+      <%= booking.id %>
+      <strong><%= booking.user.name %></strong> - <%= booking.state %>
+    </div>
+    <div>
+      <% if booking.state == "unpaid" %>
+        <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm btn-success" do %>
+          Mark as Paid
         <% end %>
-      </div>
+      <% else %>
+        <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; color: white;" do %>
+          Mark as Unpaid
+        <% end %>
+      <% end %>
     </div>
   </div>
-</turbo-frame>
+</div>

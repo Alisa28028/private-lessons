@@ -33,8 +33,7 @@ class BookingsController < ApplicationController
 
   def update_state
     @booking = Booking.find(params[:id])
-    new_state = params[:state] || "paid"
-    @booking.update(state: new_state)
+    @booking.update(state: params[:state])
 
     respond_to do |format|
       format.turbo_stream do
