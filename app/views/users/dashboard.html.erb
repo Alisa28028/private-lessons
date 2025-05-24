@@ -1,14 +1,13 @@
-<div class="container my-5 w-100 mb-0">
+<div class="container px-2 bg-white">
   <div class="row">
     <div class="col-12">
       <div class="column mx-3">
         <% if current_user.events.any? || current_user.bookings.any? %>
           <div class="d-flex justify-content-between mt-4 mb-2">
             <p class="d-flex justify-content-center fs-3 text-dark"><strong>My Dashboard</strong></p>
-            <div class="">
-              <p class="text-white bg-custom button-plus d-flex justify-content-center align-items-center"><strong>
-                  <%= link_to "+", new_event_path, class: "text-white text-decoration-none" %></strong></p>
-            </div>
+            <p class="text-white bg-custom button-plus d-flex justify-content-center align-items-center"><strong>
+                <%= link_to "+", new_event_path, class: "text-white text-decoration-none" %></strong>
+            </p>
           </div>
           <h4 class="d-flex justify-content-left mb-4 pb-2 fs-5 text-dark border-bottom border-1">Last Month:</h4>
           <div class="d-flex justify-content-between mb-4 pb-3">
@@ -34,12 +33,42 @@
           </div>
         </div>
       </div>
+      <!-- SINGLE Manage Attendees Button -->
+      <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#attendeePanel" aria-controls="attendeePanel">
+        Manage All Attendees
+      </button>
+      <!-- Offcanvas Panel for All Bookings -->
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="attendeePanel" aria-labelledby="attendeePanelLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="attendeePanelLabel">Attendee Management</h5>
+          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <% @event_instances.each do |instance| %>
+            <h6 class="" style="margin-bottom: -1px;"><%= instance.event.title.capitalize %> - <%= instance.start_time.strftime("%Y/%m/%d") %></h6>
+            <% instance.bookings.each do |booking| %>
+              <turbo-frame id="booking_<%= booking.id %>">
+                <!-- Turbo frame with buttons and state here -->
+                <div class="" style="margin-top: -6px;">
+                  <strong><%= booking.user.name %></strong> - <%= booking.state %>
+                </div>
+                <% if booking.state == 'unpaid' %>
+                  <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, remote: true, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm btn-success" do %>
+                    Mark as Paid
+                  <% end %>
+                <% else %>
+                  <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, remote: true, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; color: white;" do %>
+                    Mark as Unpaid
+                  <% end %>
+                <% end %>
+              <% end %>
+            </turbo-frame>
+          <% end %>
+        </div>
+      </div>
       <%# Iterating through teaching events %>
       <div class="container p-0">
       </div>
-      <%# </div> %>
-      <%# </div> %>
-      <%# </div> %>
       <div class="container">
         <div class="row mx-4">
           <h6 class="border-bottom border-1 d-flex justify-content-center mb-3">Upcoming classes</h6>
@@ -50,33 +79,11 @@
           </div>
         </div>
       </div>
-      <%#---- financial dashboard starts here ----%>
-      <p class="mb-0 mt-2 d-flex align-items-center fw-bold text-center">Earnings:</p>
-      <br>
-      <div class="card-sums">
-        <div class="d-flex flex-column">
-          <div class="d-flex flex-row justify-content-evenly">
-            <%# monthly earnings total: bookings this month sum %>
-            <div class="d-flex flex-column align-items-center mb-5">
-              <%# <p class="justify-content-en">This month: <%= humanized_money_with_symbol @current_month_events_sum %>
-              <p>
-              </div>
-              <div class="d-flex flex-column align-items-center">
-                <%# <p class="justify-content-en">Last month: <%= humanized_money_with_symbol @last_month_events_sum %>
-                <%# </p> %>
-              </div>
-            </div>
-          </div>
-        </div>
-        <%# optional: last 3 monthly bookings: sort bookings by date, iterate 3 times to display booking data %>
-        <%# optional: top earning classes: retrieve max key values %>
-        <%#---- financial dashboard end here ----%>
-      <% else %>
-        <h2 class="mb-0 mt-5 d-flex align-items-center fw-bold">You haven't created any events or registered to any classes yet.</h2>
-        <div class="">
-          <a href="new_event_path">
-            <p class="text-white bg-custom button-plus d-flex justify-content-center align-items-center my-2"><strong><%= link_to "+", new_event_path, class: "text-white text-decoration-none" %></strong></p>
-          </a>
-        <% end %>
-      </div>
-    </div>
+    <% else %>
+      <h2 class="mb-0 mt-5 d-flex align-items-center fw-bold">You haven't created any events or registered to any classes yet.</h2>
+      <a href="new_event_path">
+        <p class="text-white bg-custom button-plus d-flex justify-content-center align-items-center my-2"><strong><%= link_to "+", new_event_path, class: "text-white text-decoration-none" %></strong>
+        </p>
+      </a>
+    <% end %>
+  </div>

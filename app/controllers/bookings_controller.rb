@@ -31,6 +31,20 @@ class BookingsController < ApplicationController
     redirect_back fallback_location: event_instance_path(@event_instance)
   end
 
+  def update_state
+    @booking = Booking.find(params[:id])
+    new_state = params[:state] || "paid"
+    @booking.update(state: new_state)
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(@booking, partial: "bookings/booking", locals: { booking: @booking })
+      end
+      format.html { redirect_to dashboard_path }
+    end
+  end
+
+
   def destroy
     @booking = Booking.find_by(id: params[:id])
 
@@ -130,6 +144,6 @@ class BookingsController < ApplicationController
     private
 
     def booking_params
-      params.require(:booking).permit(:user_id) # Add any other required fields
+      params.require(:booking).permit(:user_id, :state) # Add any other required fields
     end
 end
