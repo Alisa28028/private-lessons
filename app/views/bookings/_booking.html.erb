@@ -1,19 +1,28 @@
-<div>
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <div style="margin-top: -6px;">
-      <%= booking.id %>
-      <strong><%= booking.user.name %></strong> - <%= booking.state %>
-    </div>
-    <div>
-      <% if booking.state == "unpaid" %>
-        <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm btn-success" do %>
-          Mark as Paid
+<turbo-frame id="booking_<%= booking.id %>">
+  <div class="">
+    <div class="d-flex justify-content-between align-items-end">
+      <div class="d-flex align-items-end" style="margin-top: -6px;">
+        <i class="fa-solid fa-caret-down"></i>
+        <h6 class="panel"><%= booking.user.name %></h6>
+        <% if booking.state == 'paid' %>
+          <h6 class="panel"> - <%= booking.state %>
+            ✅</h6>
+        <% else %>
+          <h6 class="panel">- <%= booking.state %> ❌
+          </h6>
         <% end %>
-      <% else %>
-        <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; color: white;" do %>
-          Mark as Unpaid
+      </div>
+      <div>
+        <% if booking.state == "unpaid" %>
+          <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
+            Mark as Paid
+          <% end %>
+        <% else %>
+          <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
+            Mark as Unpaid
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
     </div>
   </div>
-</div>
+</turbo-frame>

@@ -37,7 +37,7 @@ class BookingsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace(@booking, partial: "bookings/booking", locals: { booking: @booking })
+        render turbo_stream: turbo_stream.replace(@booking)
       end
       format.html { redirect_to dashboard_path }
     end
