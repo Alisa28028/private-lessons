@@ -3,7 +3,7 @@
     <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
     <% if user_signed_in? %>
       <% if current_user == @event.user %>
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between mt-2">
           <div class="event-buttons mb-2 d-flex justify-content-start" style="margin-left: -3px;">
             <!-- Buttons for the event creator (teacher) -->
             <div class="d-flex flex-end" style="margin-left: 3px;">
@@ -295,7 +295,10 @@
       <div class="mt-1 mb-4">
         <div class="d-flex flex-column w-100">
           <div class="mb-3">
-            <h3 class="show">Attendees</h3>
+            <div class="d-flex justify-content-between">
+              <h3 class="show mb-2">Attendees</h3>
+              <h5 class="show" style="margin-top: 2px; text-decoration: underline;">Manage payments</h5>
+            </div>
             <%# <h4 class="show">Number of bookings: <%= @bookings.where(waitlisted: false).count</h4> %>
             <% @bookings.each_with_index do |booking, index| %>
               <% if booking.waitlisted == false %>
@@ -313,7 +316,13 @@
                     </h4>
                   </div>
                   <% if current_user == @event_instance.event.user %>
-                    <span class="<%= booking.state %>"><%= booking.state.capitalize %></span>
+                    <% if booking.state == 'paid' %>
+                      <h4 class="show d-flex justify-content-center" style="background-color: #9bdaa7; height: 21px;line-height: 21px;border-radius: 4px; width: 100px;color: white;">
+                        <%= booking.state.capitalize %></h4>
+                    <% elsif booking.state == 'unpaid' %>
+                      <h4 class="show d-flex justify-content-center" style="background-color: black; height: 21px; color: white; border-radius: 4px; line-height: 21px; width: 100px;">
+                        <%= booking.state.capitalize %></h4>
+                    <% end %>
                   <% end %>
                 </div>
               <% end %>
@@ -321,7 +330,7 @@
           </div>
           <!-- Show only attendees within capacity -->
           <!-- If there are more bookings than capacity, show the waitlist -->
-          <h3 class="show">Waitlist</strong></h3>
+          <h3 class="show mb-2">Waitlist</strong></h3>
         <% @event_instance.bookings.where(waitlisted: true).order(:joined_at).each do |booking| %>
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
