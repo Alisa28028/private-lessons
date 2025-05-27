@@ -296,149 +296,119 @@
         <div class="d-flex flex-column w-100">
           <div class="mb-1">
             <div class="d-flex justify-content-between">
-              <h3 class="show mb-1">Attendees</h3>
-              <%# <h5 class="show" style="margin-top: 2px; text-decoration: underline;">Manage payments</h5> %>
-            </div>
-            <%# <h4 class="show">Number of bookings: <%= @bookings.where(waitlisted: false).count</h4> %>
-            <% @bookings.reject(&:waitlisted).sort_by(&:created_at).each do |booking| %>
-              <turbo-frame id="booking_<%= booking.id %>">
-                <% if current_user != @event_instance.event.user %>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                      <%= link_to user_path(booking.user) do %>
-                        <% if booking.user&.photo.present? %>
-                          <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar-bordered" %>
-                        <% else %>
-                          <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "avatar-bordered" %>
-                        <% end %>
-                      <% end %>
-                      <h4 class="show mb-0">
-                        <%= link_to booking.user.name, user_path(booking.user), class: "text-decoration-none text-dark" %>
-                      </h4>
-                    </div>
-                  </div>
-                  <h3 class="show mb-2 mt-2">Waitlist</strong></h3>
-                <% @event_instance.bookings.where(waitlisted: true).order(:joined_at).each do |booking| %>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                      <%= link_to user_path(booking.user) do %>
-                        <% if booking.user&.photo.present? %>
-                          <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar-bordered" %>
-                        <% else %>
-                          <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "default avatar" %>
-                        <% end %>
-                      <% end %>
-                      <h4 class="show mb-0">
-                        <%= link_to booking.user.name, user_path(booking.user), class: "text-decoration-none text-dark" %>
-                      </h4>
-                    </div>
-                  </div>
-                <% end %>
-              <% else %>
-                <turbo-frame id="booking_<%= booking.id %>">
-                  <div class="d-flex flex-column">
-                    <div class="">
+              <% if @bookings.any? %>
+                <h3 class="show mb-1">Attendees</h3>
+              </div>
+              <% is_creator = current_user == @event_instance.event.user %>
+              <% @bookings.reject(&:waitlisted).sort_by(&:created_at).each do |booking| %>
+                <% if is_creator %>
+                  <turbo-frame id="booking_<%= booking.id %>">
+                    <!-- Creator view with dropdown, payment buttons, etc -->
+                    <div class="d-flex flex-column">
                       <div class="d-flex justify-content-between align-items-end">
                         <div class="d-flex align-items-center" style="margin-top: -6px;">
-                          <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 1px;"></i>
-                          <%# <div class="d-flex justify-content-between align-items-center"> %>
+                          <i class="fa-solid fa-caret-down me-1"></i>
                           <div class="panel">
-                            <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-                              <h6> <%= booking.user.name %>
-                              </h6>
+                            <a class="text-decoration-none text-dark" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
+                              <h6><%= booking.user.name %></h6>
                             </a>
                           </div>
-                          <% if booking.state == 'paid' %>
-                            <div class="panel">
-                              <h6> - <%= booking.state %>
-                                ✅
-                              </h6>
-                            </div>
-                          <% else %>
-                            <div class="panel">
-                              <h6 class="panel"> - <%= booking.state %> ❌
-                              </h6>
-                            </div>
-                          <% end %>
-                          <%# </div> %>
+                          <div class="panel">
+                            <h6>- <%= booking.state %> <%= booking.state == 'paid' ? '✅' : '❌' %></h6>
+                          </div>
                         </div>
                         <div>
-                          <% if booking.state == "unpaid" %>
-                            <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
-                              Mark as Paid
-                            <% end %>
-                          <% else %>
-                            <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-                              Mark as Unpaid
-                            <% end %>
+                          <%= button_to update_state_booking_path(booking, state: (booking.state == 'paid' ? 'unpaid' : 'paid')), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #{booking.state == 'paid' ? 'black' : '#9bdaa7'}; color: white; line-height: 1px; height: 20px; border-radius: 4px; width: 127px;" do %>
+                            Mark as <%= booking.state == 'paid' ? 'Unpaid' : 'Paid' %>
                           <% end %>
                         </div>
                       </div>
-                      <!-- Dropdown Content -->
-                      <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
-                        <div class="p-2" style="border-radius: 5px;">
-                          <!-- You can put any additional booking details here -->
+                      <!-- Dropdown -->
+                      <div class="collapse mt-2" id="dropdown_<%= booking.id %>">
+                        <div class="p-2">
                           <div class="panel">
-                            <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex flex-column align-items-start" do %>
-                              <div class="d-flex justify-content-start">
-                                <% if booking.user.photo.present? %>
-                                  <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
-                                <% else %>
-                                  <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
-                                <% end %>
-                                <h6 class="panel" style="margin-left: 2px;">
-                                  view profile</h6>
-                              </div>
-                              <div class="d-flex">
-                                <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
-                                <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
-                              </div>
-                              <div class="d-flex">
-                                <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
-                                <h6 style="margin-left: 8px;">
-                                  <%= booking.user.phone_number %></h6>
-                              </div>
-                              <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
-                            <% end %>
+                            <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
+                              <% if booking.user.photo.present? %>
+                                <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+                              <% else %>
+                                <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
+                              <% end %>
+                              <h6 class="panel" style="margin-left: 2px;">
+                                view profile</h6>
+                            </div>
                           <% end %>
+                          <div class="d-flex">
+                            <div class="panel" style="margin-left: 3px;">
+                              <h6><i class="fa-solid fa-envelope"></i></h6>
+                            </div>
+                            <div class="panel" style="margin-left: 6px;">
+                              <h6>  <%= booking.user.email %></h6>
+                            </div>
+                          </div>
+                          <div class="d-flex">
+                            <div class="panel" style="margin-left: 4px;">
+                              <h6><i class="fa-solid fa-mobile-screen-button"></i></h6>
+                            </div>
+                            <div class="panel" style="margin-left: 8px;">
+                              <h6>
+                                <%= booking.user.phone_number %></h6>
+                            </div>
+                          </div>
+                          <div class="panel" style="margin-left: 3px;">
+                            <h6 >Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </turbo-frame>
-                </div>
-              </div>
-            <% end %>
-            <!-- Show only attendees within capacity -->
-            <!-- If there are more bookings than capacity, show the waitlist -->
-            <h3 class="show mb-2 mt-2">Waitlist</strong></h3>
-          <% @event_instance.bookings.where(waitlisted: true).order(:joined_at).each do |booking| %>
-            <div class="d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center">
-                <%= link_to user_path(booking.user) do %>
-                  <% if booking.user&.photo.present? %>
-                    <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar-bordered" %>
-                  <% else %>
-                    <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "default avatar" %>
-                  <% end %>
+                <% else %>
+                  <!-- Attendee (non-creator) view -->
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center">
+                      <%= link_to user_path(booking.user), class: "d-flex align-items-center text-decoration-none text-dark", data: { turbo_frame: "_top" } do %>
+                        <% if booking.user.photo.present? %>
+                          <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar" %>
+                        <% else %>
+                          <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "avatar" %>
+                        <% end %>
+                        <h4 class="mb-0"><%= booking.user.name %></h4>
+                      <% end %>
+                    </div>
+                  </div>
                 <% end %>
-                <h4 class="show mb-0">
-                  <%= link_to booking.user.name, user_path(booking.user), class: "text-decoration-none text-dark" %>
-                </h4>
-              </div>
-            </div>
-          <% end %>
-          <%# <% # Only show 'See all' if there are more bookings than the capacity %>
-          <%# <% if @bookings.count > capacity %>
-          <%# <div class="d-flex justify-content-between"> %>
-          <%# <p class="mt-2">...plus <strong><%= @bookings.count - capacity %>
-          <%# </strong> more</p> %>
-          <%# <a href="#" data-bs-toggle="modal" data-bs-target="#attendeesModal" class="mt-2"><strong>See all</strong></a> %>
-          <%# </div> %>
-          <%# <% end %>
-          <%# END of Iterating through attending users % %>
-          <!-- All Attendees Modal -->
+              <% end %>
+            <% end %>
+            <!-- Waitlist Section (after attendees) -->
+            <% waitlist = @event_instance.bookings.where(waitlisted: true).order(:joined_at) %>
+            <% if waitlist.any? %>
+              <h3 class="show mb-2 mt-4">Waitlist</h3>
+              <% waitlist.each do |booking| %>
+                <div class="panel d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex align-items-center">
+                    <%= link_to user_path(booking.user), class: "d-flex align-items-center text-decoration-none text-dark", data: { turbo_frame: "_top" } do %>
+                      <% if booking.user.photo.present? %>
+                        <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar" %>
+                      <% else %>
+                        <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "avatar" %>
+                      <% end %>
+                      <h6><%= booking.user.name %></h6>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
         </div>
+        <%# <% # Only show 'See all' if there are more bookings than the capacity %>
+        <%# <% if @bookings.count > capacity %>
+        <%# <div class="d-flex justify-content-between"> %>
+        <%# <p class="mt-2">...plus <strong><%= @bookings.count - capacity %>
+        <%# </strong> more</p> %>
+        <%# <a href="#" data-bs-toggle="modal" data-bs-target="#attendeesModal" class="mt-2"><strong>See all</strong></a> %>
+        <%# </div> %>
+        <%# <% end %>
+        <%# END of Iterating through attending users % %>
+        <!-- All Attendees Modal -->
       </div>
-      <%# </div>
     </div>
-  </div> %>
+  </div>
