@@ -6,6 +6,7 @@ class UsersController < ApplicationController
     require 'time'
 
     @bookings = current_user.bookings
+    @event_instances = EventInstance.joins(:event).where(events: { user_id: current_user.id }).includes(:bookings => :user)
 
     # Ensure @events is an ActiveRecord relation
     @events = current_user.events.presence || Event.none

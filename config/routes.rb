@@ -65,6 +65,9 @@ Rails.application.routes.draw do
     # booking routes
     resources :bookings, only: [:index, :destroy] do
       resources :payments, only: [:new]
+      member do
+          patch :update_state
+      end
   end
 
   # Dashboard route for users
