@@ -30,13 +30,18 @@
             <%#---- Tallying up students who attended the most ----%>
             <%# removing block AA %>
             <%#---- END of Tallying up students who attended the most ----%>
+            <!-- SINGLE Manage Attendees Button -->
+          </div>
+          <div class="d-flex flex-column">
+            <button class="btn btn-outline-primary mb-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#attendeePanel" aria-controls="attendeePanel">
+              Manage Payments
+            </button>
+            <button class="btn btn-outline-secondary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#bookingPanel" aria-controls="bookingPanel">
+              Manage Bookings
+            </button>
           </div>
         </div>
       </div>
-      <!-- SINGLE Manage Attendees Button -->
-      <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#attendeePanel" aria-controls="attendeePanel">
-        Manage Payment Status
-      </button>
       <!-- Offcanvas Panel for All Bookings -->
       <div class="offcanvas offcanvas-end" tabindex="-1" id="attendeePanel" aria-labelledby="attendeePanelLabel">
         <div class="d-flex flex-column">
@@ -232,6 +237,17 @@
               <% end %>
             <% end %>
           </div>
+        </div>
+      </div>
+      <%# adding another button and panel for bookings management %>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="bookingPanel" aria-labelledby="bookingPanelLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="bookingPanelLabel">Manage Bookings</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <!-- Add your booking management UI here -->
+          <p>Coming soon: functionality for editing, canceling, and reviewing bookings.</p>
         </div>
       </div>
       <%# Iterating through teaching events %>
