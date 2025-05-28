@@ -29,6 +29,22 @@
   border-radius: 4px;
 }
 
+.form-check-input {
+  width: 3.5rem !important;
+  height: 1.5rem !important;
+}
+
+.switch-label {
+  pointer-events: none !important;
+  width: 3.5rem !important;
+  text-align: center !important;
+}
+
+.switch-label--center {
+  top: 45%;          /* move up a touch (was 50%) */
+  left: 12%;         /* move a bit right (was 50%) */
+  transform: translate(-50%, -50%); /* keep true centering math */
+}
 
 
 /* Make the form wider on small screens */

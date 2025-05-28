@@ -29,6 +29,7 @@ class Event < ApplicationRecord
   # validates :start_date, presence: true
   # validates :end_date, presence: true
 
+  before_validation :set_default_approval_mode
   accepts_nested_attributes_for :event_instances, allow_destroy: true
 
   include PgSearch::Model
@@ -201,6 +202,10 @@ def update_event_instance_prices
   if saved_change_to_price_cents? # This checks if the price has changed
     event_instances.where(price_cents: nil).update_all(price_cents: self.price_cents)
   end
+end
+
+def set_default_approval_mode
+  self.approval_mode ||= "auto"
 end
 
 end

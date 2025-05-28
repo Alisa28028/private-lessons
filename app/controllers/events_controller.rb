@@ -2,6 +2,7 @@ class EventsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_event, only: [:index, :edit, :show, :update, :add_video]
 
+
   def index
     @user = current_user
     @users = User.all

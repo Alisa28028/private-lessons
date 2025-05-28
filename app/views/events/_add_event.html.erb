@@ -31,6 +31,25 @@
       <!--one time event form (hidden by default)-->
       <div data-event-form-target="oneTimeEventForm" class="d-none">
         <%= f.hidden_field :recurrence_type, value: 'one-time' %>
+        <div data-controller="toggle">
+          <div class="form-check form-switch position-relative">
+            <%= f.check_box :approval_mode,
+      {
+        class: "form-check-input",
+        role: "switch",
+        id: "approvalSwitch",
+        data: { action: "change->toggle#updateLabel" }
+      },
+      "manual",
+      "auto"
+    %>
+            <%= f.label :approval_mode, "", class: "form-check-label", for: "approvalSwitch" %>
+            <!-- Embedded label inside the switch -->
+            <span class="switch-label switch-label--center position-absolute text-white small" data-toggle-target="label">
+              <%= f.object.approval_mode == "manual" ? "YES" : "NO" %>
+            </span>
+          </div>
+        </div>
         <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
         <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
         <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
