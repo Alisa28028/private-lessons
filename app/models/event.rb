@@ -49,10 +49,6 @@ class Event < ApplicationRecord
   after_initialize :set_default_cancellation_policy, if: :new_record?
   after_update :update_event_instance_prices
 
-  def set_default_cancellation_policy
-    self.cancellation_policy_duration ||= 24
-  end
-
   def handle_one_time_event(params)
     # Find or initialize the first EventInstance
     instance = self.event_instances.first_or_initialize
@@ -202,6 +198,10 @@ def update_event_instance_prices
   if saved_change_to_price_cents? # This checks if the price has changed
     event_instances.where(price_cents: nil).update_all(price_cents: self.price_cents)
   end
+end
+
+def set_default_cancellation_policy
+  self.cancellation_policy_duration ||= 24
 end
 
 def set_default_approval_mode

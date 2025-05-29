@@ -2,10 +2,17 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="toggle"
 export default class extends Controller {
-  static targets = ["label"]
+  static targets = ["label", "checkbox", "description"]
 
-  updateLabel(event) {
-    const checked = event.target.checked
-    this.labelTarget.textContent = checked ? "YES" : "NO"
+  updateLabel() {
+    const isManual = this.checkboxTarget.checked
+    this.labelTarget.textContent = isManual ? "YES" : "NO"
+    this.labelTarget.classList.toggle("switch-label--yes", isManual)
+    this.labelTarget.classList.toggle("switch-label--no", !isManual)
+
+    // Update the description line
+    this.descriptionTarget.textContent = isManual
+      ? "Students need your approval to book the class."
+      : "Students can book the class directly."
   }
 }

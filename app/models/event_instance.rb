@@ -26,6 +26,12 @@ class EventInstance < ApplicationRecord
   before_validation :set_default_price, on: :create
   before_destroy :destroy_event_if_last_instance
 
+  before_validation :inherit_approval_mode, on: :create
+
+  def inherit_approval_mode
+    self.approval_mode ||= event&.approval_mode
+  end
+
   def apply_default_cancellation_policy
     self.cancellation_policy_duration ||= event.cancellation_policy_duration
   end
@@ -33,6 +39,7 @@ class EventInstance < ApplicationRecord
   def set_default_price
     self.price_cents ||= event.price_cents if event
   end
+
 
   before_save :set_end_time_from_duration
 
@@ -144,6 +151,10 @@ class EventInstance < ApplicationRecord
 
   def effective_price
     price || event.price
+  end
+
+  def effective_approval_mode
+    self[:approval_mode] || event.approval_mode
   end
 
   private

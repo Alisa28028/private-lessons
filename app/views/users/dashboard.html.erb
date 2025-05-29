@@ -83,7 +83,7 @@
         <div class="offcanvas-body">
           <h3 id="past-events" class="mb-4">Past Events</h3>
           <div>
-            <% @past_event_instances.each do |instance| %>
+            <% @past_event_instances_created.each do |instance| %>
               <% if instance.bookings.any? %>
                 <%= link_to event_instance_path(instance) do %>
                   <div class="panel mb-3">
@@ -161,7 +161,7 @@
           </div>
           <div>
             <h3 id="future-events" class="mt-5 mb-4">Upcoming Events</h3>
-            <% @upcoming_event_instances.each do |instance| %>
+            <% @upcoming_event_instances_created.each do |instance| %>
               <% if instance.bookings.any? %>
                 <%= link_to event_instance_path(instance) do %>
                   <div class="panel mb-3">

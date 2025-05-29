@@ -157,10 +157,10 @@ end
   def event_instance_params
     params.require(:event_instance).permit(
       :start_time, :end_time, :start_date, :end_date, :duration, :capacity, :price, :cancellation_policy_duration,
-      :location_id, :location_name,
+      :location_id, :approval_mode, :location_name,
       photos: [],
       videos: [],
-      event_attributes: [:id, :title, :description, :location_id, :location_name] # Permit event attributes here
+      event_attributes: [:id, :title, :description, :location_id, :location_name, :approval_mode] # Permit event attributes here
     )
   end
 

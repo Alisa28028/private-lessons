@@ -237,6 +237,8 @@
               <i class="fa-solid fa-location-dot fa-xs text-custom" style="padding-right: 2px; padding-top: 3px"></i>
               <h4 class="show"><%= @event_instance.location.name %>
               </div>
+              <h4>approval mode</h4>
+              <%= @event.approval_mode %>
               <%# , <%= @event.location.address %>
             </h4>
           <% else %>
