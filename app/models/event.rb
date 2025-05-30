@@ -75,6 +75,7 @@ class Event < ApplicationRecord
       instance.date = parsed_date
       instance.location_id = self.location_id
       instance.price_cents = self.price_cents
+      instance.approval_mode = self.approval_mode
 
       if instance.save
         Rails.logger.info("Event instance saved successfully with start_time: #{instance.start_time}")
@@ -115,7 +116,8 @@ class Event < ApplicationRecord
       start_time: start_time_utc,
       cancellation_policy_duration: cancellation_policy_duration,
       location_id: location_id,
-      price_cents: price_cents
+      price_cents: price_cents,
+      approval_mode: approval_mode
     )
 
     end
@@ -162,7 +164,8 @@ class Event < ApplicationRecord
         date: parsed_date,
         cancellation_policy_duration: cancellation_policy_duration,
         location_id: location_id,
-        price_cents: price_cents
+        price_cents: price_cents,
+        approval_mode: approval_mode
       )
     rescue JSON::ParserError
       self.errors.add(:custom_dates, "Invalid format for custom dates.")
