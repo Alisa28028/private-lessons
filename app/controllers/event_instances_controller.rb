@@ -104,7 +104,8 @@ class EventInstancesController < ApplicationController
           # Redirect to the event instance page if both are successful
           redirect_to @event_instance, notice: 'Event instance successfully updated.'
         else
-          render :edit, alert: 'Failed to update event.'
+          flash.now[:alert] = 'Failed to update event.'
+          render :edit, status: :unprocessable_entity
         end
 
         # //////////////////////////////////////

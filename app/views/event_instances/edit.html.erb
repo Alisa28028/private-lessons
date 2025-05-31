@@ -19,32 +19,6 @@
           <%= event_fields.input :description, label: "Description", input_html: { placeholder: "Description (this will apply to all instances)" } %>
           <!-- Hidden field for location, if needed later -->
           <%# <%= event_fields.input :location_id, as: :hidden %>
-          <div data-controller="toggle">
-            <div class="d-flex justify-content-start align-items-center mb-2">
-              <%= event_fields.label :approval_mode, "Approval Mode", class: "form-label me-2", style: "margin-top: 3px;" %>
-              <div class="form-check form-switch position-relative">
-                <%= event_fields.check_box :approval_mode,
-          {
-            class: "form-check-input",
-            role: "switch",
-            id: "approvalSwitch",
-            data: { action: "change->toggle#updateLabel",
-             toggle_target: "checkbox"
-             }
-          },
-          "manual", "auto" %>
-                <% approval_text = event_fields.object.approval_mode == "manual" ? "YES" : "NO" %>
-                <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
-                <span class="switch-label <%= approval_class %> position-absolute text-white small" data-toggle-target="label">
-                  <%= approval_text %>
-                </span>
-              </div>
-            </div>
-            <!-- Booking behavior message -->
-            <p data-toggle-target="description" class="text-muted small">
-              <%= event_fields.object.approval_mode == "manual" ? "Students need your approval to book the class" : "Students can book the class directly" %>
-            </p>
-          </div>
         <% end %>
       </div>
       <!-- Common fields for the event instance -->
@@ -81,6 +55,34 @@
         </div>
         <!-- Hidden Location ID Input -->
         <%# <%= f.hidden_field :location_id, id: "event_location_id" %>
+      </div>
+      <div data-controller="toggle">
+        <%= f.input :approval_mode, as: :hidden %>
+        <div class="d-flex justify-content-start align-items-center mb-2">
+          <%= f.label :approval_mode, "Approval Mode", class: "form-label me-2", style: "margin-top: 3px;" %>
+          <div class="form-check form-switch position-relative">
+            <%= f.check_box :approval_mode,
+      {
+        class: "form-check-input",
+        role: "switch",
+        id: "approvalSwitch",
+        data: {
+          action: "change->toggle#updateLabel",
+          toggle_target: "checkbox"
+        }
+      },
+      "manual", "auto" %>
+            <% approval_text = @event_instance.approval_mode == "manual" ? "YES" : "NO" %>
+            <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
+            <span class="switch-label <%= approval_class %> position-absolute text-white small" data-toggle-target="label">
+              <%= approval_text %>
+            </span>
+          </div>
+        </div>
+        <!-- Booking behavior message -->
+        <p data-toggle-target="description" class="text-muted small">
+          <%= @event_instance.approval_mode == "manual" ? "Students need your approval to book the class" : "Students can book the class directly" %>
+        </p>
       </div>
       <div class="form-group">
         <%= f.input :capacity %>
