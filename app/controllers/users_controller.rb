@@ -25,6 +25,22 @@ class UsersController < ApplicationController
              Time.now, current_user.id, @bookings.pluck(:event_instance_id))
       .order(start_time: :desc)
 
+
+      # Upcoming events CREATED by current_user
+    @upcoming_event_instances_created = EventInstance
+    .joins(:event)
+    .where('event_instances.start_time > ?', Time.current)
+    .where(events: { user_id: current_user.id })
+    .order(start_time: :asc)
+
+    # Past events CREATED by current_user
+    @past_event_instances_created = EventInstance
+    .joins(:event)
+    .where('event_instances.start_time <= ?', Time.current)
+    .where(events: { user_id: current_user.id })
+    .order(start_time: :desc)
+
+
     # Earnings Calculation
     @last_month_event_instances = EventInstance.where(start_time: Time.now.last_month.beginning_of_month..Time.now.last_month.end_of_month)
     # @last_month_events_sum = monthly_sum(@last_month_event_instances)

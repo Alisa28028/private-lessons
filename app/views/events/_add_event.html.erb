@@ -31,6 +31,38 @@
       <!--one time event form (hidden by default)-->
       <div data-event-form-target="oneTimeEventForm" class="d-none">
         <%= f.hidden_field :recurrence_type, value: 'one-time' %>
+        <div data-controller="toggle">
+          <div class="d-flex justify-content-start mb-1">
+            <%= f.label :approval_mode, "Approval Mode", class: "form-label", style: "margin-top: 3px; margin-right: 3px; margin-bottom: 0px;" %>
+            <div>
+              <div class="form-check form-switch position-relative">
+                <%= f.check_box :approval_mode,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "approvalSwitch",
+            data: {
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox"
+            }
+          },
+          "manual", "auto" %>
+                <% approval_text = f.object.approval_mode == "manual" ? "YES" : "NO" %>
+                <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
+                <span class="switch-label <%= approval_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                  <%= approval_text %>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- This is the dynamic line below the switch -->
+          <div class="text-muted small mb-3" style="color: #8d76a7 !important;" data-toggle-target="description">
+            <%= f.object.approval_mode == "manual" ?
+      "Students need your approval to book the class." :
+      "Students can book the class directly." %>
+          </div>
+        </div>
         <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
         <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
         <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
@@ -94,6 +126,39 @@
       <%= f.hidden_field :time_zone, id: 'user-time-zone', value: current_user.time_zone %>
       <div data-event-form-target="everyWeekEventForm" class="d-none">
         <%= f.hidden_field :recurrence_type, value: 'every-week' %>
+        <%# approval toggle %>
+        <div data-controller="toggle">
+          <div class="d-flex justify-content-start mb-1">
+            <%= f.label :approval_mode, "Approval Mode", class: "form-label", style: "margin-top: 3px; margin-right: 3px; margin-bottom: 0px;" %>
+            <div>
+              <div class="form-check form-switch position-relative">
+                <%= f.check_box :approval_mode,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "approvalSwitch",
+            data: {
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox"
+            }
+          },
+          "manual", "auto" %>
+                <% approval_text = f.object.approval_mode == "manual" ? "YES" : "NO" %>
+                <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
+                <span class="switch-label <%= approval_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                  <%= approval_text %>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- This is the dynamic line below the switch -->
+          <div class="text-muted small mb-3" style="color: #8d76a7 !important;" data-toggle-target="description">
+            <%= f.object.approval_mode == "manual" ?
+      "Students need your approval to book the class." :
+      "Students can book the class directly." %>
+          </div>
+        </div>
         <%= f.input :title, label: false, input_html: { placeholder: "Title..." } %>
         <%= f.input :description, label: false, input_html: { placeholder: "Describe your event..." } %>
         <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
@@ -163,6 +228,39 @@
           <%= f.hidden_field :time_zone, id: 'user-time-zone', value: current_user.time_zone %>
           <div data-event-form-target="customRecurrence" class="d-none">
             <%= f.hidden_field :recurrence_type, value: 'custom-dates' %>
+            <%# approval toggle %>
+            <div data-controller="toggle">
+              <div class="d-flex justify-content-start mb-1">
+                <%= f.label :approval_mode, "Approval Mode", class: "form-label", style: "margin-top: 3px; margin-right: 3px; margin-bottom: 0px;" %>
+                <div>
+                  <div class="form-check form-switch position-relative">
+                    <%= f.check_box :approval_mode,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "approvalSwitch",
+            data: {
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox"
+            }
+          },
+          "manual", "auto" %>
+                    <% approval_text = f.object.approval_mode == "manual" ? "YES" : "NO" %>
+                    <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
+                    <span class="switch-label <%= approval_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                      <%= approval_text %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!-- This is the dynamic line below the switch -->
+              <div class="text-muted small mb-3" style="color: #8d76a7 !important;" data-toggle-target="description">
+                <%= f.object.approval_mode == "manual" ?
+      "Students need your approval to book the class." :
+      "Students can book the class directly." %>
+              </div>
+            </div>
             <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
             <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
             <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>

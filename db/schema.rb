@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_27_081847) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_29_083213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -79,6 +79,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_27_081847) do
     t.integer "cancellation_policy_duration"
     t.integer "price_cents", default: 0, null: false
     t.bigint "location_id"
+    t.string "approval_mode"
     t.index ["event_id"], name: "index_event_instances_on_event_id"
     t.index ["location_id"], name: "index_event_instances_on_location_id"
   end
@@ -103,6 +104,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_27_081847) do
     t.integer "duration"
     t.string "recurrence_type"
     t.string "time_zone"
+    t.string "approval_mode"
     t.index ["location_id"], name: "index_events_on_location_id"
     t.index ["user_id"], name: "index_events_on_user_id"
   end

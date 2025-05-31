@@ -29,6 +29,49 @@
   border-radius: 4px;
 }
 
+.form-switch {
+  position: relative !important;
+  margin-left: 4px !important;
+}
+
+// change below with .form-check-input-toggle {
+
+.form-check-input {
+  width: 3.5rem !important;
+  height: 1.5rem !important;
+  // margin-left: 1.5rem !important;
+  background-color: #8d76a7 !important;
+  border-color: none !important;
+}
+
+
+
+.switch-label {
+  pointer-events: none !important;
+  // font-weight: bold !important;
+}
+
+.switch-label--yes {
+  color: rgb(255, 255, 255) !important;
+  top: 67% !important;
+  left: 35% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.switch-label--no {
+  color: rgb(255, 255, 255) !important;
+  top: 67% !important;
+  left: 64% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+
+
+// .switch-label--center {
+//   top: 45%;          /* move up a touch (was 50%) */
+//   left: 12%;         /* move a bit right (was 50%) */
+//   transform: translate(-50%, -50%); /* keep true centering math */
+// }
 
 
 /* Make the form wider on small screens */

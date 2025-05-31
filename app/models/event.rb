@@ -29,6 +29,7 @@ class Event < ApplicationRecord
   # validates :start_date, presence: true
   # validates :end_date, presence: true
 
+  before_validation :set_default_approval_mode
   accepts_nested_attributes_for :event_instances, allow_destroy: true
 
   include PgSearch::Model
@@ -47,10 +48,6 @@ class Event < ApplicationRecord
 
   after_initialize :set_default_cancellation_policy, if: :new_record?
   after_update :update_event_instance_prices
-
-  def set_default_cancellation_policy
-    self.cancellation_policy_duration ||= 24
-  end
 
   def handle_one_time_event(params)
     # Find or initialize the first EventInstance
@@ -78,6 +75,7 @@ class Event < ApplicationRecord
       instance.date = parsed_date
       instance.location_id = self.location_id
       instance.price_cents = self.price_cents
+      instance.approval_mode = self.approval_mode
 
       if instance.save
         Rails.logger.info("Event instance saved successfully with start_time: #{instance.start_time}")
@@ -118,7 +116,8 @@ class Event < ApplicationRecord
       start_time: start_time_utc,
       cancellation_policy_duration: cancellation_policy_duration,
       location_id: location_id,
-      price_cents: price_cents
+      price_cents: price_cents,
+      approval_mode: approval_mode
     )
 
     end
@@ -165,7 +164,8 @@ class Event < ApplicationRecord
         date: parsed_date,
         cancellation_policy_duration: cancellation_policy_duration,
         location_id: location_id,
-        price_cents: price_cents
+        price_cents: price_cents,
+        approval_mode: approval_mode
       )
     rescue JSON::ParserError
       self.errors.add(:custom_dates, "Invalid format for custom dates.")
@@ -201,6 +201,14 @@ def update_event_instance_prices
   if saved_change_to_price_cents? # This checks if the price has changed
     event_instances.where(price_cents: nil).update_all(price_cents: self.price_cents)
   end
+end
+
+def set_default_cancellation_policy
+  self.cancellation_policy_duration ||= 24
+end
+
+def set_default_approval_mode
+  self.approval_mode ||= "auto"
 end
 
 end
