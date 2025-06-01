@@ -18,12 +18,34 @@ class BookingsController < ApplicationController
 
     # Determine if the booking should be waitlisted
     is_full = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).count
-    @booking = @event_instance.bookings.new(user: current_user, waitlisted: is_full, joined_at: is_full ? Time.current : nil)
-    puts "Sending confirmation to #{current_user.email}"
+
+    # Determine status
+    status = if is_full
+                "waitlisted"
+            elsif @event_instance.approval_mode == "manual"
+                "pending"
+            else
+                "confirmed"
+            end
+
+    @booking = @event_instance.bookings.new(
+      user: current_user,
+      waitlisted: status == "waitlisted",
+      joined_at: status == "waitlisted" ? Time.current : nil,
+      status: status
+    )
+
 
     if @booking.save
       BookingMailer.booking_confirmation(current_user, @booking).deliver_now unless @booking.waitlisted?
-      flash[:notice] = @booking.waitlisted? ? "You've been added to the waitlist!" : "You are booked!"
+      flash[:notice] = if @booking.waitlisted?
+        "You've been added to the waitlist!"
+      elsif @booking.status == "pending"
+        "Your booking is pending the teacher’s approval."
+      else
+        "You are booked!"
+      end
+
     else
       flash[:alert] =  @booking.errors.full_messages.to_sentence
     end
@@ -143,6 +165,6 @@ class BookingsController < ApplicationController
     private
 
     def booking_params
-      params.require(:booking).permit(:user_id, :state) # Add any other required fields
+      params.require(:booking).permit(:user_id, :state, :status) # Add any other required fields
     end
 end

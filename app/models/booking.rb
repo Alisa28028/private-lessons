@@ -2,8 +2,11 @@ class Booking < ApplicationRecord
   belongs_to :user
   belongs_to :event_instance
 
-  validates :state, presence: true # pending, paid, cancelled
+  STATUSES = %w[pending confirmed cancelled]
 
+  validates :status, inclusion: { in: STATUSES }
+
+  validates :state, presence: true # pending, paid, cancelled
   validate :unique_booking_per_event_instance
 
   private
