@@ -67,6 +67,8 @@ Rails.application.routes.draw do
       resources :payments, only: [:new]
       member do
           patch :update_state
+          post :approve
+          post :cancel
       end
   end
 

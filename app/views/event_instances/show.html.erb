@@ -116,30 +116,31 @@
             <% future_event = @event_instance.start_time > Time.current %>
             <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
             <% if user_booking && !user_booking.waitlisted %>
-              <%# <div class="d-flex flex-column"> %>
-              <p style="font-size: small; border: 1px solid #000; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: black;">
-                <%= future_event ? "Booked!" : "Attended" %>
-              </button>
-              <% if @event.cancellation_policy_duration.present? %>
-                <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
-                <% if future_event %>
-                  <% if Time.current < cancellation_cutoff %>
+              <% if user_booking.status == "pending" %>
+                <p style="font-size: small; border: 1px solid #ff9800; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #ff9800;">
+                  Pending Approval
+                </p>
+              <% else %>
+                <p style="font-size: small; border: 1px solid #000; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: black;">
+                  <%= future_event ? "Booked!" : "Attended" %>
+                </p>
+                <% if @event.cancellation_policy_duration.present? %>
+                  <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
+                  <% if future_event && Time.current < cancellation_cutoff %>
                     <div class="col-12 px-0">
                       <%= button_to "Cancel Booking!", booking_path(user_booking),
-          method: :delete,
-          data: { confirm: "Are you sure you want to cancel your booking?" },
-
-          class: "btn btn-card mt-0" %>
+              method: :delete,
+              data: { confirm: "Are you sure you want to cancel your booking?" },
+              class: "btn btn-card mt-0" %>
                     </div>
                   <% end %>
-                <% end %>
-              <% else %>
-                <%= button_to "Cancel Booking", booking_path(user_booking),
+                <% else %>
+                  <%= button_to "Cancel Booking", booking_path(user_booking),
           method: :delete,
           data: { confirm: "Are you sure you want to cancel your booking?" },
           class: "btn btn-card ml-2 mb-1 mr-0" %>
+                <% end %>
               <% end %>
-              <%# </div> %>
             <% elsif user_booking && user_booking.waitlisted && future_event %>
               <div class="col-12 px-0">
                 <%= button_to "On Waitlist (click to leave waitlist)", booking_path(user_booking),

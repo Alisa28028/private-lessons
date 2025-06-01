@@ -66,6 +66,19 @@ class BookingsController < ApplicationController
   end
 
 
+  def approve
+    booking = Booking.find(params[:id])
+    booking.update!(status: "confirmed")
+    redirect_to dashboard_path, notice: "Booking approved"
+  end
+
+  def cancel
+    booking = Booking.find(params[:id])
+    booking.update!(status: "cancelled")
+    redirect_to dashboard_path, notice: "Booking rejected"
+  end
+
+
   def destroy
     @booking = Booking.find_by(id: params[:id])
 
