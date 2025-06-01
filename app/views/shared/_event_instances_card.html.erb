@@ -28,13 +28,11 @@
               <p class="text-custom d-flex justify-content-end"><strong><%= event.location.address</strong></p> %>
         <% if instance.start_time > Time.current %>
           <%# <div class="d-flex flex-column justify-content-end"> %>
-          <% if instance.effective_capacity - instance.bookings.count <= 0 %>
+          <% if instance.spots_left <= 0 %>
             <p class="attendee-number">EVENT FULL!</p>
           <% else %>
-            <!-- REMAINING SPOTS -->
-            <% remaining_spots = instance.effective_capacity - instance.bookings.count %>
-            <% if remaining_spots <= 10 %>
-              <p class="attendee-number"> <%= instance.effective_capacity - instance.bookings.count %> Spots left</p>
+            <% if instance.spots_left <= 5 %>
+              <p class="attendee-number"><%= instance.spots_left %> Spots left</p>
             <% end %>
           <% end %>
         <% end %>
@@ -176,10 +174,14 @@
         <h3><%= instance.event.title.titleize %></h3>
         <div class="d-flex gap-2">
           <i class="fa-solid fa-person fa-sm mt-2"></i>
-          <% if (instance.effective_capacity || 0) - instance.bookings.count <= 0 %>
-            <p class="attendee-number text-dark fs-6"><strong><%= instance.effective_capacity %>/<%= instance.effective_capacity %></strong></p>
+          <% if (instance.effective_capacity || 0) - instance.active_bookings_count <= 0 %>
+            <p class="attendee-number text-dark fs-6">
+              <strong><%= instance.effective_capacity %>/<%= instance.effective_capacity %></strong>
+            </p>
           <% else %>
-            <p class="attendee-number text-dark fs-6"><%= instance.bookings.count %>/<%= instance.effective_capacity %></p>
+            <p class="attendee-number text-dark fs-6">
+              <%= instance.active_bookings_count %>/<%= instance.effective_capacity %>
+            </p>
           <% end %>
         </div>
       </div>

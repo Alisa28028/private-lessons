@@ -84,12 +84,13 @@
     </div>
     <div class="d-flex justify-content-between">
       <% capacity = @event_instance.respond_to?(:capacity) ? @event_instance.capacity : @event.capacity %>
-      <% bookings_count = @event_instance.respond_to?(:bookings) ? @event_instance.bookings.count : @event.bookings.count %>
+      <% bookings_scope = @event_instance.respond_to?(:bookings) ? @event_instance.bookings : @event.bookings %>
+      <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: "cancelled").count %>
       <% if capacity.present? && bookings_count.present? %>
         <% if capacity - bookings_count <= 0 %>
           <h4 class="show" style="font-weight: 700; margin-bottom: 2px; color: #786490;"> EVENT FULL!!</h4>
         <% else %>
-          <h4 class="show" style="font-weight: 700; color: #786490; margin-bottom: 2px;"> Spots left: <%= capacity - bookings_count %></h4>
+          <h4 class="show" style="font-weight: 700; color: #786490; margin-bottom: 2px;">Spots left: <%= capacity - bookings_count %></h4>
         <% end %>
       <% end %>
       <% if @event_instance.price_cents.present? && @event_instance.price_cents > 0 %>
@@ -307,7 +308,7 @@
               <h3 class="show mb-1">Attendees</h3>
             </div>
             <% is_creator = current_user == @event_instance.event.user %>
-            <% @bookings.reject(&:waitlisted).sort_by(&:created_at).each do |booking| %>
+            <% @bookings.reject{ |b| b.waitlisted || b.status == "cancelled" }.sort_by(&:created_at).each do |booking| %>
               <% if is_creator %>
                 <turbo-frame id="booking_<%= booking.id %>">
                   <!-- Creator view with dropdown, payment buttons, etc -->

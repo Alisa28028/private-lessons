@@ -74,8 +74,12 @@ class BookingsController < ApplicationController
 
   def cancel
     booking = Booking.find(params[:id])
-    booking.update!(status: "cancelled")
-    redirect_to dashboard_path, notice: "Booking rejected"
+    booking.update!(status: "cancelled", state: "cancelled")
+    redirect_to dashboard_path, notice: "Booking cancelled"
+  rescue ActiveRecord::RecordNotFound
+    redirect_to dashboard_path, alert: "Booking not found"
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to dashboard_path, alert: "Failed to cancel booking: #{e.message}"
   end
 
 
