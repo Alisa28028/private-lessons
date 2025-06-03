@@ -17,11 +17,11 @@ class BookingsController < ApplicationController
     end
 
     # Determine if the booking should be waitlisted
-    is_full = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).count
+    is_waitlisted = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).count
 
     # Determine status
-    status = if is_full
-                "waitlisted"
+    status = if is_waitlisted
+                "pending"  # still needs approval to be confirmed
             elsif @event_instance.approval_mode == "manual"
                 "pending"
             else
@@ -30,10 +30,11 @@ class BookingsController < ApplicationController
 
     @booking = @event_instance.bookings.new(
       user: current_user,
-      waitlisted: status == "waitlisted",
-      joined_at: status == "waitlisted" ? Time.current : nil,
+      waitlisted: is_waitlisted,
+      joined_at: is_waitlisted ? Time.current : nil,
       status: status
     )
+
 
 
     if @booking.save
@@ -74,7 +75,7 @@ class BookingsController < ApplicationController
 
   def cancel
     booking = Booking.find(params[:id])
-    booking.update!(status: "cancelled", state: "cancelled")
+    booking.update!(status: "cancelled")
     redirect_to dashboard_path, notice: "Booking cancelled"
   rescue ActiveRecord::RecordNotFound
     redirect_to dashboard_path, alert: "Booking not found"
@@ -93,6 +94,17 @@ class BookingsController < ApplicationController
 
     event_instance = @booking.event_instance
     was_waitlisted = @booking.waitlisted?
+    is_pending = @booking.status == 'pending'
+
+    # Allow students to cancel their own pending or waitlisted bookings anytime
+    if is_pending && @booking.user == current_user
+      was_waitlisted = @booking.waitlisted?
+      @booking.destroy
+      flash[:notice] = was_waitlisted ? "You have been removed from the waitlist." : "Booking request cancelled."
+      return redirect_to event_instance_path(event_instance)
+    end
+
+
     # Skip cutoff check if waitlisted
     if !was_waitlisted
       cancellation_cutoff = if event_instance.cancellation_policy_duration.present?

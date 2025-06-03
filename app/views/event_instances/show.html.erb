@@ -118,9 +118,14 @@
             <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
             <% if user_booking && !user_booking.waitlisted %>
               <% if user_booking.status == "pending" %>
-                <p style="font-size: small; border: 1px solid #ff9800; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #ff9800;">
+                <%# <p style="font-size: small; border: 1px solid #ff9800; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #ff9800;">
                   Pending Approval
-                </p>
+                </p> %>
+                <div class="col-12 px-0">
+                  <%= button_to "Pending approval (click to cancel request)", booking_path(user_booking),
+        method: :delete,
+        class: "btn btn-card mt-1", style: "background-color: #a58ab5" %>
+                </div>
               <% else %>
                 <p style="font-size: small; border: 1px solid #000; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: black;">
                   <%= future_event ? "Booked!" : "Attended" %>
@@ -304,11 +309,12 @@
       <div class="d-flex flex-column w-100">
         <div class="mb-1">
           <div class="d-flex justify-content-between">
-            <% if @bookings.any? %>
+            <% valid_bookings = @bookings.reject{ |b| b.waitlisted || b.status == "cancelled" || b.status == "pending" } %>
+            <% if valid_bookings.any? %>
               <h3 class="show mb-1">Attendees</h3>
             </div>
             <% is_creator = current_user == @event_instance.event.user %>
-            <% @bookings.reject{ |b| b.waitlisted || b.status == "cancelled" }.sort_by(&:created_at).each do |booking| %>
+            <% valid_bookings.sort_by(&:created_at).each do |booking| %>
               <% if is_creator %>
                 <turbo-frame id="booking_<%= booking.id %>">
                   <!-- Creator view with dropdown, payment buttons, etc -->
