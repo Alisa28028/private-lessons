@@ -17,13 +17,36 @@ class BookingsController < ApplicationController
     end
 
     # Determine if the booking should be waitlisted
-    is_full = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).count
-    @booking = @event_instance.bookings.new(user: current_user, waitlisted: is_full, joined_at: is_full ? Time.current : nil)
-    puts "Sending confirmation to #{current_user.email}"
+    is_waitlisted = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).count
+
+    # Determine status
+    status = if is_waitlisted
+                "pending"  # still needs approval to be confirmed
+            elsif @event_instance.approval_mode == "manual"
+                "pending"
+            else
+                "confirmed"
+            end
+
+    @booking = @event_instance.bookings.new(
+      user: current_user,
+      waitlisted: is_waitlisted,
+      joined_at: is_waitlisted ? Time.current : nil,
+      status: status
+    )
+
+
 
     if @booking.save
       BookingMailer.booking_confirmation(current_user, @booking).deliver_now unless @booking.waitlisted?
-      flash[:notice] = @booking.waitlisted? ? "You've been added to the waitlist!" : "You are booked!"
+      flash[:notice] = if @booking.waitlisted?
+        "You've been added to the waitlist!"
+      elsif @booking.status == "pending"
+        "Your booking is pending the teacher’s approval."
+      else
+        "You are booked!"
+      end
+
     else
       flash[:alert] =  @booking.errors.full_messages.to_sentence
     end
@@ -44,6 +67,23 @@ class BookingsController < ApplicationController
   end
 
 
+  def approve
+    booking = Booking.find(params[:id])
+    booking.update!(status: "confirmed")
+    redirect_to dashboard_path, notice: "Booking approved"
+  end
+
+  def cancel
+    booking = Booking.find(params[:id])
+    booking.update!(status: "cancelled")
+    redirect_to dashboard_path, notice: "Booking cancelled"
+  rescue ActiveRecord::RecordNotFound
+    redirect_to dashboard_path, alert: "Booking not found"
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to dashboard_path, alert: "Failed to cancel booking: #{e.message}"
+  end
+
+
   def destroy
     @booking = Booking.find_by(id: params[:id])
 
@@ -54,6 +94,17 @@ class BookingsController < ApplicationController
 
     event_instance = @booking.event_instance
     was_waitlisted = @booking.waitlisted?
+    is_pending = @booking.status == 'pending'
+
+    # Allow students to cancel their own pending or waitlisted bookings anytime
+    if is_pending && @booking.user == current_user
+      was_waitlisted = @booking.waitlisted?
+      @booking.destroy
+      flash[:notice] = was_waitlisted ? "You have been removed from the waitlist." : "Booking request cancelled."
+      return redirect_to event_instance_path(event_instance)
+    end
+
+
     # Skip cutoff check if waitlisted
     if !was_waitlisted
       cancellation_cutoff = if event_instance.cancellation_policy_duration.present?
@@ -143,6 +194,6 @@ class BookingsController < ApplicationController
     private
 
     def booking_params
-      params.require(:booking).permit(:user_id, :state) # Add any other required fields
+      params.require(:booking).permit(:user_id, :state, :status) # Add any other required fields
     end
 end

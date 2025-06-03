@@ -142,8 +142,13 @@ class EventInstance < ApplicationRecord
 #   end
 
   def spots_left
-    capacity - bookings.count
+    capacity - bookings.where(waitlisted: false).where.not(status: "cancelled").count
   end
+
+  def active_bookings_count
+    bookings.where(waitlisted: false).where.not(status: "cancelled").count
+  end
+
 
   def effective_capacity
     capacity || event.default_capacity
