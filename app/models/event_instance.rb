@@ -21,7 +21,7 @@ class EventInstance < ApplicationRecord
   # validates :duration
 
 
-  before_validation :apply_default_cancellation_policy
+  before_validation :apply_default_cancellation_policy, on: :create
   # Set default price from event if price is not provided for event instance
   before_validation :set_default_price, on: :create
   before_destroy :destroy_event_if_last_instance
@@ -33,11 +33,17 @@ class EventInstance < ApplicationRecord
   end
 
   def apply_default_cancellation_policy
-    self.cancellation_policy_duration ||= event.cancellation_policy_duration
+    if cancellation_policy_duration.nil? && event.present?
+      self.cancellation_policy_duration = event.cancellation_policy_duration
+    end
   end
 
   def set_default_price
     self.price_cents ||= event.price_cents if event
+  end
+
+  def payment_obligation_on_booking?
+    self[:payment_obligation_on_booking].nil? ? event.payment_obligation_on_booking? : self[:payment_obligation_on_booking]
   end
 
 

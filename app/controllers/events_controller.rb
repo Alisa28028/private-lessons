@@ -254,7 +254,7 @@ class EventsController < ApplicationController
 
   def event_params
     params.require(:event).permit(:title, :description, :capacity, :time_zone, :cancellation_policy_duration, :default_capacity, :duration, :recurrence_type, :custom_dates, :start_date,
-       :end_date, :start_time, :location, :location_name, :location_id, :price, :approval_mode, :day_of_week, videos: [], photos: [],
+       :end_date, :start_time, :location, :location_name, :location_id, :price, :approval_mode, :payment_obligation_on_booking, :day_of_week, videos: [], photos: [],
       event_instances_attributes: [:id, :date, :start_time, :location_id, :price, :capacity , :approval_mode , :cancellation_policy_duration, :_destroy]
     )
   end

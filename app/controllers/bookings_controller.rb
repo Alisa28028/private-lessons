@@ -28,11 +28,17 @@ class BookingsController < ApplicationController
                 "confirmed"
             end
 
+
+
+    # require_payment_now = @event_instance.event.payment_obligation_on_booking?
+    state = (status == "confirmed" && !is_waitlisted) ? "unpaid" : nil
+
     @booking = @event_instance.bookings.new(
       user: current_user,
       waitlisted: is_waitlisted,
       joined_at: is_waitlisted ? Time.current : nil,
-      status: status
+      status: status,
+      state: state
     )
 
 
@@ -54,22 +60,37 @@ class BookingsController < ApplicationController
     redirect_back fallback_location: event_instance_path(@event_instance)
   end
 
-  def update_state
+  def update_booking_status
     @booking = Booking.find(params[:id])
     @booking.update(state: params[:state])
 
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace(@booking)
+        render partial: "bookings/booking_row", locals: { booking: @booking }
       end
       format.html { redirect_to dashboard_path }
     end
   end
 
+  def update_payment_state
+    @booking = Booking.find(params[:id])
+    @booking.update(state: params[:state])
+
+    respond_to do |format|
+      format.turbo_stream {
+        render partial: "payments/payment_row", formats: [:html], locals: { booking: @booking }
+      }
+      format.html {
+        redirect_to request.referer || bookings_path, notice: "Payment status updated."
+      }
+    end
+  end
+
+
 
   def approve
     booking = Booking.find(params[:id])
-    booking.update!(status: "confirmed")
+    booking.update!(status: "confirmed", state: "unpaid")
     redirect_to dashboard_path, notice: "Booking approved"
   end
 
@@ -107,6 +128,13 @@ class BookingsController < ApplicationController
 
     # Skip cutoff check if waitlisted
     if !was_waitlisted
+
+      # 🔒 Disallow cancellation if payment is required upon booking
+      if event_instance.event.payment_obligation_on_booking?
+        flash[:alert] = "Cancellations are not allowed for this event. Please contact the teacher."
+        return redirect_to event_instance_path(event_instance)
+      end
+
       cancellation_cutoff = if event_instance.cancellation_policy_duration.present?
         event_instance.start_time - event_instance.cancellation_policy_duration.to_i.hours
       end

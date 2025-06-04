@@ -5,11 +5,15 @@ class Booking < ApplicationRecord
   STATUSES = %w[pending confirmed cancelled]
 
   validates :status, inclusion: { in: STATUSES }
-
-  validates :state, presence: true # pending, paid, cancelled
+  validates :state, presence: true, if: -> { status == "confirmed" && !waitlisted? } # pending, paid, cancelled
   validate :unique_booking_per_event_instance
 
   private
+
+  def state_required?
+    # These statuses must have a state
+    %w[confirmed cancelled].include?(status)
+  end
 
   def unique_booking_per_event_instance
     existing_booking = Booking.where(user_id: user_id, event_instance_id: event_instance_id)
