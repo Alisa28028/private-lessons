@@ -60,17 +60,18 @@ class BookingsController < ApplicationController
     redirect_back fallback_location: event_instance_path(@event_instance)
   end
 
-  def update_booking_status
+  def update_state
     @booking = Booking.find(params[:id])
     @booking.update(state: params[:state])
 
     respond_to do |format|
       format.turbo_stream do
-        render partial: "bookings/booking_row", locals: { booking: @booking }
+        render turbo_stream: turbo_stream.replace(@booking)
       end
       format.html { redirect_to dashboard_path }
     end
   end
+
 
   def update_payment_state
     @booking = Booking.find(params[:id])

@@ -8,30 +8,28 @@
             <h6> <%= booking.user.name %></a>
           </h6>
         </div>
-        <% if booking.status == 'confirmed' || booking.status == 'cancelled' %>
-          <% if booking.state == 'paid' %>
-            <div class="panel">
-              <h6> - <%= booking.state %>
-                ✅
-              </h6>
-            </div>
-          <% else %>
-            <div class="panel">
-              <h6 class="panel"> - <%= booking.state %> ❌
-              </h6>
-            </div>
+        <% if booking.state == 'paid' %>
+          <div class="panel">
+            <h6> - <%= booking.state %>
+              ✅
+            </h6>
+          </div>
+        <% else %>
+          <div class="panel">
+            <h6 class="panel"> - <%= booking.state %> ❌
+            </h6>
+          </div>
+        <% end %>
+        <%# </div> %>
+      </div>
+      <div>
+        <% if booking.state == "unpaid" %>
+          <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
+            Mark as Paid
           <% end %>
-          <%# </div> %>
-        </div>
-        <div>
-          <% if booking.state == "unpaid" %>
-            <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
-              Mark as Paid
-            <% end %>
-          <% else %>
-            <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-              Mark as Unpaid
-            <% end %>
+        <% else %>
+          <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
+            Mark as Unpaid
           <% end %>
         <% end %>
       </div>

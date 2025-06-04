@@ -1,47 +1,42 @@
-<turbo-frame id="booking_<%= booking.id %>">
+<turbo-frame id="payment_<%= booking.id %>">
   <div class="d-flex justify-content-between align-items-end">
     <div class="d-flex align-items-end" style="margin-top: -6px;">
       <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 2px;"></i>
       <h6 class="panel">
         <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-          <%= booking.user.name %>
+          <%= booking.user.name %> -- <%= booking.status %>
         </a>
-      </h6>
-      <% if booking.state == 'paid' %>
-        <h6 class="panel"> - <%= booking.state %> ✅</h6>
-      <% else %>
-        <h6 class="panel">- <%= booking.state %> ❌</h6>
-      <% end %>
-    </div>
-    <% if booking.state == 'unpaid' %>
-      <%= button_to update_payment_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
-        Mark as Paid
-      <% end %>
-    <% else %>
-      <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-        Mark as Unpaid
-      <% end %>
-    <% end %>
-  </div>
-  <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
-    <div class="p-2" style="border-radius: 5px;">
-      <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
-        <% if booking.user.photo.present? %>
-          <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
-        <% else %>
-          <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
+        <% if booking.status == 'pending' %>
+          <%= button_to "Approve", approve_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;" %>
+          <%= button_to "Reject", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;" %>
+        <% elsif booking.status == 'confirmed' %>
+          <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;" %>
         <% end %>
-        <h6 class="panel" style="margin-left: 2px;">view profile</h6>
-      <% end %>
-      <div class="d-flex">
-        <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
-        <h6 class="panel" style="margin-left: 6px;"><%= booking.user.email %></h6>
       </div>
-      <div class="d-flex">
-        <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i></h6>
-        <h6 style="margin-left: 8px;"><%= booking.user.phone_number %></h6>
-      </div>
-      <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
     </div>
-  </div>
-</turbo-frame>
+    <!-- Dropdown Content -->
+    <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
+      <div class="p-2" style="border-radius: 5px;">
+        <!-- You can put any additional booking details here -->
+        <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
+          <% if booking.user.photo.present? %>
+            <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+          <% else %>
+            <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
+          <% end %>
+          <h6 class="panel" style="margin-left: 2px;">
+            view profile</h6>
+        <% end %>
+        <div class="d-flex">
+          <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
+          <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
+        </div>
+        <div class="d-flex">
+          <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
+          <h6 style="margin-left: 8px;">
+            <%= booking.user.phone_number %></h6>
+        </div>
+        <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+      </div>
+    </div>
+  </turbo-frame>
