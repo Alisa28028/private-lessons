@@ -313,8 +313,8 @@
                     </div>
                     <% if booking.status == 'pending' %>
                       <div class="d-flex align-items-between">
-                        <%= button_to "Approve", approve_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px" %>
-                        <%= button_to "Reject", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;" %>
+                        <%= button_to "Approve", update_state_booking_path(booking, status: "confirmed"), method: :patch, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
+                        <%= button_to "Reject", update_state_booking_path(booking, status: "cancelled"), method: :patch, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
                       </div>
                     <% elsif booking.status == 'confirmed' %>
                       <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;" %>
@@ -382,10 +382,10 @@
                       </h6>
                     </div>
                     <% if booking.status == 'pending' %>
-                      <%= button_to "Approve", approve_booking_path(booking), method: :post %>
-                      <%= button_to "Reject", cancel_booking_path(booking), method: :post %>
+                      <%= button_to "Approve", update_state_booking_path(booking, status: "confirmed"), method: :patch, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
+                      <%= button_to "Reject", update_state_booking_path(booking, status: "cancelled"), method: :patch, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
                     <% elsif booking.status == 'approved' %>
-                      <%= button_to "Cancel", cancel_booking_path(booking), method: :post %>
+                      <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;"  %>
                       <%# <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
                         <%# Mark as Paid %>
                         <%# <% end %>

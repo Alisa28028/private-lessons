@@ -115,53 +115,47 @@
     <% if current_user %>
       <div style="position: relative; display: inline-flex;">
         <% future_event = instance.start_time > Time.current %>
-        <%# <% if @event.user != current_user %> <!-- Only show button if current_user is not the event creator -->
-        <!-- ATTENDING  -->
-        <!-- Checking if current user is already attending the event -->
         <% user_booking = instance.bookings.find_by(user_id: current_user.id) %>
         <% if user_booking %>
-          <% if user_booking.waitlisted? %>
-            <% if future_event %>
-              <p style="font-size: small; border: 1px solid #8d76a7; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px; color: #8d76a7">
-                On Waitlist!
-              </p>
-            <% end %>
-          <% else %>
-            <% if user_booking.status == "pending" %>
-              <p style="font-size: small; border: 1px solid #ff9800; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px; color: #ff9800">
-                Pending Approval
-              </p>
-            <% else %>
-              <p style="font-size: small; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px">
-                <%= future_event ? "Booked" : "Attended" %>
-              </p>
-            <% end %>
+          <% if user_booking.waitlisted? && future_event %>
+            <p style="font-size: small; border: 1px solid #8d76a7; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px; color: #8d76a7">
+              On Waitlist!
+            </p>
+          <% elsif user_booking.status == "pending" %>
+            <p style="font-size: small; border: 1px solid #ff9800; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px; color: #ff9800">
+              Pending Approval
+            </p>
+          <% elsif user_booking.status == "confirmed"  %>
+            <p style="font-size: small; border: 1px solid #000; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px">
+              <%= future_event ? "Booked" : "Attended" %>
+            </p>
+          <% elsif user_booking.status == "cancelled" %>
+            <p style="font-size: small; border: 1px solid #dc3545; padding: 8px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 5px; color: #dc3545">
+              Booking Rejected or Cancelled
+            </p>
+            <%# No booking buttons if previously cancelled %>
           <% end %>
-          <!-- BOOK CLASS / JOIN WAIT LIST  -->
-          <!-- if not attending, check if the event is full. If no, BOOK CLASS. If yes, JOIN WAIT LIST -->
         <% elsif future_event %>
-          <% if instance.effective_capacity - instance.bookings.count <= 0 %>
+          <% if instance.effective_capacity - instance.bookings.where(status: "confirmed").count <= 0 %>
             <button type="button" class="btn btn-card ml-2 mr-0" style="background-color: #8d76a7;"
-                      data-bs-toggle="modal"
-                      data-bs-target="#waitinglistModal<%= instance.id %>"
-                      data-controller="modal"
-                      data-action="click->modal#handleClick">
+                data-bs-toggle="modal"
+                data-bs-target="#waitinglistModal<%= instance.id %>"
+                data-controller="modal"
+                data-action="click->modal#handleClick">
               Join Waitlist
             </button>
           <% else %>
             <button type="button" class="btn btn-card ml-2 mr-0"
-                      data-bs-toggle="modal"
-                      data-bs-target="#bookingModal<%= instance.id %>"
-                      data-controller="modal"
-                      data-action="click->modal#handleClick">
+                data-bs-toggle="modal"
+                data-bs-target="#bookingModal<%= instance.id %>"
+                data-controller="modal"
+                data-action="click->modal#handleClick">
               Book Class!
             </button>
           <% end %>
         <% end %>
       </div>
     <% end %>
-    <%# <% end %>
-    <%# </div> %>
   <% end %>
   <%# --------------------NEW BLOCK----------------------------------------- %>
 <% else %> <!-- For event creators (show edit, duplicate, delete buttons) -->

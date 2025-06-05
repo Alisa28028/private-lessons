@@ -1,8 +1,15 @@
 <!-- app/views/booking_mailer/booking_confirmation.html.erb -->
-<h1>Booking Confirmation: <%= @event_instance.event.title %></h1>
+<% if @booking.status == "pending" %>
+  <h1>Booking Request: <%= @event_instance.event.title %></h1>
+<% else %>
+  <h1>Booking Confirmation: <%= @event_instance.event.title %></h1>
+<% end %>
 <p>Dear <%= @user.name %>,</p>
 <% if @moved_from_waitlist %>
   <p>Good news! A spot has opened up for <strong><%= @event_instance.event.title %></strong>, and you've been automatically moved from the waitlist to a confirmed spot. 🎉</p>
+<% elsif @booking.status == "pending" %>
+  <p>You have requested a booking for <strong><%= @event.title %></strong> on <%= @event_instance.start_time.strftime("%A, %B %e at %l:%M %p") %>.</p>
+  <p>The teacher will review your booking and confirm or decline shortly.</p>
 <% else %>
   <p>Thank you for booking a class with us!</p>
 <% end %>
@@ -16,6 +23,8 @@
   <%# <li><strong>Location:</strong> <%= @event.location.name %>
   <li><strong>Instructor:</strong> <%= @event_instance.event.user.name %></li>
 </ul>
-<p>If you need to cancel or reschedule, please contact us as soon as possible.</p>
+<% if @booking.status != "pending" %>
+  <p>If you need to cancel or reschedule, please contact us as soon as possible.</p>
+<% end %>
 <p>Best regards,<br>
   Your App Team</p>

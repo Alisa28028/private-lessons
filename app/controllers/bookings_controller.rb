@@ -62,11 +62,32 @@ class BookingsController < ApplicationController
 
   def update_state
     @booking = Booking.find(params[:id])
-    @booking.update(state: params[:state])
+    new_status = params[:status]
+
+  if new_status == "confirmed"
+    if @booking.update(status: "confirmed", state: "unpaid")
+      BookingMailer.booking_approved(@booking.user, @booking).deliver_later
+      flash[:notice] = "Booking confirmed and user notified."
+    else
+      flash[:alert] = "Failed to confirm booking."
+    end
+  elsif new_status == "cancelled"
+    if @booking.update(status: "cancelled")
+      Rails.logger.info "[MAILER DEBUG] Sending booking rejected email to #{@booking.user.email}"
+      BookingMailer.booking_rejected(@booking.user, @booking).deliver_later
+      flash[:notice] = "Booking rejected and user notified."
+    else
+      flash[:alert] = "Failed to reject booking."
+    end
+  end
 
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace(@booking)
+        render turbo_stream: turbo_stream.replace(
+          "payment_#{@booking.id}",
+          partial: "payments/payment_row",
+          locals: { booking: @booking }
+        )
       end
       format.html { redirect_to dashboard_path }
     end
