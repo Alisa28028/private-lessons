@@ -60,7 +60,7 @@ class BookingsController < ApplicationController
     redirect_back fallback_location: event_instance_path(@event_instance)
   end
 
-  def update_state
+  def update_status
     @booking = Booking.find(params[:id])
     new_status = params[:status]
 
@@ -84,8 +84,8 @@ class BookingsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace(
-          "payment_#{@booking.id}",
-          partial: "payments/payment_row",
+          "booking_#{@booking.id}",
+          partial: "bookings/booking",
           locals: { booking: @booking }
         )
       end
@@ -99,9 +99,13 @@ class BookingsController < ApplicationController
     @booking.update(state: params[:state])
 
     respond_to do |format|
-      format.turbo_stream {
-        render partial: "payments/payment_row", formats: [:html], locals: { booking: @booking }
-      }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "payment_#{@booking.id}",
+          partial: "payments/payment_row",
+          locals: { booking: @booking }
+        )
+      end
       format.html {
         redirect_to request.referer || bookings_path, notice: "Payment status updated."
       }

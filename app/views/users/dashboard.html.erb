@@ -100,7 +100,7 @@
               <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
             </h6>
             <% instance.bookings.reject(&:waitlisted).each do |booking| %>
-              <turbo-frame id="booking_<%= booking.id %>">
+              <turbo-frame id="payment_<%= booking.id %>">
                 <!-- Turbo frame with buttons and state here -->
                 <div class="d-flex justify-content-between align-items-end">
                   <div class="d-flex align-items-end" style="margin-top: -6px;">
@@ -119,11 +119,11 @@
                     <% end %>
                   </div>
                   <% if booking.state == 'unpaid' %>
-                    <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
+                    <%= button_to update_status_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
                       Mark as Paid
                     <% end %>
                   <% else %>
-                    <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
+                    <%= button_to update_status_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
                       Mark as Unpaid
                     <% end %>
                   <% end %>
@@ -178,7 +178,7 @@
               <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
             </h6>
             <% instance.bookings.each do |booking| %>
-              <turbo-frame id="booking_<%= booking.id %>">
+              <turbo-frame id="payment_<%= booking.id %>">
                 <!-- Turbo frame with buttons and state here -->
                 <div class="d-flex justify-content-between align-items-end">
                   <div class="d-flex align-items-end" style="margin-top: -6px;">
@@ -197,11 +197,11 @@
                     <% end %>
                   </div>
                   <% if booking.state == 'unpaid' %>
-                    <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
+                    <%= button_to update_status_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
                       Mark as Paid
                     <% end %>
                   <% else %>
-                    <%= button_to update_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
+                    <%= button_to update_status_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
                       Mark as Unpaid
                     <% end %>
                   <% end %>
@@ -244,7 +244,7 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="bookingPanel" aria-labelledby="bookingPanelLabel">
   <div class="d-flex flex-column">
     <div class="offcanvas-header" style="margin-bottom: -18px;">
-      <h2 class="offcanvas-title" id="attendeePanelLabel">Bookings Management</h2>
+      <h2 class="offcanvas-title" id="bookingPanelLabel">Bookings Management</h2>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="ms-3">
@@ -298,7 +298,7 @@
               <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
             </h6>
             <% instance.bookings.reject(&:waitlisted).each do |booking| %>
-              <turbo-frame id="payment_<%= booking.id %>">
+              <turbo-frame id="booking_<%= booking.id %>">
                 <!-- Turbo frame with buttons and state here -->
                 <div class="d-flex justify-content-between align-items-end">
                   <div class="d-flex align-items-end" style="margin-top: -6px;">
@@ -306,15 +306,16 @@
                     <h6 class="panel">
                       <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
                         <div class="d-flex mt-2">
-                          <%= booking.id %>
-                          <%= booking.user.name %> - <%= booking.status %>
+                          <div class="d-flex <%= 'mt-1' if booking.status == 'cancelled' %>">
+                            <%= booking.user.name %> - <%= booking.status %>
+                          </div>
                         </div>
                       </a>
                     </div>
                     <% if booking.status == 'pending' %>
                       <div class="d-flex align-items-between">
-                        <%= button_to "Approve", update_state_booking_path(booking, status: "confirmed"), method: :patch, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
-                        <%= button_to "Reject", update_state_booking_path(booking, status: "cancelled"), method: :patch, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
+                        <%= button_to "Approve", update_status_booking_path(booking, status: "confirmed"), method: :patch, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
+                        <%= button_to "Reject", update_status_booking_path(booking, status: "cancelled"), method: :patch, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;", data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" }%>
                       </div>
                     <% elsif booking.status == 'confirmed' %>
                       <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;" %>
@@ -377,13 +378,15 @@
                       <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 2px;"></i>
                       <h6 class="panel">
                         <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-                          <%= booking.user.name %> - <%= booking.status %>
+                          <div class="d-flex <%= 'mt-1' if booking.status == 'cancelled' %>">
+                            <%= booking.user.name %> - <%= booking.status %>
+                          </div>
                         </a>
                       </h6>
                     </div>
                     <% if booking.status == 'pending' %>
-                      <%= button_to "Approve", update_state_booking_path(booking, status: "confirmed"), method: :patch, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
-                      <%= button_to "Reject", update_state_booking_path(booking, status: "cancelled"), method: :patch, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
+                      <%= button_to "Approve", update_status_booking_path(booking, status: "confirmed"), method: :patch, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
+                      <%= button_to "Reject", update_status_booking_path(booking, status: "cancelled"), method: :patch, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;", data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
                     <% elsif booking.status == 'approved' %>
                       <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;"  %>
                       <%# <%= button_to update_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>

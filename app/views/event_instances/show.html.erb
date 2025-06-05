@@ -334,7 +334,7 @@
                         </div>
                       </div>
                       <div>
-                        <%= button_to update_state_booking_path(booking, state: (booking.state == 'paid' ? 'unpaid' : 'paid')), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #{booking.state == 'paid' ? 'black' : '#9bdaa7'}; color: white; line-height: 1px; height: 20px; border-radius: 4px; width: 127px;" do %>
+                        <%= button_to update_status_booking_path(booking, state: (booking.state == 'paid' ? 'unpaid' : 'paid')), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #{booking.state == 'paid' ? 'black' : '#9bdaa7'}; color: white; line-height: 1px; height: 20px; border-radius: 4px; width: 127px;" do %>
                           Mark as <%= booking.state == 'paid' ? 'Unpaid' : 'Paid' %>
                         <% end %>
                       </div>
