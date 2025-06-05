@@ -17,7 +17,7 @@ class BookingsController < ApplicationController
     end
 
     # Determine if the booking should be waitlisted
-    is_waitlisted = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).count
+    is_waitlisted = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).where.not(status: ["cancelled", "pending"]).count
 
     # Determine status
     status = if is_waitlisted

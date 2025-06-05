@@ -24,11 +24,11 @@
       </div>
       <div>
         <% if booking.state == "unpaid" %>
-          <%= button_to update_status_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
+          <%= button_to update_payment_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
             Mark as Paid
           <% end %>
         <% else %>
-          <%= button_to update_status_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
+          <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
             Mark as Unpaid
           <% end %>
         <% end %>

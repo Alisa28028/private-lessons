@@ -85,7 +85,7 @@
     <div class="d-flex justify-content-between">
       <% capacity = @event_instance.respond_to?(:capacity) ? @event_instance.capacity : @event.capacity %>
       <% bookings_scope = @event_instance.respond_to?(:bookings) ? @event_instance.bookings : @event.bookings %>
-      <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: "cancelled").count %>
+      <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: ["cancelled", "pending"]).count %>
       <% if capacity.present? && bookings_count.present? %>
         <% if capacity - bookings_count <= 0 %>
           <h4 class="show" style="font-weight: 700; margin-bottom: 2px; color: #786490;"> EVENT FULL!!</h4>
@@ -158,7 +158,7 @@
           class: "btn btn-card mt-1" %>
               </div>
             <% elsif future_event %>
-              <% if @event_instance.effective_capacity - @event_instance.bookings.count <= 0 %>
+              <% if @event_instance.effective_capacity - @event_instance.bookings.where(status: "confirmed").count <= 0 %>
                 <div class="col-12 px-0">
                   <button type="button" style="font-size: small; background-color: #8d76a7;"
             class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
