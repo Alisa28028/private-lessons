@@ -1,6 +1,19 @@
 <div class="container px-2 bg-white">
   <div class="row tight-row mt-2">
-    <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+    <div class="d-flex justify-content-start align-items-baseline">
+      <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+      <% if @event_instance.event.approval_mode == "manual" %>
+        <%# <h4 style="margin-left: 3px;">approval required</h4> %>
+        <i
+  class="fa-solid fa-circle-exclamation"
+  style="color: #AA83D7; margin-left: 5px; margin-bottom: 2px; font-size: 12px; cursor: pointer; position: relative; top: -2px;"
+  data-bs-toggle="popover"
+  data-bs-placement="top"
+  data-bs-content="Teacher approval required"
+  onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
+></i>
+      <% end %>
+    </div>
     <% if user_signed_in? %>
       <% if current_user == @event.user %>
         <div class="d-flex justify-content-between mt-2">
@@ -85,7 +98,7 @@
     <div class="d-flex justify-content-between">
       <% capacity = @event_instance.respond_to?(:capacity) ? @event_instance.capacity : @event.capacity %>
       <% bookings_scope = @event_instance.respond_to?(:bookings) ? @event_instance.bookings : @event.bookings %>
-      <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: "cancelled").count %>
+      <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: ["cancelled", "pending"]).count %>
       <% if capacity.present? && bookings_count.present? %>
         <% if capacity - bookings_count <= 0 %>
           <h4 class="show" style="font-weight: 700; margin-bottom: 2px; color: #786490;"> EVENT FULL!!</h4>
@@ -117,16 +130,19 @@
             <% future_event = @event_instance.start_time > Time.current %>
             <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
             <% if user_booking && !user_booking.waitlisted %>
-              <% if user_booking.status == "pending" %>
-                <%# <p style="font-size: small; border: 1px solid #ff9800; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #ff9800;">
-                  Pending Approval
-                </p> %>
+              <% case user_booking.status %>
+              <% when "pending" %>
                 <div class="col-12 px-0">
                   <%= button_to "Pending approval (click to cancel request)", booking_path(user_booking),
-        method: :delete,
-        class: "btn btn-card mt-1", style: "background-color: #a58ab5" %>
+            method: :delete,
+            class: "btn btn-card mt-1",
+            style: "background-color: #a58ab5" %>
                 </div>
-              <% else %>
+              <% when "cancelled" %>
+                <p style="font-size: small; border: 1px solid #dc3545; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
+                  Booking Rejected or Cancelled
+                </p>
+              <% when "confirmed" %>
                 <p style="font-size: small; border: 1px solid #000; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: black;">
                   <%= future_event ? "Booked!" : "Attended" %>
                 </p>
@@ -135,31 +151,30 @@
                   <% if future_event && Time.current < cancellation_cutoff %>
                     <div class="col-12 px-0">
                       <%= button_to "Cancel Booking!", booking_path(user_booking),
-              method: :delete,
-              data: { confirm: "Are you sure you want to cancel your booking?" },
-              class: "btn btn-card mt-0" %>
+                method: :delete,
+                data: { confirm: "Are you sure you want to cancel your booking?" },
+                class: "btn btn-card mt-0" %>
                     </div>
                   <% end %>
                 <% else %>
                   <%= button_to "Cancel Booking", booking_path(user_booking),
-          method: :delete,
-          data: { confirm: "Are you sure you want to cancel your booking?" },
-          class: "btn btn-card ml-2 mb-1 mr-0" %>
+            method: :delete,
+            data: { confirm: "Are you sure you want to cancel your booking?" },
+            class: "btn btn-card ml-2 mb-1 mr-0" %>
                 <% end %>
               <% end %>
             <% elsif user_booking && user_booking.waitlisted && future_event %>
               <div class="col-12 px-0">
                 <%= button_to "On Waitlist (click to leave waitlist)", booking_path(user_booking),
-        method: :delete,
-        data: { confirm: "Are you sure you want to leave the waitlist?" },
-        class: "btn btn-card mt-1" %>
+          method: :delete,
+          data: { confirm: "Are you sure you want to leave the waitlist?" },
+          class: "btn btn-card mt-1" %>
               </div>
             <% elsif future_event %>
-              <% if @event_instance.effective_capacity - @event_instance.bookings.count <= 0 %>
+              <% if @event_instance.effective_capacity - @event_instance.bookings.where(status: "confirmed").count <= 0 %>
                 <div class="col-12 px-0">
                   <button type="button" style="font-size: small; background-color: #8d76a7;"
-
-                    class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
+            class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
                     Join Waitlist!
                   </button>
                 </div>
@@ -332,7 +347,7 @@
                         </div>
                       </div>
                       <div>
-                        <%= button_to update_state_booking_path(booking, state: (booking.state == 'paid' ? 'unpaid' : 'paid')), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #{booking.state == 'paid' ? 'black' : '#9bdaa7'}; color: white; line-height: 1px; height: 20px; border-radius: 4px; width: 127px;" do %>
+                        <%= button_to update_status_booking_path(booking, state: (booking.state == 'paid' ? 'unpaid' : 'paid')), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #{booking.state == 'paid' ? 'black' : '#9bdaa7'}; color: white; line-height: 1px; height: 20px; border-radius: 4px; width: 127px;" do %>
                           Mark as <%= booking.state == 'paid' ? 'Unpaid' : 'Paid' %>
                         <% end %>
                       </div>
@@ -393,7 +408,7 @@
             <% end %>
           <% end %>
           <!-- Waitlist Section (after attendees) -->
-          <% waitlist = @event_instance.bookings.where(waitlisted: true).order(:joined_at) %>
+          <% waitlist = @event_instance.bookings.where(waitlisted: true).where.not(status: 'pending').order(:joined_at) %>
           <% if waitlist.any? %>
             <h3 class="show mb-2 mt-4">Waitlist</h3>
             <% waitlist.each do |booking| %>
@@ -426,3 +441,27 @@
     </div>
   </div>
 </div>
+<script>
+  function showTemporaryPopover(el) {
+    // Dispose existing
+    const existing = bootstrap.Popover.getInstance(el);
+    if (existing) existing.dispose();
+
+    const popover = new bootstrap.Popover(el);
+    popover.show();
+
+    // Wait a bit so the popover gets inserted into DOM
+    setTimeout(() => {
+      const popoverElement = document.querySelector('.popover');
+      if (popoverElement) {
+        popoverElement.classList.add('fade-out');
+
+        // After fade-out completes, dispose the popover
+        setTimeout(() => {
+          const popInstance = bootstrap.Popover.getInstance(el);
+          if (popInstance) popInstance.dispose();
+        }, 800); // matches fade-out duration
+      }
+    }, 1300); // show for 2.5s, then fade out
+  }
+</script>

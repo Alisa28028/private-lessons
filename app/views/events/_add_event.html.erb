@@ -42,6 +42,7 @@
             role: "switch",
             id: "approvalSwitch",
             data: {
+              mode: "approval",
               action: "change->toggle#updateLabel",
               toggle_target: "checkbox"
             }
@@ -85,8 +86,42 @@
       data-locations='<%= @location_data.to_json.html_safe if @location_data.present? %>'
       class="d-none"></ul>
         </div>
+        <div data-controller="toggle">
+          <div class="d-flex justify-content-start mb-1">
+            <%= f.label :payment_obligation_on_booking, "Payment Due Upon Booking?", class: "form-label", style: "margin-top: 3px; margin-right: 3px; margin-bottom: 0px;" %>
+            <div>
+              <div class="form-check form-switch position-relative">
+                <%= f.check_box :payment_obligation_on_booking,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "paymentSwitch",
+            data: {
+              mode: "payment",
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox"
+            }
+          } %>
+                <% payment_label = f.object.payment_obligation_on_booking ? "YES" : "NO" %>
+                <% payment_class = f.object.payment_obligation_on_booking ? "switch-label--yes" : "switch-label--no" %>
+                <span class="switch-label <%= payment_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                  <%= payment_label %>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="text-muted small mb-3" style="color: #8d76a7 !important;" data-toggle-target="description">
+            <%= f.object.payment_obligation_on_booking ?
+      "Students must pay 100% at the time of booking. No cancellation refunds apply." :
+      "Students will not be asked to pay immediately, and cancellation policies apply." %>
+          </div>
+          <!-- Hidden section: cancellation policy (conditionally shown) -->
+          <div data-toggle-target="section" style="<%= f.object.payment_obligation_on_booking ? 'display: none;' : '' %>">
+            <%= f.input :cancellation_policy_duration, label: "Cancellation Policy (hours)", hint: "How many hours before the event can students cancel?" %>
+          </div>
+        </div>
         <%= f.fields_for :event_instances do |ei| %>
-          <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
           <div class="form-group" data-controller="datepicker">
             <%= ei.input :date,
             as: :string,
@@ -138,6 +173,7 @@
             role: "switch",
             id: "approvalSwitch",
             data: {
+              mode: "approval",
               action: "change->toggle#updateLabel",
               toggle_target: "checkbox"
             }
@@ -240,6 +276,7 @@
             role: "switch",
             id: "approvalSwitch",
             data: {
+              mode: "approval",
               action: "change->toggle#updateLabel",
               toggle_target: "checkbox"
             }

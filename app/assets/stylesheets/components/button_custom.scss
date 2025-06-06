@@ -79,3 +79,8 @@
   background-color: #9982f5;
   color: white;
 }
+
+.fade-out {
+  opacity: 0 !important;
+  transition: opacity 0.4s ease;
+}

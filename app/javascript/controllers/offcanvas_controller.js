@@ -1,4 +1,4 @@
-// does not working so currently not in use.
+// does not work so currently not in use.
 
 import { Controller } from "@hotwired/stimulus"
 

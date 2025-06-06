@@ -17,7 +17,7 @@ class BookingsController < ApplicationController
     end
 
     # Determine if the booking should be waitlisted
-    is_waitlisted = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).count
+    is_waitlisted = @event_instance.effective_capacity <= @event_instance.bookings.where(waitlisted: false).where.not(status: ["cancelled", "pending"]).count
 
     # Determine status
     status = if is_waitlisted
@@ -28,11 +28,17 @@ class BookingsController < ApplicationController
                 "confirmed"
             end
 
+
+
+    # require_payment_now = @event_instance.event.payment_obligation_on_booking?
+    state = (status == "confirmed" && !is_waitlisted) ? "unpaid" : nil
+
     @booking = @event_instance.bookings.new(
       user: current_user,
       waitlisted: is_waitlisted,
       joined_at: is_waitlisted ? Time.current : nil,
-      status: status
+      status: status,
+      state: state
     )
 
 
@@ -54,22 +60,63 @@ class BookingsController < ApplicationController
     redirect_back fallback_location: event_instance_path(@event_instance)
   end
 
-  def update_state
+  def update_status
     @booking = Booking.find(params[:id])
-    @booking.update(state: params[:state])
+    new_status = params[:status]
+
+  if new_status == "confirmed"
+    if @booking.update(status: "confirmed", state: "unpaid")
+      BookingMailer.booking_approved(@booking.user, @booking).deliver_later
+      flash[:notice] = "Booking confirmed and user notified."
+    else
+      flash[:alert] = "Failed to confirm booking."
+    end
+  elsif new_status == "cancelled"
+    if @booking.update(status: "cancelled")
+      Rails.logger.info "[MAILER DEBUG] Sending booking rejected email to #{@booking.user.email}"
+      BookingMailer.booking_rejected(@booking.user, @booking).deliver_later
+      flash[:notice] = "Booking rejected and user notified."
+    else
+      flash[:alert] = "Failed to reject booking."
+    end
+  end
 
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace(@booking)
+        render turbo_stream: turbo_stream.replace(
+          "booking_#{@booking.id}",
+          partial: "bookings/booking",
+          locals: { booking: @booking }
+        )
       end
       format.html { redirect_to dashboard_path }
     end
   end
 
 
+  def update_payment_state
+    @booking = Booking.find(params[:id])
+    @booking.update(state: params[:state])
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "payment_#{@booking.id}",
+          partial: "payments/payment_row",
+          locals: { booking: @booking }
+        )
+      end
+      format.html {
+        redirect_to request.referer || bookings_path, notice: "Payment status updated."
+      }
+    end
+  end
+
+
+
   def approve
     booking = Booking.find(params[:id])
-    booking.update!(status: "confirmed")
+    booking.update!(status: "confirmed", state: "unpaid")
     redirect_to dashboard_path, notice: "Booking approved"
   end
 
@@ -107,6 +154,13 @@ class BookingsController < ApplicationController
 
     # Skip cutoff check if waitlisted
     if !was_waitlisted
+
+      # 🔒 Disallow cancellation if payment is required upon booking
+      if event_instance.event.payment_obligation_on_booking?
+        flash[:alert] = "Cancellations are not allowed for this event. Please contact the teacher."
+        return redirect_to event_instance_path(event_instance)
+      end
+
       cancellation_cutoff = if event_instance.cancellation_policy_duration.present?
         event_instance.start_time - event_instance.cancellation_policy_duration.to_i.hours
       end
