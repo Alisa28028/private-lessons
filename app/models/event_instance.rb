@@ -168,6 +168,11 @@ class EventInstance < ApplicationRecord
     self[:approval_mode] || event.approval_mode
   end
 
+  def active_bookings_count
+    bookings.where(waitlisted: false, status: 'confirmed').count
+
+  end
+
   private
 
   def recurring_weekly?

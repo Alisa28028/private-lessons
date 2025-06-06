@@ -5,14 +5,28 @@
       <h6 class="panel">
         <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
           <div class="d-flex <%= 'mt-1' if booking.status == 'cancelled' %>">
-            <%= booking.user.name %> -- <%= booking.status %>
+            <%= booking.user.name %> –
+            <div style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">&nbsp;<%= booking.status %>
+            </div>
           </div>
         </a>
       </h6>
     </div>
     <% if booking.status == 'pending' %>
-      <%= button_to "Approve", update_status_booking_path(booking, status: "confirmed"), method: :patch, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
-      <%= button_to "Reject", update_status_booking_path(booking, status: "cancelled"), method: :patch, class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px", data: { turbo_method: :patch } %>
+      <div class="d-flex align-items-between">
+        <% if instance.active_bookings_count < instance.effective_capacity.to_i %>
+          <%= button_to "Approve", update_status_booking_path(booking, status: "confirmed"), method: :patch,
+          class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px",
+          data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
+        <% else %>
+          <button class="btn btn-sm disabled" style="height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: black; margin-right: 4px; margin-top: 4px; padding-top: 4px;" disabled>
+            Full
+          </button>
+        <% end %>
+        <%= button_to "Reject", update_status_booking_path(booking, status: "cancelled"), method: :patch,
+        class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;",
+        data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
+      </div>
     <% elsif booking.status == 'confirmed' %>
       <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;" %>
     <% end %>
