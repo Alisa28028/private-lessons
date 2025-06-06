@@ -8,16 +8,29 @@
     <% past_event = instance.start_time < Time.current %> <!-- Check if event is in the past -->
     <%# <div class="card-product m-1 mb-3 position-relative"> %>
     <div class="d-flex flex-column justify-content-between">
-      <div class="d-flex flex-row justify-content-between">
+      <div class="d-flex flex-row justify-content-between" style="margin-bottom: -6px;">
         <!-- EVENT TITLE -->
-        <h3><%= instance.event.title.titleize %></h3>
+        <div class="d-flex justify-content-start align-items-baseline">
+          <h3><%= instance.event.title.titleize %></h3>
+          <% if instance.event.approval_mode == "manual" %>
+            <%# <h4 style="margin-left: 3px;">approval required</h4> %>
+            <i
+  class="fa-solid fa-circle-exclamation"
+  style="color: #AA83D7; margin-left: 5px; margin-bottom: 2px; font-size: 12px; cursor: pointer; position: relative; top: -1px;"
+  data-bs-toggle="popover"
+  data-bs-placement="top"
+  data-bs-content="Teacher approval required"
+  onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
+></i>
+          <% end %>
+        </div>
         <% if instance.likes.exists?(user: current_user) %>
           <%= button_to event_instance_like_path(instance), method: :delete, class: "btn p-0 border-0 bg-transparent z-1000", form: { data: { turbo: false } } do %>
-            <i class="fa-solid fa-heart" style="color: #9062c6; padding-top: 5px;"></i>
+            <i class="fa-solid fa-heart" style="color: #9062c6; margin-bottom: 8px;"></i>
           <% end %>
         <% else %>
           <%= button_to event_instance_like_path(instance), method: :post, class: "btn p-0 border-0 bg-transparent z-1000", form: { data: { turbo: false } } do %>
-            <i class="fa-regular fa-heart z-10" style="color: #AA83D7; padding-top: 5px;"></i>
+            <i class="fa-regular fa-heart z-10" style="color: #AA83D7; margin-bottom: 8px;"></i>
           <% end %>
         <% end %>
       </div>
@@ -304,3 +317,27 @@
     </div>
   </div>
 </div>
+<script>
+  function showTemporaryPopover(el) {
+    // Dispose existing
+    const existing = bootstrap.Popover.getInstance(el);
+    if (existing) existing.dispose();
+
+    const popover = new bootstrap.Popover(el);
+    popover.show();
+
+    // Wait a bit so the popover gets inserted into DOM
+    setTimeout(() => {
+      const popoverElement = document.querySelector('.popover');
+      if (popoverElement) {
+        popoverElement.classList.add('fade-out');
+
+        // After fade-out completes, dispose the popover
+        setTimeout(() => {
+          const popInstance = bootstrap.Popover.getInstance(el);
+          if (popInstance) popInstance.dispose();
+        }, 800); // matches fade-out duration
+      }
+    }, 1300); // show for 2.5s, then fade out
+  }
+</script>

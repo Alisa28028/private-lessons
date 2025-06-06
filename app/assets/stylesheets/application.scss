@@ -28,3 +28,26 @@ html, body {
   width: 100%;
   height: auto;
 }
+
+.popover {
+  background-color: #f7f4f9;
+  border: 1px solid #5b4a6d;
+  border-radius: 5px;
+
+}
+
+/* Popover content */
+.popover-body {
+  color: #543A70; /* dark purple text */
+  font-weight: 400;
+  font-family: sans-serif;
+  // padding: 0.5rem 1rem;
+  padding-bottom: 4px;
+  padding-top: 4px;
+  padding-right: 9px;
+  padding-left: 9px;
+}
+
+.popover .popover-arrow {
+  display: none !important;
+}

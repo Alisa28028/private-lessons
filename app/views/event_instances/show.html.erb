@@ -1,6 +1,19 @@
 <div class="container px-2 bg-white">
   <div class="row tight-row mt-2">
-    <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+    <div class="d-flex justify-content-start align-items-baseline">
+      <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+      <% if @event_instance.event.approval_mode == "manual" %>
+        <%# <h4 style="margin-left: 3px;">approval required</h4> %>
+        <i
+  class="fa-solid fa-circle-exclamation"
+  style="color: #AA83D7; margin-left: 5px; margin-bottom: 2px; font-size: 12px; cursor: pointer;"
+  data-bs-toggle="popover"
+  data-bs-placement="top"
+  data-bs-content="Teacher approval required"
+  onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
+></i>
+      <% end %>
+    </div>
     <% if user_signed_in? %>
       <% if current_user == @event.user %>
         <div class="d-flex justify-content-between mt-2">
@@ -395,7 +408,7 @@
             <% end %>
           <% end %>
           <!-- Waitlist Section (after attendees) -->
-          <% waitlist = @event_instance.bookings.where(waitlisted: true).order(:joined_at) %>
+          <% waitlist = @event_instance.bookings.where(waitlisted: true).where.not(status: 'pending').order(:joined_at) %>
           <% if waitlist.any? %>
             <h3 class="show mb-2 mt-4">Waitlist</h3>
             <% waitlist.each do |booking| %>
@@ -428,3 +441,27 @@
     </div>
   </div>
 </div>
+<script>
+  function showTemporaryPopover(el) {
+    // Dispose existing
+    const existing = bootstrap.Popover.getInstance(el);
+    if (existing) existing.dispose();
+
+    const popover = new bootstrap.Popover(el);
+    popover.show();
+
+    // Wait a bit so the popover gets inserted into DOM
+    setTimeout(() => {
+      const popoverElement = document.querySelector('.popover');
+      if (popoverElement) {
+        popoverElement.classList.add('fade-out');
+
+        // After fade-out completes, dispose the popover
+        setTimeout(() => {
+          const popInstance = bootstrap.Popover.getInstance(el);
+          if (popInstance) popInstance.dispose();
+        }, 800); // matches fade-out duration
+      }
+    }, 1300); // show for 2.5s, then fade out
+  }
+</script>
