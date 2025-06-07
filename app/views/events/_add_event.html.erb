@@ -197,7 +197,7 @@
         </div>
         <%= f.input :title, label: false, input_html: { placeholder: "Title..." } %>
         <%= f.input :description, label: false, input_html: { placeholder: "Describe your event..." } %>
-        <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
+        <%# <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
         <%# field for event instances %>
         <%# <%= f.fields_for :event_instances do |ei| %>
           <%# <div class="event-instance-fields"> %>
@@ -247,6 +247,41 @@
               <ul data-location-target="locationList"
       data-locations='<%= @location_data.to_json.html_safe if @location_data.present? %>'
       class="d-none"></ul>
+            </div>
+            <div data-controller="toggle">
+              <div class="d-flex justify-content-start mb-1">
+                <%= f.label :payment_obligation_on_booking, "Payment Due Upon Booking?", class: "form-label", style: "margin-top: 3px; margin-right: 3px; margin-bottom: 0px;" %>
+                <div>
+                  <div class="form-check form-switch position-relative">
+                    <%= f.check_box :payment_obligation_on_booking,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "paymentSwitch",
+            data: {
+              mode: "payment",
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox"
+            }
+          } %>
+                    <% payment_label = f.object.payment_obligation_on_booking ? "YES" : "NO" %>
+                    <% payment_class = f.object.payment_obligation_on_booking ? "switch-label--yes" : "switch-label--no" %>
+                    <span class="switch-label <%= payment_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                      <%= payment_label %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-muted small mb-3" style="color: #8d76a7 !important;" data-toggle-target="description">
+                <%= f.object.payment_obligation_on_booking ?
+      "Students must pay 100% at the time of booking. No cancellation refunds apply." :
+      "Students will not be asked to pay immediately, and cancellation policies apply." %>
+              </div>
+              <!-- Hidden section: cancellation policy (conditionally shown) -->
+              <div data-toggle-target="section" style="<%= f.object.payment_obligation_on_booking ? 'display: none;' : '' %>">
+                <%= f.input :cancellation_policy_duration, label: "Cancellation Policy (hours)", hint: "How many hours before the event can students cancel?" %>
+              </div>
             </div>
             <%= f.input :price, placeholder: "Leave blank to use event price",
               value: @event_instance&.price || @event.price %>
@@ -300,7 +335,7 @@
             </div>
             <%= f.input :title, label:false, input_html: { placeholder: "Title..." } %>
             <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
-            <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
+            <%# <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
             <%# <%= f.fields_for :event_instances do |ei| %>
               <%# <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
               <%# <% end %>
@@ -313,19 +348,21 @@
                 <!-- Hidden field to store selected dates -->
                 <%= f.hidden_field :custom_dates, id: 'custom_dates_field' %>
                 <!-- Visible Time Picker -->
-                <div class="mb-1">
+                <%# <div class="mb-1">
                   <label for="apply_same_time_to_all">Same time for all custom dates?</label>
                   <input type="checkbox" id="apply_same_time_to_all" name="apply_same_time_to_all">
-                </div>
-                <label for="event_time">Select Time</label>
-                <input
+                </div> %>
+                <div>
+                  <label for="event_time">Select Time</label>
+                  <input
               id="event_time"
               type="text"
               placeholder="Select time"
               data-datepicker-target="eventTime">
-                  <%# data-action="change->datepicker#updateTimeHiddenField"> %>
-                  <!-- Hidden Field for Start Time -->
-                  <%= f.hidden_field :start_time, id: 'hidden_custom_event_start_time' %>
+                    <%# data-action="change->datepicker#updateTimeHiddenField"> %>
+                    <!-- Hidden Field for Start Time -->
+                    <%= f.hidden_field :start_time, id: 'hidden_custom_event_start_time' %>
+                  </div>
                 </div>
                 <%= f.input :duration, as: :integer, label: "Duration (in minutes)" %>
                 <%= f.input :capacity, label:false, input_html: { placeholder: "Capacity..." } %>
@@ -345,6 +382,41 @@
       class="d-none"></ul>
                 </div>
                 <!-- Checkbox to toggle custom capacities -->
+                <div data-controller="toggle">
+                  <div class="d-flex justify-content-start mb-1">
+                    <%= f.label :payment_obligation_on_booking, "Payment Due Upon Booking?", class: "form-label", style: "margin-top: 3px; margin-right: 3px; margin-bottom: 0px;" %>
+                    <div>
+                      <div class="form-check form-switch position-relative">
+                        <%= f.check_box :payment_obligation_on_booking,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "paymentSwitch",
+            data: {
+              mode: "payment",
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox"
+            }
+          } %>
+                        <% payment_label = f.object.payment_obligation_on_booking ? "YES" : "NO" %>
+                        <% payment_class = f.object.payment_obligation_on_booking ? "switch-label--yes" : "switch-label--no" %>
+                        <span class="switch-label <%= payment_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                          <%= payment_label %>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-muted small mb-3" style="color: #8d76a7 !important;" data-toggle-target="description">
+                    <%= f.object.payment_obligation_on_booking ?
+      "Students must pay 100% at the time of booking. No cancellation refunds apply." :
+      "Students will not be asked to pay immediately, and cancellation policies apply." %>
+                  </div>
+                  <!-- Hidden section: cancellation policy (conditionally shown) -->
+                  <div data-toggle-target="section" style="<%= f.object.payment_obligation_on_booking ? 'display: none;' : '' %>">
+                    <%= f.input :cancellation_policy_duration, label: "Cancellation Policy (hours)", hint: "How many hours before the event can students cancel?" %>
+                  </div>
+                </div>
                 <%= f.input :price, placeholder: "Leave blank to use event price",
               value: @event_instance&.price || @event.price %>
                 <div class="form-group mb-8">

@@ -116,11 +116,14 @@
         </div>
         <% future_event = @event_instance.start_time > Time.current %>
         <% if @event.cancellation_policy_duration.present? %>
-          <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
           <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
-          <% if future_event && Time.current > cancellation_cutoff && user_booking && !user_booking.waitlisted%>
-            <h4 class="show" style="color: #786490">Cancellation not possible.
-            </h4>
+          <% if user_booking %>
+            <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
+            <% future_event = @event_instance.start_time > Time.current %>
+            <% too_late_to_cancel = future_event && Time.current > cancellation_cutoff && !user_booking.waitlisted %>
+            <% if too_late_to_cancel || @event_instance.event.payment_obligation_on_booking? %>
+              <h4 class="show" style="color: #786490">Cancellation not possible.</h4>
+            <% end %>
           <% end %>
         <% end %>
       </div>
@@ -148,7 +151,7 @@
                 </p>
                 <% if @event.cancellation_policy_duration.present? %>
                   <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
-                  <% if future_event && Time.current < cancellation_cutoff %>
+                  <% if @event_instance.start_time.future? && Time.current < cancellation_cutoff && !@event.payment_obligation_on_booking %>
                     <div class="col-12 px-0">
                       <%= button_to "Cancel Booking!", booking_path(user_booking),
                 method: :delete,
@@ -239,8 +242,13 @@
           <% if @event.event_instances.any? %>
             <% if @event.event_instances.first.cancellation_policy_duration != nil %>
               <h3 class="show">Cancellation policy </h3>
-              <h4 class="show"><%= @event.event_instances.first.cancellation_policy_duration %>
-                hours before event starts</h4>
+              <% if @event.payment_obligation_on_booking? %>
+                <h4 class="show">No cancellations or refunds after booking.
+                </h4>
+              <% else %>
+                <h4 class="show"><%= @event.event_instances.first.cancellation_policy_duration %>
+                  hours before event starts</h4>
+              <% end %>
             <% else %>
               <h3 class="show"> Cancellation policy: not provided</h4>
             <% end %>
