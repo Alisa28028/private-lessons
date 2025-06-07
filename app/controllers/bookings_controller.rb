@@ -64,8 +64,27 @@ class BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
     new_status = params[:status]
 
+  # if new_status == "confirmed"
+  #   if @booking.update(status: "confirmed", state: "unpaid")
+  #     BookingMailer.booking_approved(@booking.user, @booking).deliver_later
+  #     flash[:notice] = "Booking confirmed and user notified."
+  #   else
+  #     flash[:alert] = "Failed to confirm booking."
+  #   end
+  # elsif new_status == "cancelled"
+  #   if @booking.update(status: "cancelled")
+  #     Rails.logger.info "[MAILER DEBUG] Sending booking rejected email to #{@booking.user.email}"
+  #     BookingMailer.booking_rejected(@booking.user, @booking).deliver_later
+  #     flash[:notice] = "Booking rejected and user notified."
+  #   else
+  #     flash[:alert] = "Failed to reject booking."
+  #   end
   if new_status == "confirmed"
-    if @booking.update(status: "confirmed", state: "unpaid")
+    event_instance = @booking.event_instance
+
+    if event_instance.active_bookings_count >= event_instance.effective_capacity.to_i
+      flash[:alert] = "Cannot confirm booking — event is at full capacity."
+    elsif @booking.update(status: "confirmed", state: "unpaid")
       BookingMailer.booking_approved(@booking.user, @booking).deliver_later
       flash[:notice] = "Booking confirmed and user notified."
     else
@@ -73,24 +92,36 @@ class BookingsController < ApplicationController
     end
   elsif new_status == "cancelled"
     if @booking.update(status: "cancelled")
-      Rails.logger.info "[MAILER DEBUG] Sending booking rejected email to #{@booking.user.email}"
       BookingMailer.booking_rejected(@booking.user, @booking).deliver_later
       flash[:notice] = "Booking rejected and user notified."
     else
       flash[:alert] = "Failed to reject booking."
     end
+
   end
 
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.replace(
+  respond_to do |format|
+    format.turbo_stream do
+      render turbo_stream: [
+        turbo_stream.replace(
           "booking_#{@booking.id}",
           partial: "bookings/booking",
-          locals: { booking: @booking }
+          locals: {
+            booking: @booking,
+            instance: @booking.event_instance
+          }
+        ),
+        turbo_stream.replace(
+          "event_instance_#{@booking.event_instance.id}",
+          partial: "event_instances/event_instance",
+          locals: { instance: @booking.event_instance }
         )
-      end
-      format.html { redirect_to dashboard_path }
+      ]
     end
+
+    format.html { redirect_to dashboard_path }
+  end
+
   end
 
 
