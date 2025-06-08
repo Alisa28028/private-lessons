@@ -8,6 +8,7 @@ class UsersController < ApplicationController
     @bookings = current_user.bookings
     @event_instances = EventInstance.joins(:event).where(events: { user_id: current_user.id }).includes(:bookings => :user)
 
+
     # Ensure @events is an ActiveRecord relation
     @events = current_user.events.presence || Event.none
 
@@ -48,7 +49,33 @@ class UsersController < ApplicationController
     @current_month_event_instances = EventInstance.where(start_time: Time.now.beginning_of_month..Time.now)
     # @current_month_events_sum = monthly_sum(@current_month_event_instances)
 
-    # Attended students
+    start_of_month = Time.current.beginning_of_month
+end_of_month = Time.current.end_of_month
+
+@current_month_paid_sum = Booking
+  .joins(event_instance: :event)
+  .where(status: "confirmed", state: "paid")
+  .where(events: { user_id: current_user.id })
+  .where(event_instances: { start_time: start_of_month..end_of_month })
+  .sum("event_instances.price_cents")
+
+  @unpaid_booking_count = Booking
+  .joins(:event_instance)
+  .where(
+    state: "unpaid",
+    status: ["confirmed", "cancelled"],
+    event_instances: { id: @event_instances.select(:id) }
+  )
+  .count
+
+  @unpaid_bookings = Booking
+  .joins(:event_instance)
+  .where(
+    state: "unpaid",
+    status: ["confirmed", "cancelled"],
+    event_instances: { id: @event_instances.select(:id) }
+  )
+  # Attended students
     @most_attended_list_current_month = most_attended(@current_month_event_instances)
     @most_attended_list_last_month = most_attended(@last_month_event_instances)
 
