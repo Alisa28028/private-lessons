@@ -32,7 +32,7 @@
                   Full
                 </button>
               <% end %>
-              <%= button_to "Reject", update_status_booking_path(booking, status: "cancelled"), method: :patch,
+              <%= button_to "Reject", update_status_booking_path(booking, status: "rejected_by_teacher"), method: :patch,
         class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;",
         data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
             </div>

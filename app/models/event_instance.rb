@@ -148,11 +148,11 @@ class EventInstance < ApplicationRecord
 #   end
 
   def spots_left
-    capacity - bookings.where(waitlisted: false).where.not(status: "cancelled").count
+    capacity - bookings.where(waitlisted: false).where.not(status: ["cancelled_by_student", "cancelled_by_teacher", "rejected_by_teacher", "pending"]).count
   end
 
   def active_bookings_count
-    bookings.where(waitlisted: false).where.not(status: "cancelled").count
+    bookings.where(waitlisted: false).where.not(status: ["cancelled_by_student", "cancelled_by_teacher", "rejected_by_teacher", "pending"]).count
   end
 
 

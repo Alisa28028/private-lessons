@@ -98,7 +98,7 @@
     <div class="d-flex justify-content-between">
       <% capacity = @event_instance.respond_to?(:capacity) ? @event_instance.capacity : @event.capacity %>
       <% bookings_scope = @event_instance.respond_to?(:bookings) ? @event_instance.bookings : @event.bookings %>
-      <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: ["cancelled", "pending"]).count %>
+      <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: ["cancelled_by_teacher", "cancelled_by_student", "rejected_by_teacher", "pending"]).count %>
       <% if capacity.present? && bookings_count.present? %>
         <% if capacity - bookings_count <= 0 %>
           <h4 class="show" style="font-weight: 700; margin-bottom: 2px; color: #786490;"> EVENT FULL!!</h4>
@@ -326,7 +326,8 @@
           <div class="d-flex flex-column w-100">
             <div class="mb-1">
               <div class="d-flex justify-content-between">
-                <% valid_bookings = @bookings.reject{ |b| b.waitlisted || b.status == "cancelled" || b.status == "pending" } %>
+                <% valid_bookings = @bookings.reject{ |b| b.waitlisted || b.status == "cancelled_by_teacher" || b.status == "pending" ||
+                b.status == "cancelled_by_student" || b.status == "rejected_by_teacher" } %>
                 <% if valid_bookings.any? %>
                   <h3 class="show mb-1">Attendees</h3>
                 </div>
@@ -410,7 +411,10 @@
                 <% end %>
               <% end %>
               <!-- Waitlist Section (after attendees) -->
-              <% waitlist = @event_instance.bookings.where(waitlisted: true).where.not(status: 'pending').order(:joined_at) %>
+              <% waitlist = @event_instance.bookings
+  .where(waitlisted: true)
+  .where.not(status: ['pending', 'cancelled_by_teacher', 'cancelled_by_student', 'rejected_by_teacher'])
+  .order(:joined_at) %>
               <% if waitlist.any? %>
                 <h3 class="show mb-2 mt-4">Waitlist</h3>
                 <% waitlist.each do |booking| %>
