@@ -31,9 +31,9 @@ class Booking < ApplicationRecord
 
   def cancelled_before_policy?
     return false unless status == "cancelled_by_student"
-    return false unless cancelled_at && event_instance.cancellation_deadline
+    return false unless cancelled_at && event_instance.cancellation_policy_duration
 
-    cancelled_at <= event_instance.cancellation_deadline
+    cancelled_at <= event_instance.cancellation_policy_duration
   end
 
   def set_cancelled_at_timestamp
@@ -54,6 +54,7 @@ class Booking < ApplicationRecord
   def unique_booking_per_event_instance
     existing_booking = Booking.where(user_id: user_id, event_instance_id: event_instance_id)
                               .where.not(id: id)
+                              .where.not(status: ['cancelled_by_student'])
                               .first
 
     if existing_booking

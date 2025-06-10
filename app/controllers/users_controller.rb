@@ -63,7 +63,7 @@ class UsersController < ApplicationController
     .joins(:event_instance)
     .where(
       state: "unpaid",
-      status: ["confirmed", "cancelled"],
+      status: ["confirmed", "cancelled_by_teacher", "completed"],
       event_instances: { id: @event_instances.select(:id) }
     )
     .count

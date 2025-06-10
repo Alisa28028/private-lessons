@@ -126,18 +126,29 @@
                       <% if booking.state == 'paid' %>
                         <h6 class="panel"> - <%= booking.state %>
                           ✅</h6>
-                      <% else %>
-                        <h6 class="panel">- <%= booking.state %> ❌
-                        </h6>
+                      <% elsif booking.state == 'unpaid' %>
+                        <h6 class="panel"> - <%= booking.state %> ❌
+                        <% else %>
+                          <h6 class="panel"> - <%= booking.state %>
+                          </h6>
+                        </div>
                       <% end %>
                     </div>
                     <% if booking.state == 'unpaid' %>
-                      <%= button_to update_payment_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
-                        Mark as Paid
-                      <% end %>
-                    <% else %>
-                      <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-                        Mark as Unpaid
+                      <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
+                        <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+      method: :patch,
+      data: { turbo_frame: "payment_#{booking.id}" },
+      class: "btn btn-sm btn-success" %>
+                        <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
+      method: :patch,
+      data: { turbo_frame: "payment_#{booking.id}" },
+      class: "btn btn-sm btn-warning" %>
+                      <% else %>
+                        <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+      method: :patch,
+      data: { turbo_frame: "payment_#{booking.id}" },
+      class: "btn btn-sm btn-success" %>
                       <% end %>
                     <% end %>
                   </div>
@@ -206,18 +217,30 @@
                       <% if booking.state == 'paid' %>
                         <h6 class="panel"> - <%= booking.state %>
                           ✅</h6>
+                      </div>
+                    <% elsif booking.state == 'unpaid' %>
+                      <h6 class="panel"> - <%= booking.state %> ❌
                       <% else %>
-                        <h6 class="panel">- <%= booking.state %> ❌
+                        <h6 class="panel"> - <%= booking.state %>
                         </h6>
+                        <%# </div> %>
                       <% end %>
                     </div>
                     <% if booking.state == 'unpaid' %>
-                      <%= button_to update_payment_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
-                        Mark as Paid
-                      <% end %>
-                    <% else %>
-                      <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-                        Mark as Unpaid
+                      <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
+                        <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+      method: :patch,
+      data: { turbo_frame: "payment_#{booking.id}" },
+      class: "btn btn-sm btn-success" %>
+                        <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
+      method: :patch,
+      data: { turbo_frame: "payment_#{booking.id}" },
+      class: "btn btn-sm btn-warning" %>
+                      <% else %>
+                        <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+      method: :patch,
+      data: { turbo_frame: "payment_#{booking.id}" },
+      class: "btn btn-sm btn-success" %>
                       <% end %>
                     <% end %>
                   </div>

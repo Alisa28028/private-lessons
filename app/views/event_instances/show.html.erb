@@ -413,7 +413,7 @@
               <!-- Waitlist Section (after attendees) -->
               <% waitlist = @event_instance.bookings
   .where(waitlisted: true)
-  .where.not(status: ['pending', 'cancelled_by_teacher', 'cancelled_by_student', 'rejected_by_teacher'])
+  .where.not(status: ['cancelled_by_teacher', 'cancelled_by_student', 'rejected_by_teacher'])
   .order(:joined_at) %>
               <% if waitlist.any? %>
                 <h3 class="show mb-2 mt-4">Waitlist</h3>

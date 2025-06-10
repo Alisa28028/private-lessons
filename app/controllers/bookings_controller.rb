@@ -109,7 +109,7 @@ class BookingsController < ApplicationController
 
   def update_payment_state
     @booking = Booking.find(params[:id])
-    @booking.update(state: params[:state])
+    @booking.update(state: params[:state].presence)
 
     respond_to do |format|
       format.turbo_stream do
@@ -171,19 +171,16 @@ class BookingsController < ApplicationController
     was_waitlisted = @booking.waitlisted?
     is_pending = @booking.status == 'pending'
 
-    # Allow students to cancel their own pending or waitlisted bookings anytime
-    if is_pending && @booking.user == current_user
-      was_waitlisted = @booking.waitlisted?
+    # Allow students to cancel their own pending or waitlisted bookings anytime by destroying
+    if (is_pending || was_waitlisted) && @booking.user == current_user
       @booking.destroy
       flash[:notice] = was_waitlisted ? "You have been removed from the waitlist." : "Booking request cancelled."
       return redirect_to event_instance_path(event_instance)
     end
 
-
     # Skip cutoff check if waitlisted
-    if !was_waitlisted
-
-      # 🔒 Disallow cancellation if payment is required upon booking
+    unless was_waitlisted
+      # Disallow cancellation if payment is required upon booking
       if event_instance.event.payment_obligation_on_booking?
         flash[:alert] = "Cancellations are not allowed for this event. Please contact the teacher."
         return redirect_to event_instance_path(event_instance)
@@ -193,34 +190,50 @@ class BookingsController < ApplicationController
         event_instance.start_time - event_instance.cancellation_policy_duration.to_i.hours
       end
 
+      # If after cancellation deadline, disallow student self-cancellation (ask teacher)
       if cancellation_cutoff.present? && Time.current > cancellation_cutoff
-        flash[:alert] = "Cancellation is not allowed after the deadline. Please contact the teacher"
+        flash[:alert] = "Cancellation is not allowed after the deadline. Please contact the teacher."
         return redirect_to event_instance_path(event_instance)
       end
     end
 
-    @booking.destroy
-
-    if was_waitlisted
-      flash[:notice] = "You have been removed from the waitlist."
-    else
-      flash[:notice] = "Booking canceled successfully."
+    # If we reach here, it means the student is cancelling before the deadline and not waitlisted or pending,
+    # so update status instead of destroying
+    if @booking.user == current_user
+      @booking.update(
+        status: "cancelled_by_student",
+        cancelled_by: "student",
+        cancelled_at: Time.current
+      )
+      flash[:notice] = "Booking cancelled successfully."
       BookingMailer.cancellation_confirmation(current_user, @booking).deliver_now
+    else
+      # For others (e.g., teacher), allow destroy or handle separately if needed
+      @booking.destroy
+      flash[:notice] = "Booking cancelled."
     end
 
     next_in_line = event_instance.bookings.where(waitlisted: true).order(:joined_at).first
-    open_spots_available = event_instance.effective_capacity - event_instance.bookings.where(waitlisted: false).count > 0
+    open_spots_available = (event_instance.effective_capacity - event_instance.bookings.where(waitlisted: false).count) > 0
+
+    Rails.logger.info "Next in line booking: #{next_in_line.inspect}"
+    Rails.logger.info "Open spots available? #{open_spots_available}"
 
     if next_in_line && open_spots_available
-      if next_in_line.update(waitlisted: false, joined_at: nil)
+      new_status = event_instance.approval_mode == "manual" ? "pending" : "confirmed"
+
+      if next_in_line.update(waitlisted: false, joined_at: nil, status: new_status)
         BookingMailer.booking_confirmation(next_in_line.user, next_in_line, moved_from_waitlist: true).deliver_now
         flash[:notice] += " A waitlisted user has been moved to the event!"
       else
         Rails.logger.error "⚠️ Failed to move waitlisted user: #{next_in_line.errors.full_messages}"
       end
     end
+
+
     redirect_to event_instance_path(event_instance)
   end
+
 
 
   # def destroy

@@ -14,9 +14,10 @@
               ✅
             </h6>
           </div>
-        <% else %>
-          <div class="panel">
-            <h6 class="panel"> - <%= booking.state %> ❌
+        <% elsif booking.state == 'unpaid' %>
+          <h6 class="panel"> - <%= booking.state %> ❌
+          <% else %>
+            <h6 class="panel"> - <%= booking.state %>
             </h6>
           </div>
         <% end %>
