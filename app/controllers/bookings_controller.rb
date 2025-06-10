@@ -134,13 +134,28 @@ class BookingsController < ApplicationController
   end
 
   def cancel
-    booking = Booking.find(params[:id])
-    booking.update!(status: "cancelled")
-    redirect_to dashboard_path, notice: "Booking cancelled"
-  rescue ActiveRecord::RecordNotFound
-    redirect_to dashboard_path, alert: "Booking not found"
-  rescue ActiveRecord::RecordInvalid => e
-    redirect_to dashboard_path, alert: "Failed to cancel booking: #{e.message}"
+    @booking = Booking.find(params[:id])
+    cancelled_by = params[:cancelled_by]
+
+    case cancelled_by
+    when "teacher"
+      @booking.update(status: "cancelled_by_teacher", cancelled_by: "teacher")
+    when "student"
+      @booking.update(status: "cancelled_by_teacher", cancelled_by: "student")
+    else
+      # fallback in case param is missing or invalid
+      @booking.update(status: "cancelled_by_teacher")
+    end
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "booking_#{@booking.id}",
+          partial: "bookings/booking", locals: { booking: @booking }
+        )
+      end
+      format.html { redirect_back fallback_location: root_path, notice: "Booking cancelled" }
+    end
   end
 
 
