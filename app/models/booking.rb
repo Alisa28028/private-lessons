@@ -54,8 +54,10 @@ class Booking < ApplicationRecord
   def unique_booking_per_event_instance
     existing_booking = Booking.where(user_id: user_id, event_instance_id: event_instance_id)
                               .where.not(id: id)
-                              .where.not(status: ['cancelled_by_student'])
+                              .where.not(status: ['cancelled_by_student', 'cancelled_by_teacher'])
                               .first
+    Rails.logger.info "🧪 Booking check — Found existing: #{existing_booking&.id}, status: #{existing_booking&.status}"
+
 
     if existing_booking
       if existing_booking.waitlisted?

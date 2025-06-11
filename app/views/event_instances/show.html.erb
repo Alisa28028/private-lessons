@@ -131,7 +131,10 @@
         <div class="row mx-3">
           <% if @event.user != current_user %>
             <% future_event = @event_instance.start_time > Time.current %>
-            <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
+            <% user_booking = @event_instance.bookings
+  .where(user_id: current_user.id)
+  .where.not(status: ["cancelled_by_student", "cancelled_by_teacher", "rejected_by_teacher"])
+  .first %>
             <% if user_booking && !user_booking.waitlisted %>
               <% case user_booking.status %>
               <% when "pending" %>
@@ -141,7 +144,7 @@
             class: "btn btn-card mt-1",
             style: "background-color: #a58ab5" %>
                 </div>
-              <% when "cancelled" %>
+              <% when "cancelled_by_teacher", "rejected_by_teacher" %>
                 <p style="font-size: small; border: 1px solid #dc3545; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
                   Booking Rejected or Cancelled
                 </p>

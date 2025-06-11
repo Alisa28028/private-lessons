@@ -9,7 +9,10 @@ class BookingsController < ApplicationController
     @event_instance = EventInstance.find(params[:event_instance_id])
 
     # Check if the user already has a booking (either confirmed or waitlisted)
-    existing_booking = @event_instance.bookings.find_by(user: current_user)
+    existing_booking = @event_instance.bookings
+    .where(user: current_user)
+    .where.not(status: ['cancelled_by_student', 'cancelled_by_teacher'])
+    .first
 
     if existing_booking
       flash[:alert] = existing_booking.waitlisted? ? "You are already on the waitlist for this class." : "You have already booked this class."
@@ -214,15 +217,18 @@ class BookingsController < ApplicationController
     end
 
     next_in_line = event_instance.bookings.where(waitlisted: true).order(:joined_at).first
-    open_spots_available = (event_instance.effective_capacity - event_instance.bookings.where(waitlisted: false).count) > 0
+    active_statuses = ['confirmed', 'pending']
+    confirmed_count = event_instance.bookings.where(waitlisted: false, status: active_statuses).count
+    open_spots_available = (event_instance.effective_capacity - confirmed_count) > 0
 
     Rails.logger.info "Next in line booking: #{next_in_line.inspect}"
     Rails.logger.info "Open spots available? #{open_spots_available}"
 
     if next_in_line && open_spots_available
       new_status = event_instance.approval_mode == "manual" ? "pending" : "confirmed"
+      new_state = "unpaid"
 
-      if next_in_line.update(waitlisted: false, joined_at: nil, status: new_status)
+      if next_in_line.update(waitlisted: false, joined_at: nil, status: new_status, state: "unpaid")
         BookingMailer.booking_confirmation(next_in_line.user, next_in_line, moved_from_waitlist: true).deliver_now
         flash[:notice] += " A waitlisted user has been moved to the event!"
       else
