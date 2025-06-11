@@ -11,7 +11,7 @@ class BookingsController < ApplicationController
     # Check if the user already has a booking (either confirmed or waitlisted)
     existing_booking = @event_instance.bookings
     .where(user: current_user)
-    .where.not(status: ['cancelled_by_student', 'cancelled_by_teacher'])
+    .where.not(status: %w[cancelled_by_student cancelled_by_teacher])
     .first
 
     if existing_booking
@@ -142,9 +142,9 @@ class BookingsController < ApplicationController
 
     case cancelled_by
     when "teacher"
-      @booking.update(status: "cancelled_by_teacher", cancelled_by: "teacher")
+      @booking.update(status: "cancelled_by_teacher", cancelled_by: "teacher", cancelled_at: Time.current)
     when "student"
-      @booking.update(status: "cancelled_by_teacher", cancelled_by: "student")
+      @booking.update(status: "cancelled_by_teacher", cancelled_by: "student", cancelled_at: Time.current)
     else
       # fallback in case param is missing or invalid
       @booking.update(status: "cancelled_by_teacher")
@@ -168,6 +168,11 @@ class BookingsController < ApplicationController
     if @booking.nil?
       flash[:alert] = "Booking not found."
       redirect_back(fallback_location: root_path) and return
+    end
+
+    if @booking.status.in?(["cancelled_by_student", "cancelled_by_teacher", "rejected_by_teacher"])
+      flash[:alert] = "This booking has already been cancelled."
+      redirect_back(fallback_location: event_instance_path(@booking.event_instance)) and return
     end
 
     event_instance = @booking.event_instance
@@ -200,45 +205,53 @@ class BookingsController < ApplicationController
       end
     end
 
-    # If we reach here, it means the student is cancelling before the deadline and not waitlisted or pending,
-    # so update status instead of destroying
-    if @booking.user == current_user
-      @booking.update(
-        status: "cancelled_by_student",
-        cancelled_by: "student",
-        cancelled_at: Time.current
-      )
+    # If we reach here, the student is cancelling before the deadline
+  if @booking.user == current_user
+    update_attrs = {
+      status: "cancelled_by_student",
+      cancelled_by: "student",
+      cancelled_at: Time.current
+    }
+
+    # Only nullify state if it's allowed by the validation logic
+    update_attrs[:state] = nil if @booking.cancelled_before_policy?
+
+    if @booking.update(update_attrs)
       flash[:notice] = "Booking cancelled successfully."
       BookingMailer.cancellation_confirmation(current_user, @booking).deliver_now
     else
-      # For others (e.g., teacher), allow destroy or handle separately if needed
-      @booking.destroy
-      flash[:notice] = "Booking cancelled."
+      Rails.logger.error "⚠️ Booking update failed: #{@booking.errors.full_messages}"
+      flash[:alert] = "Booking cancellation failed."
+      return redirect_to event_instance_path(event_instance)
     end
-
-    next_in_line = event_instance.bookings.where(waitlisted: true).order(:joined_at).first
-    active_statuses = ['confirmed', 'pending']
-    confirmed_count = event_instance.bookings.where(waitlisted: false, status: active_statuses).count
-    open_spots_available = (event_instance.effective_capacity - confirmed_count) > 0
-
-    Rails.logger.info "Next in line booking: #{next_in_line.inspect}"
-    Rails.logger.info "Open spots available? #{open_spots_available}"
-
-    if next_in_line && open_spots_available
-      new_status = event_instance.approval_mode == "manual" ? "pending" : "confirmed"
-      new_state = "unpaid"
-
-      if next_in_line.update(waitlisted: false, joined_at: nil, status: new_status, state: "unpaid")
-        BookingMailer.booking_confirmation(next_in_line.user, next_in_line, moved_from_waitlist: true).deliver_now
-        flash[:notice] += " A waitlisted user has been moved to the event!"
-      else
-        Rails.logger.error "⚠️ Failed to move waitlisted user: #{next_in_line.errors.full_messages}"
-      end
-    end
-
-
-    redirect_to event_instance_path(event_instance)
+  else
+    # For others (e.g., teacher), allow destroy
+    @booking.destroy
+    flash[:notice] = "Booking cancelled."
   end
+
+  # Move the next waitlisted user into the event if space is available
+  next_in_line = event_instance.bookings.where(waitlisted: true).order(:joined_at).first
+  active_statuses = ['confirmed', 'pending']
+  confirmed_count = event_instance.bookings.where(waitlisted: false, status: active_statuses).count
+  open_spots_available = (event_instance.effective_capacity - confirmed_count) > 0
+
+  Rails.logger.info "Next in line booking: #{next_in_line.inspect}"
+  Rails.logger.info "Open spots available? #{open_spots_available}"
+
+  if next_in_line && open_spots_available
+    new_status = event_instance.approval_mode == "manual" ? "pending" : "confirmed"
+
+    if next_in_line.update(waitlisted: false, joined_at: nil, status: new_status, state: "unpaid")
+      BookingMailer.booking_confirmation(next_in_line.user, next_in_line, moved_from_waitlist: true).deliver_now
+      flash[:notice] += " A waitlisted user has been moved to the event!"
+    else
+      Rails.logger.error "⚠️ Failed to move waitlisted user: #{next_in_line.errors.full_messages}"
+    end
+  end
+
+  redirect_to event_instance_path(event_instance)
+end
 
 
 
@@ -297,4 +310,5 @@ class BookingsController < ApplicationController
     def booking_params
       params.require(:booking).permit(:user_id, :state, :status) # Add any other required fields
     end
+
 end

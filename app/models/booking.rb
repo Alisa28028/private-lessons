@@ -27,7 +27,11 @@ class Booking < ApplicationRecord
   validates :cancelled_by, inclusion: { in: CANCELLERS }, allow_nil: true, if: :cancelled_status?
   validate :unique_booking_per_event_instance
 
-  private
+  def cancelled?
+    status.in?(%w[cancelled_by_student cancelled_by_teacher])
+  end
+
+
 
   def cancelled_before_policy?
     return false unless status == "cancelled_by_student"
@@ -35,6 +39,7 @@ class Booking < ApplicationRecord
 
     cancelled_at <= event_instance.cancellation_policy_duration
   end
+  private
 
   def set_cancelled_at_timestamp
     if status_changed? && cancelled_status? && cancelled_at.nil?
@@ -52,19 +57,19 @@ class Booking < ApplicationRecord
   end
 
   def unique_booking_per_event_instance
+    return if cancelled?
     existing_booking = Booking.where(user_id: user_id, event_instance_id: event_instance_id)
                               .where.not(id: id)
-                              .where.not(status: ['cancelled_by_student', 'cancelled_by_teacher'])
+                              .where.not(status: %w[cancelled_by_student cancelled_by_teacher])
                               .first
-    Rails.logger.info "🧪 Booking check — Found existing: #{existing_booking&.id}, status: #{existing_booking&.status}"
 
-
-    if existing_booking
+    return unless existing_booking
+         Rails.logger.info "🧪 Booking check — Found existing: #{existing_booking&.id}, status: #{existing_booking&.status}"
       if existing_booking.waitlisted?
         errors.add(:user_id, "is already on the waitlist for this event.")
       else
         errors.add(:user_id, "has already booked this event.")
-      end
+
     end
   end
 end
