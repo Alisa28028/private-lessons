@@ -210,7 +210,7 @@ class BookingsController < ApplicationController
     update_attrs = {
       status: "cancelled_by_student",
       cancelled_by: "student",
-      cancelled_at: Time.current
+      cancelled_at: Time.current,
     }
 
     # Only nullify state if it's allowed by the validation logic

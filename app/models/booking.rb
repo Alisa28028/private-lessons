@@ -32,13 +32,13 @@ class Booking < ApplicationRecord
   end
 
 
-
   def cancelled_before_policy?
     return false unless status == "cancelled_by_student"
     return false unless cancelled_at && event_instance.cancellation_policy_duration
 
     cancelled_at <= event_instance.cancellation_policy_duration
   end
+
   private
 
   def set_cancelled_at_timestamp
