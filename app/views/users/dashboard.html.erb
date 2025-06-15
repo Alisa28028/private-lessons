@@ -123,91 +123,31 @@
               <%= link_to event_instance_path(instance) do %>
                 <div class="panel mb-3">
                   <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
-                  <h4 class= "panel d-flex align-items-center"><%= instance.event.title.upcase %>
-                    <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
+                  <h4 class="panel d-flex align-items-center">
+                    <%= instance.event.title.upcase %>
+                    <div style="margin-bottom: 2px; margin-left: 5px">
+                      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i>
+                    </div>
                   </h4>
-                <% end %>
-                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-                <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-                <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
-                  <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
-                  <%# <span style="font-size: 12px;" class="text-custom"> %>
-                  <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-                </h6>
-                <% @bookings_to_pay.each do |booking| %>
-                  <%# <% if booking.status == 'confirmed' %>
-                  <turbo-frame id="payment_<%= booking.id %>">
-                    <!-- Turbo frame with buttons and state here -->
-                    <div class="d-flex justify-content-between align-items-end">
-                      <div class="d-flex align-items-end" style="margin-top: -6px;">
-                        <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 1px;"></i>
-                        <h6 class="panel">
-                          <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-                            <%= booking.id %>
-                            <%= booking.user.name %>
-                          </a>
-                        </h6>
-                        <% if booking.state == 'paid' %>
-                          <h6 class="panel"> - <%= booking.state %>
-                            ✅</h6>
-                        <% elsif booking.state == 'unpaid' %>
-                          <h6 class="panel"> - <%= booking.state %> ❌</h6>
-                        <% else %>
-                          <h6 class="panel"> - <%= booking.state %>
-                          </h6>
-                        </div>
-                      <% end %>
-                    </div>
-                    <% if booking.state == 'unpaid' %>
-                      <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
-                        <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
-                            method: :patch,
-                            data: { turbo_frame: "payment_#{booking.id}" },
-                            class: "btn btn-sm btn-success" %>
-                        <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
-                            method: :patch,
-                            data: { turbo_frame: "payment_#{booking.id}" },
-                            class: "btn btn-sm btn-warning" %>
-                      <% else %>
-                        <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
-                            method: :patch,
-                            data: { turbo_frame: "payment_#{booking.id}" },
-                            class: "btn btn-sm btn-success" %>
-                      <% end %>
-                    <% end %>
-                    <!-- Dropdown Content -->
-                    <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
-                      <div class="p-2" style="border-radius: 5px;">
-                        <!-- You can put any additional booking details here -->
-                        <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
-                          <% if booking.user.photo.present? %>
-                            <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
-                          <% else %>
-                            <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
-                          <% end %>
-                          <h6 class="panel" style="margin-left: 2px;">
-                            view profile</h6>
-                        <% end %>
-                        <div class="d-flex">
-                          <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
-                          <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
-                        </div>
-                        <div class="d-flex">
-                          <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
-                          <h6 style="margin-left: 8px;">
-                            <%= booking.user.phone_number %></h6>
-                        </div>
-                        <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
-                      </div>
-                    </div>
-                  </turbo-frame>
-                  <%# <% end %>
                 </div>
               <% end %>
-            </div>
+              <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+              <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+              <h6 class="panel mb-2">
+                <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
+                <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
+                <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+              </h6>
+              <% instance.bookings.each do |booking| %>
+                <% if @bookings_to_pay.include?(booking) %>
+                  <%= render partial: "payments/payment_row", locals: { booking: booking } %>
+                <% end %>
+              <% end %>
+            <% end %>
           <% end %>
         </div>
-      <% end %>
+        <%# <% end %>
+      </div>
       <%# </div> %>
       <%# </div> %>
       <%# adding another button and panel for bookings management %>

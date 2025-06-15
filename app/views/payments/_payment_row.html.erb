@@ -24,14 +24,31 @@
         <%# </div> %>
       </div>
       <div>
-        <% if booking.state == "unpaid" %>
-          <%= button_to update_payment_state_booking_path(booking, state: 'paid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;" do %>
-            Mark as Paid
+        <% if booking.state == 'unpaid' %>
+          <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
+            <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm" %>
+            <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm" %>
+          <% else %>
+            <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+        style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;"
+        %>
           <% end %>
         <% else %>
-          <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-            Mark as Unpaid
-          <% end %>
+          <%= button_to "Mark as Unpaid", update_payment_state_booking_path(booking, state: "unpaid"),
+      method: :patch,
+      data: { turbo_frame: "payment_#{booking.id}" },
+      class: "btn btn-sm btn-dark",
+      style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;"
+      %>
         <% end %>
       </div>
     </div>
