@@ -1,5 +1,7 @@
 class Booking < ApplicationRecord
   before_save :set_cancelled_at_timestamp
+  before_save :clear_payment_state_if_student_cancelled_early
+
 
   belongs_to :user
   belongs_to :event_instance
@@ -44,6 +46,19 @@ class Booking < ApplicationRecord
   def set_cancelled_at_timestamp
     if status_changed? && cancelled_status? && cancelled_at.nil?
       self.cancelled_at = Time.current
+    end
+  end
+
+  def clear_payment_state_if_student_cancelled_early
+    return unless cancelled_by == "student" && status == "cancelled_by_student"
+    return unless state == "unpaid"
+    return unless cancelled_at.present?
+
+    # Replace with your actual policy window logic
+    policy_deadline = event_instance.start_time - event_instance.event.cancellation_policy_duration.hours
+
+    if cancelled_at < policy_deadline
+      self.state = nil
     end
   end
 
