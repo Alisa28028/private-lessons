@@ -48,12 +48,14 @@
               <div data-cancel-dropdown-target="menu"
        style="display: none;"
        class="absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <%= button_to "As teacher", cancel_booking_path(booking, cancelled_by: "teacher"),
+                <%= button_to "As teacher", cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
         method: :post,
-        class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-                <%= button_to "As student", cancel_booking_path(booking, cancelled_by: "student"),
+        class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+        data: { turbo_frame: "event_instance_#{booking.event_instance_id}" } %>
+                <%= button_to "As student", cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
         method: :post,
-        class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+        class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+        data: { turbo_frame: "event_instance_#{booking.event_instance_id}" } %>
               </div>
             </div>
           <% end %>

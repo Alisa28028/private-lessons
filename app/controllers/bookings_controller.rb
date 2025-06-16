@@ -131,19 +131,32 @@ class BookingsController < ApplicationController
   def destroy
     @booking = Booking.find(params[:id])
 
-    unless @booking.waitlisted? && @booking.user == current_user
-      flash[:alert] = "You can only remove yourself from the waitlist."
+    is_leaving_waitlist = params[:leave_waitlist].present?
+
+    unless (@booking.waitlisted? || @booking.status == "pending") && @booking.user == current_user
+      flash[:alert] = "You can only remove yourself from the waitlist or if your booking is pending."
       return redirect_back(fallback_location: root_path)
     end
 
-    if @booking.destroy
+    previous_status = @booking.status
+    was_waitlisted = @booking.waitlisted?
+
+
+  if @booking.destroy
+    if is_leaving_waitlist
       flash[:notice] = "You have been removed from the waitlist."
+    elsif previous_status == "pending"
+      flash[:notice] = "Your booking request has been removed."
     else
-      flash[:alert] = "Failed to remove you from the waitlist."
+      flash[:notice] = "Booking removed."
     end
+  else
+    flash[:alert] = "Failed to remove your booking."
+  end
 
     redirect_to event_instance_path(@booking.event_instance)
   end
+
 
   def approve
     booking = Booking.find(params[:id])
@@ -172,27 +185,29 @@ class BookingsController < ApplicationController
 
   def cancel
     @booking = Booking.find_by(id: params[:id])
-
-    if @booking.nil?
-      flash[:alert] = "Booking not found."
-      return redirect_back(fallback_location: root_path)
-    end
+    return redirect_back(fallback_location: root_path, alert: "Booking not found.") if @booking.nil?
 
     success = cancel_booking(@booking, by: current_user)
 
     respond_to do |format|
       format.turbo_stream do
         if success
-          render turbo_stream: turbo_stream.replace("booking_#{@booking.id}", partial: "bookings/booking", locals: { booking: @booking })
+          if params[:dashboard] == "true"
+            @event_instance = @booking.event_instance
+            render :cancel_dashboard
+          else
+            render :cancel  # reload full page
+          end
         else
           head :unprocessable_entity
         end
       end
-      format.html do
-        redirect_to event_instance_path(@booking.event_instance)
-      end
+
+      format.html { redirect_to event_instance_path(@booking.event_instance) }
     end
   end
+
+
 
 
 
@@ -270,7 +285,7 @@ class BookingsController < ApplicationController
         cancelled_by = "student"
       elsif by.is_teacher_for?(event_instance.event)
         if cancelled_by_requester == "student"
-          status = "cancelled_by_student"
+          status = "cancelled_by_teacher"
           cancelled_by = "student"
         else
           status = "cancelled_by_teacher"
