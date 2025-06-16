@@ -27,4 +27,9 @@ class User < ApplicationRecord
   def is_teacher?
     events.any?
   end
+
+  def is_teacher_for?(event)
+    event.user_id == self.id
+  end
+
 end

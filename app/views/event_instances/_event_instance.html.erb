@@ -7,13 +7,14 @@
   <% bookings_to_show.each do |booking| %>
     <turbo-frame id="booking_<%= booking.id %>">
       <!-- Turbo frame with buttons and state here -->
+      <%# <%= booking.id %>
       <div class="d-flex justify-content-between align-items-end">
         <div class="d-flex align-items-end" style="margin-top: -6px;">
           <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 2px;"></i>
           <h6 class="panel">
             <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
               <div class="d-flex mt-2">
-                <div class="d-flex <%= 'mt-1' if booking.status == 'cancelled' %>">
+                <div class="d-flex <%= 'mt-1' if booking.status.in?(%w[cancelled_by_teacher cancelled_by_student]) %>">
                   <%= booking.user.name %> –
                   <div style="<%= 'color: #5e9e6b;  font-weight: 600;' if booking.status == 'confirmed' %>">&nbsp;<%= booking.status %>
                   </div>
@@ -32,12 +33,31 @@
                   Full
                 </button>
               <% end %>
-              <%= button_to "Reject", update_status_booking_path(booking, status: "cancelled"), method: :patch,
+              <%= button_to "Reject", update_status_booking_path(booking, status: "rejected_by_teacher"), method: :patch,
         class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;",
         data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
             </div>
           <% elsif booking.status == 'confirmed' %>
-            <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;" %>
+            <div class="relative inline-block text-left" data-controller="cancel-dropdown">
+              <button type="button"
+          class="btn btn-sm"
+          style="background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;"
+          data-action="click->cancel-dropdown#toggle">
+                Cancel
+              </button>
+              <div data-cancel-dropdown-target="menu"
+       style="display: none;"
+       class="absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <%= button_to "As teacher", cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
+        method: :post,
+        class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+        data: { turbo_frame: "event_instance_#{booking.event_instance_id}" } %>
+                <%= button_to "As student", cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
+        method: :post,
+        class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+        data: { turbo_frame: "event_instance_#{booking.event_instance_id}" } %>
+              </div>
+            </div>
           <% end %>
         </div>
         <!-- Dropdown Content -->

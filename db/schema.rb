@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_03_065620) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_11_071937) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -52,7 +52,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_03_065620) do
     t.boolean "waitlisted", default: false, null: false
     t.datetime "joined_at"
     t.string "status"
-    t.index ["user_id", "event_instance_id"], name: "index_bookings_on_user_id_and_event_instance_id", unique: true
+    t.string "cancelled_by"
+    t.datetime "cancelled_at"
+    t.index ["user_id", "event_instance_id"], name: "index_bookings_on_user_and_event_instance_active_only", unique: true, where: "((status)::text <> ALL ((ARRAY['cancelled_by_student'::character varying, 'cancelled_by_teacher'::character varying])::text[]))"
     t.index ["user_id"], name: "index_bookings_on_user_id"
   end
 

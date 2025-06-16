@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "event_instance_#{@event_instance.id}" do %>
+  <%= render partial: "event_instances/event_instance", locals: { instance: @event_instance } %>
+<% end %>
