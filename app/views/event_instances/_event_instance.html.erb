@@ -1,9 +1,5 @@
 <turbo-frame id="event_instance_<%= instance.id %>">
-  <% bookings_to_show = if instance.event.approval_mode == "manual"
-      instance.bookings
-    else
-      instance.bookings.reject(&:waitlisted)
-    end %>
+  <% bookings_to_show = instance.bookings %>
   <% bookings_to_show.each do |booking| %>
     <turbo-frame id="booking_<%= booking.id %>">
       <!-- Turbo frame with buttons and state here -->
@@ -15,14 +11,18 @@
             <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
               <div class="d-flex mt-2">
                 <div class="d-flex <%= 'mt-1' if booking.status.in?(%w[cancelled_by_teacher cancelled_by_student]) %>">
-                  <%= booking.user.name %> –
-                  <div style="<%= 'color: #5e9e6b;  font-weight: 600;' if booking.status == 'confirmed' %>">&nbsp;<%= booking.status %>
-                  </div>
+                  <%= booking.user.name %> –&nbsp;
+                  <% if booking.status == "pending" && booking.waitlisted? %>
+                    <div style="color: #9d94ad;"> waitlisted</div>
+                  <% else %>
+                    <div style="<%= 'color: #5e9e6b;  font-weight: 600;' if booking.status == 'confirmed' %>">&nbsp;<%= booking.status %>
+                    </div>
+                  <% end %>
                 </div>
               </div>
             </a>
           </div>
-          <% if booking.status == 'pending' %>
+          <% if booking.status == 'pending' && booking.event_instance.approval_mode == "manual" %>
             <div class="d-flex align-items-between">
               <% if instance.active_bookings_count < instance.effective_capacity.to_i %>
                 <%= button_to "Approve", update_status_booking_path(booking, status: "confirmed"), method: :patch,
