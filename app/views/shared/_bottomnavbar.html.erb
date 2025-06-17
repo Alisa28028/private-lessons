@@ -1,36 +1,35 @@
 <% if user_signed_in? %>
   <nav class="pl-nav pl-bottom-nav">
     <section class="pl-nav-content">
-      <ul>
-        <li class="pl-nav-item">
-          <%= link_to "/" do %>
-            <%= inline_svg "diversity.svg", class: "pl-icon" %>
-            <p>All Events</p>
+      <ul class="d-flex justify-content-around w-100">
+        <li class="pl-nav-item text-center">
+          <%= link_to "/", class: "d-flex flex-column align-items-center" do %>
+            <i class="fa-solid fa-house fa-lg"></i>
+            <%# <span class="nav-label mt-1" style="font-size: 12px;">Home</span> %>
           <% end %>
         </li>
-        <li class="pl-nav-item">
-          <%= link_to new_event_path do %>
-            <%= inline_svg "square-plus-regular.svg", class: "pl-icon" %>
-            <p>New Event</p>
+        <li class="pl-nav-item text-center">
+          <%= link_to new_event_path, class: "d-flex flex-column align-items-center" do %>
+            <i class="fa-solid fa-square-plus fa-lg"></i>
+            <%# <span class="nav-label mt-1" style="font-size: 12px;">New Event</span> %>
           <% end %>
         </li>
-        <li class="pl-nav-item">
-          <%= link_to search_path do %>
-            <%= inline_svg "magnifying-glass-solid.svg", class: "pl-icon" %>
-            <p>Search</p>
+        <li class="pl-nav-item text-center">
+          <%= link_to search_path, class: "d-flex flex-column align-items-center" do %>
+            <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+            <%# <span class="nav-label mt-1" style="font-size: 12px;">Search</span> %>
           <% end %>
         </li>
-        <%# -------------dropdown menu---------- %>
-        <li class="pl-dropdown-menu" data-controller="dropdown" style="margin-bottom: 10px;">
-          <a href="#" class="pl-avatar-frame" data-action="click->dropdown#toggle">
-            <%# If user has an avatar image, show it, otherwise show default avatar %>
+        <!-- Profile Dropdown -->
+        <li class="pl-dropdown-menu text-center" data-controller="dropdown">
+          <a href="#" class="d-flex flex-column align-items-center" data-action="click->dropdown#toggle">
             <% if current_user.photo.attached? %>
-              <%= cl_image_tag(current_user.photo.key, class: "pl-avatar") %>
+              <%= cl_image_tag(current_user.photo.key, class: "pl-avatar-bottom") %>
             <% else %>
-              <%= image_tag "default-avatar.png", class: "pl-avatar" %>
+              <%= image_tag "default-avatar.png", class: "pl-avatar-bottom" %>
             <% end %>
+            <%# <span class="nav-label mt-1">Menu</span> %>
           </a>
-          <!-- Dropdown Content -->
           <div class="pl-dropdown-content" data-dropdown-target="dropdown" style="display: none;">
             <%= link_to "Profile", user_path(current_user), data: { action: "click->dropdown#activateLink" } %>
             <%= link_to "Dashboard", dashboard_path(current_user), data: { action: "click->dropdown#activateLink" } %>
