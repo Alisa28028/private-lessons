@@ -54,7 +54,9 @@ class UsersController < ApplicationController
 
   @current_month_paid_sum = Booking
     .joins(event_instance: :event)
-    .where(status: "confirmed", state: "paid")
+    .where(
+      status: ["confirmed", "cancelled_by_teacher"],
+      state: "paid")
     .where(events: { user_id: current_user.id })
     .where(event_instances: { start_time: start_of_month..end_of_month })
     .sum("event_instances.price_cents")
@@ -72,7 +74,7 @@ class UsersController < ApplicationController
     .joins(:event_instance)
     .where(
       state: "unpaid",
-      status: ["confirmed", "cancelled"],
+      status: ["confirmed", "cancelled_by_teacher", "completed"],
       event_instances: { id: @event_instances.select(:id) }
     )
     # Attended students

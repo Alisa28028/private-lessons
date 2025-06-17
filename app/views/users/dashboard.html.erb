@@ -25,13 +25,15 @@
             </div>
             <div class="container-dashboard">
               <h3 class="d-flex justify-content-center mb-3"> pending approval</h3>
-              <h1 class="d-flex justify-content-center"><%= @event_instances.sum { |instance| instance.bookings.where(status: "pending").count } %></h1>
+              <h1 class="d-flex justify-content-center"><%= @event_instances.sum { |instance| instance.bookings.where(status: "pending", waitlisted: false).count } %></h1>
             </div>
           </div>
           <div class="d-flex flex-row gap-2">
             <div class="container-dashboard ">
               <h3 class="d-flex justify-content-center mb-3">total earnings</h3>
-              <h1 class="d-flex justify-content-center"><%=   @current_month_paid_sum %></h1>
+              <h1 class="d-flex justify-content-center">
+                <%= number_to_currency(@current_month_paid_sum, unit: "¥", precision: 0) %>
+              </h1>
             </div>
             <div class="container-dashboard">
               <h3 class="d-flex justify-content-center mb-3"> unpaid bookings</h3>
@@ -53,7 +55,13 @@
         <div class="d-flex flex-column">
           <div class="offcanvas-header" style="margin-bottom: -18px;">
             <h2 class="offcanvas-title" id="attendeePanelLabel">Payment Management</h2>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button
+  type="button"
+  class="btn-close"
+  data-bs-dismiss="offcanvas"
+  aria-label="Close"
+  onclick="location.reload();">
+            </button>
           </div>
           <div class="ms-3">
             <%= link_to dashboard_path, class: "text-dark text-decoration-none", style: "font-family: Inter, sans-serif;" do  %>
@@ -105,7 +113,7 @@
                     <%# <span style="font-size: 12px;" class="text-custom"> %>
                     <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
                   </h6>
-                  <% instance.bookings.reject { |b| b.waitlisted || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
+                  <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
                     <turbo-frame id="payment_<%= booking.id %>">
                       <!-- Turbo frame with buttons and state here -->
                       <div class="d-flex justify-content-between align-items-end">
@@ -208,7 +216,7 @@
                     <%# <span style="font-size: 12px;" class="text-custom"> %>
                     <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
                   </h6>
-                  <% instance.bookings.reject { |b| b.waitlisted || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
+                  <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
                     <%# <% if booking.status == 'confirmed' %>
                     <turbo-frame id="payment_<%= booking.id %>">
                       <!-- Turbo frame with buttons and state here -->
@@ -356,11 +364,7 @@
                     <%# <span style="font-size: 12px;" class="text-custom"> %>
                     <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
                   </h6>
-                  <% bookings_to_show = if instance.event.approval_mode == "manual"
-                instance.bookings
-              else
-                instance.bookings.reject(&:waitlisted)
-              end %>
+                  <% bookings_to_show = instance.bookings %>
                   <%# block BBB (correct block) %>
                   <%= render partial: "event_instances/event_instance", locals: { instance: instance } %>
                 </div>
@@ -385,11 +389,7 @@
                   <%# <span style="font-size: 12px;" class="text-custom"> %>
                   <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
                 </h6>
-                <% bookings_to_show = if instance.event.approval_mode == "manual"
-                instance.bookings
-              else
-                instance.bookings.reject(&:waitlisted)
-              end %>
+                <% bookings_to_show = instance.bookings %>
                 <%# block AAA %>
                 <%= render partial: "event_instances/event_instance", locals: { instance: instance } %>
               </div>
