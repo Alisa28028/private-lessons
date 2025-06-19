@@ -34,3 +34,25 @@ body {
   margin-left: 20px;
 
 }
+
+.container-home {
+  background-color: #3E34A1;
+  height: 300px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  width: 100%;
+  position: relative;
+}
+
+h1.home {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+h3.home {
+  color: white;
+  font-size: 16px;
+  font-weight: 100;
+}

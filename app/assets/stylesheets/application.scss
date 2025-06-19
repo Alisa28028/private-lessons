@@ -27,6 +27,7 @@ html, body {
   overflow-y: auto; /* Ensures vertical scrolling is enabled */
   width: 100%;
   height: auto;
+  background-color: #F2F2F2 !important;
 }
 
 .popover {
@@ -61,4 +62,19 @@ html, body {
   padding-left: 9px;
   border-radius: 5px;
 
+}
+
+header {
+  background-color: transparent !important;
+  box-shadow: none; // optional: remove shadow if present
+}
+
+.header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000; // make sure it's above everything
+  background: transparent;
+  width: 100%;
+  padding: 1rem 2rem;
 }

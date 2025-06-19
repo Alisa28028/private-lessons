@@ -16,7 +16,20 @@
     <%= javascript_importmap_tags %>
   </head>
   <body data-controller="sidebar">
-    <%= render "shared/navbar" %>
+    <%# <%= render "shared/navbar" %>
+    <header class="header-overlay d-flex justify-content-start mt-3">
+      <!-- Logo always shown -->
+      <div class="logo">
+        <%= link_to root_path do %>
+          <%= image_tag "PL_logo.png", class: "pl-logo" %>
+        <% end %>      </div>
+      <!-- Hamburger only for not-logged-in users -->
+      <% unless user_signed_in? %>
+        <div class="hamburger">
+          <i class="fa-solid fa-bars fa-xl" data-action="click->menu#toggle"></i>
+        </div>
+      <% end %>
+    </header>
     <%= render "shared/sidebar", data: { sidebar_target: "sidebar" } %>
     <%= render "shared/flashes" %>
     <!-- Main content, wrapped in the div with the sidebar target -->
