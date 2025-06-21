@@ -172,18 +172,12 @@
             <h3><%= instance.event.title.capitalize %></h3>
             <div class="d-flex gap-2">
               <i class="fa-solid fa-person fa-sm mt-2"></i>
-              <% if (instance.effective_capacity || 0) - instance.active_bookings_count <= 0 %>
-                <p class="attendee-number text-dark fs-6">
-                  <strong><%= instance.effective_capacity %>/<%= instance.effective_capacity %></strong>
-                </p>
-              <% else %>
-                <p class="attendee-number text-dark fs-6">
-                  <%= instance.active_bookings_count %>/<%= instance.effective_capacity %>
-                </p>
-              <% end %>
+              <p class="attendee-number text-dark fs-6">
+                <%= instance.active_bookings_count %>/<%= instance.effective_capacity %>
+              </p>
             </div>
           </div>
-          <h4> <%= instance.event.user.name.capitalize %> </h4>
+          <h4><%= instance.event.user.name.capitalize %></h4>
         </div>
         <div class="card-infos justify-content-start mb-2 p-0">
           <div class="ms-0">
@@ -192,9 +186,6 @@
             <% elsif instance.event.photos.attached? %>
               <%= cl_image_tag instance.event.photos.first.key %>
             <% else %>
-              <%# <% if event.user.photo.attached? %>
-              <%# <%= cl_image_tag(event.user.photo.key, class: "pl-avatar") %>
-              <%# <% end %>
               <%= image_tag "sexy_lady.jpg", alt: "Default Photo"  %>
             <% end %>
           </div>
