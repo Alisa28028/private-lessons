@@ -7,13 +7,29 @@
 }
 
 .btn-card {
-  background-color: #543A70;
+  background-color: #3E34A1;
   color: white;
-  font-size: small;
+  font-size: 15px;
+  padding: 12px;
   width: 100%;
-  border-radius: 5px;
-  margin-top: 5px;
+  border-radius: 14px;
+  margin-top: 7px;
   margin-bottom: 3px;
+}
+
+.btn-manage {
+  font-size: 15px;
+  // border: 1px solid #000;
+  background-color: #c4bfc9;
+  color: white;
+  padding: 12px;
+  display: inline-block;
+  border-radius: 14px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 5px;
+  margin-top: 5px
+
 }
 
 .btn-card:focus {

@@ -11,6 +11,7 @@
             <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
               <div class="d-flex mt-2">
                 <div class="d-flex <%= 'mt-1' if booking.status.in?(%w[cancelled_by_teacher cancelled_by_student]) %>">
+                  <%= booking.id %>
                   <%= booking.user.name %> –&nbsp;
                   <% if booking.status == "pending" && booking.waitlisted? %>
                     <div style="color: #9d94ad;"> waitlisted</div>

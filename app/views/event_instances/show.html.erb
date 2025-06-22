@@ -134,7 +134,7 @@
               <% future_event = @event_instance.start_time > Time.current %>
               <% user_booking = @event_instance.bookings
                               .where(user_id: current_user.id)
-                              .where.not(status: ["cancelled_by_student", "cancelled_by_teacher", "rejected_by_teacher"])
+                              .where.not(status: "cancelled_by_student")
                               .first %>
               <% if user_booking && !user_booking.waitlisted %>
                 <% case user_booking.status %>

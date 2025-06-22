@@ -11,7 +11,8 @@
 }
 
 .text-custom {
-   color: #5A5A5A;
+   color: #292A5A;
+   size: 13px;
 }
 
 .text-custom-dark {
@@ -24,7 +25,18 @@ body {
 
 .image-container {
   position: relative;
-  display: inline-block;
+  // display: inline-block;
+  width: 100%;
+  // display: block;
+}
+
+.image-container img {
+  width: 146px;
+  min-height: 110px;
+  // height: 110px;
+  margin: 0px;
+  object-fit: cover;
+  display: block; /* removes inline spacing below images */
 }
 
 .overlay-text {
@@ -33,6 +45,25 @@ body {
   top: 55%;
   margin-left: 20px;
 
+}
+
+.overlay-text-availability {
+  position: absolute;
+  top: 10px;
+  left:-9px;
+  // background: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.event-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
 }
 
 .container-home {
@@ -46,13 +77,13 @@ body {
 
 h1.home {
   color: white;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 21px;
+  font-weight: 500;
   margin-bottom: 4px;
 }
 
 h3.home {
   color: white;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 100;
 }

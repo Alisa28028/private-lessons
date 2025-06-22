@@ -11,12 +11,15 @@
     flex: 1 1 300px;
     height: auto;
     background: #FFFFFF;
-    border-radius: 10px;
+    border-radius: 14px;
     position: relative;
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 19px;
+    padding-right: 19px;
     padding-top: 12px;
     padding-bottom: 12px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+    // box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+
   }
 
   // .card-product-info-grid {
@@ -33,25 +36,27 @@
   }
 
   .card img {
-    height: 80px;
-    width: 119px;
+    height: 105px;
+    width: 138px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 6px;
 
   }
 
   .card h3 {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 900;
     margin: 0;
+    color: #292A5A;
     // margin-bottom: 1px;
   }
 
   .card h4 {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: light;
     margin: 0;
-    margin-bottom: 8px;
+    color: #292A5A;
+    margin-bottom: 13px;
   }
 
   .card p {
@@ -78,9 +83,9 @@
 
 
   .card .attendee-number {
-    color: #AA83D7;
+    color: #292A5A;
     font-size: 10px;
-    margin-top: 1px;
+    // margin-top: 1px;
       }
 
   // .card-product .card-product-infos {
@@ -100,6 +105,7 @@
     display: flex;
     flex-direction: row; /* Change this from column to row for side-by-side layout */
     align-items: stretch; /* Optional: To vertically center the items */
+    // margin-left: -63px;
   }
 
 
