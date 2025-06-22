@@ -32,8 +32,8 @@ body {
 
 .image-container img {
   width: 146px;
-  max-height: 100px;
-  height: auto;
+  min-height: 110px;
+  // height: 110px;
   margin: 0px;
   object-fit: cover;
   display: block; /* removes inline spacing below images */
