@@ -38,6 +38,15 @@ class EventInstancesController < ApplicationController
     @event = @event_instance.event
     @new_booking = Booking.new
     @bookings = @event_instance.bookings
+
+    @other_upcoming_instances = EventInstance
+      .joins(:event)
+      .where(events: { user: @event.user })                # Same teacher
+      .where('event_instances.start_time > ?', Time.current)
+      .where.not(id: @event_instance.id)                   # Exclude current
+      .order('start_time ASC')
+
+
   end
 
   def edit
