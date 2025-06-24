@@ -2,7 +2,7 @@
   display: flex;
   flex-wrap: wrap; /* Allow cards to wrap */
   justify-content: center;
-  gap: 1rem; /* Spacing between cards */
+  gap: 20px; /* Spacing between cards */
 }
 
 .card {
@@ -53,10 +53,11 @@
 
   .card h4 {
     font-size: 13px;
-    font-weight: light;
+    font-weight: 400;
     margin: 0;
     color: #292A5A;
-    margin-bottom: 13px;
+    // margin-bottom: 13px;
+    margin-top: -2px;
   }
 
   .card p {

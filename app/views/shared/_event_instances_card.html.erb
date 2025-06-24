@@ -31,81 +31,84 @@
           <% end %>
           <%# <turbo-frame id="like_<%= instance.id %>
         </div>
-        <h4> <%= instance.event.user.name.capitalize %> </h4>
+        <h4 style="margin-bottom: 16px; font-weight: 500;"><%= instance.event.user.name.capitalize %> </h4>
         <div class="d-flex flex-row justify-content-between mb-2">
           <!-- EVENT LOCATION -->
           <div class="d-flex align-items-start">
             <!-- EVENT PHOTO -->
-            <div class="image-container">
-              <% if instance.start_time > Time.current %>
-                <% if instance.spots_left <= 0 %>
-                  <div class="overlay-text-availability" style="background-color: #B15CDE">EVENT FULL!</div>
-                <% elsif instance.spots_left <= 3 %>
-                  <div class="overlay-text-availability" style="background-color: #9747FF"><%= instance.spots_left %> Spots left</div>
+            <div>
+              <div class="image-container">
+                <% if instance.start_time > Time.current %>
+                  <% if instance.spots_left <= 0 %>
+                    <div class="overlay-text-availability" style="background-color: #B15CDE">EVENT FULL!</div>
+                  <% elsif instance.spots_left == 1 %>
+                    <div class="overlay-text-availability" style="background-color: #9747FF"><%= instance.spots_left %> spot left!</div>
+                  <% elsif instance.spots_left <= 3 %>
+                    <div class="overlay-text-availability" style="background-color: #9747FF"><%= instance.spots_left %> spots left</div>
+                  <% end %>
                 <% end %>
-              <% end %>
-              <% if instance.photos.attached? %>
-                <%= cl_image_tag instance.photos.first.key, class: "event-image" %>
-              <% elsif instance.event.photos.attached? %>
-                <%= cl_image_tag instance.event.photos.first.key, class: "event-image" %>
-              <% else %>
-                <%= image_tag "sexy_lady.jpg", alt: "Default Photo", class: "event-image" %>
-              <% end %>
-            </div>
-          </div>
-          <div class="card-infos d-flex flex-row">
-            <!-- EVENT DATE AND TIME / INSTRUCTOR-->
-            <div class="d-flex justify-content-between ms-3">
-              <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-              <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-              <div>
-                <% if instance.start_time.present? %>
-                  <div class="d-flex align-items-center mb-1" style="gap: 13px">
-                    <i class="fa-regular fa-calendar fa-xs text-custom"></i>
-                    <span style="font-size: 12px;" class="text-custom">
-                      <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %>
-                    </span>
-                  </div>
-                  <div class="d-flex align-items-center mb-1" style="gap: 11px">
-                    <i class="fa-regular fa-clock fa-xs text-custom"></i>
-                    <span style="font-size: 12px;" class="text-custom">
-                      <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> ~
-                      <%# <span style="font-size: 12px;" class="text-custom">~</span> %>
-                      <% if instance.end_time.present? %>
-                        <%# <span style="font-size: 12px;" class="text-custom"> %>
-                        <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-                      </span>
-                    <% else %>
-                      <span style="font-size: 12px;" class="text-custom">End time not available</span>
-                    <% end %>
-                  </div>
+                <% if instance.photos.attached? %>
+                  <%= cl_image_tag instance.photos.first.key, class: "event-image" %>
+                <% elsif instance.event.photos.attached? %>
+                  <%= cl_image_tag instance.event.photos.first.key, class: "event-image" %>
                 <% else %>
-                  <p class="mb-0">No valid date or time available.</p>
+                  <%= image_tag "sexy_lady.jpg", alt: "Default Photo", class: "event-image" %>
                 <% end %>
-                <% if instance.location.present? %>
-                  <div class="d-flex align-items-center mb-1" style="gap: 13px">
-                    <i class="fa-solid fa-location-dot fa-xs text-custom" style="padding-left: 2px"></i>
-                    <span style="font-size: 12px;" class="text-custom">
-                      <%= instance.location.name %>
-                    </span>
+              </div>
+            </div>
+            <div class="card-infos d-flex flex-row">
+              <!-- EVENT DATE AND TIME / INSTRUCTOR-->
+              <div class="d-flex justify-content-between ms-3">
+                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+                <div style="margin-top: 2px;">
+                  <% if instance.start_time.present? %>
+                    <div class="d-flex align-items-center" style="gap: 13px; margin-bottom:13px;">
+                      <i class="fa-regular fa-calendar fa-sm text-custom"></i>
+                      <h4>
+                        <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %>
+                      </h4>
+                    </div>
+                    <div class="d-flex align-items-center" style="gap: 11px; margin-bottom:13px;">
+                      <i class="fa-regular fa-clock fa-sm text-custom"></i>
+                      <h4>
+                        <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> ~
+                        <%# <span style="font-size: 12px;" class="text-custom">~</span> %>
+                        <% if instance.end_time.present? %>
+                          <%# <span style="font-size: 12px;" class="text-custom"> %>
+                          <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                        </h4>
+                      <% else %>
+                        <h4>End time not available</h4>
+                      <% end %>
+                    </div>
                   <% else %>
-                    <% if instance.event.location.present? %>
-                      <%= instance.event.location.name %>
+                    <h4 class="mb-0">No valid date or time available.</h4>
+                  <% end %>
+                  <% if instance.location.present? %>
+                    <div class="d-flex align-items-center" style="gap: 13px; margin-bottom:13px;">
+                      <i class="fa-solid fa-location-dot fa-sm text-custom" style="padding-left: 2px"></i>
+                      <h4>
+                        <%= instance.location.name %>
+                      </h4>
                     <% else %>
-                      <span style="font-size: 12px;" class="text-custom">Location not available</span>
+                      <% if instance.event.location.present? %>
+                        <%= instance.event.location.name %>
+                      <% else %>
+                        <h4>Location not available</h4>
+                      <% end %>
                     <% end %>
+                  </div>
+                  <% if instance.price.present? %>
+                    <div class="d-flex align-items-center"style="gap: 11px;">
+                      <i class="fa-regular fa-money-bill-1 fa-sm text-custom"></i>
+                      <h4>¥<%= instance.price %>
+                      </h4>
+                    </div>
+                  <% else %>
+                    <h4>Price not available</h4>
                   <% end %>
                 </div>
-                <% if instance.price.present? %>
-                  <div class="d-flex align-items-center mb-1"style="gap: 11px">
-                    <i class="fa-regular fa-money-bill-1 fa-xs text-custom"></i>
-                    <span style="font-size: 12px;" class="text-custom">¥<%= instance.price %>
-                    </span>
-                  </div>
-                <% else %>
-                  <span style="font-size: 12px;" class="text-custom">Price not available</span>
-                <% end %>
-                <%# </div> %>
               </div>
             </div>
           </div>
@@ -122,19 +125,19 @@
   .first %>
           <% if user_booking %>
             <% if user_booking.waitlisted? && future_event %>
-              <p style="font-size: 14px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 7px; color: #9747FF">
+              <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; color: #9747FF">
                 On Waitlist!
               </p>
             <% elsif user_booking.status == "pending" %>
-              <p style="font-size: 14px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 7px; color: #9747FF">
+              <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; color: #9747FF">
                 Pending Approval
               </p>
             <% elsif user_booking.status == "confirmed"  %>
-              <p style="font-size: 14px; border: 1px solid #3E34A1; color: #3E34A1; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 7px">
+              <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #3E34A1; color: #3E34A1; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px">
                 <%= future_event ? "Booked" : "Attended" %>
               </p>
             <% elsif user_booking.status == "cancelled_by_teacher" || user_booking.status == "rejected_by_teacher"  %>
-              <p style="font-size: 14px; border: 1px solid #AFB3CC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 7px; color: #AFB3CC">
+              <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #AFB3CC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; color: #AFB3CC">
                 Booking Rejected or Cancelled
               </p>
               <%# No booking buttons if previously cancelled %>
@@ -178,79 +181,81 @@
               </p>
             </div>
           </div>
-          <h4><%= instance.event.user.name.capitalize %></h4>
+          <h4 style="margin-bottom: 16px; font-weight: 500;"><%= instance.event.user.name.capitalize %></h4>
         </div>
         <div class="card-infos justify-content-start mb-1 p-0">
           <div class="d-flex align-items-start">
             <!-- EVENT PHOTO -->
-            <div class="image-container">
-              <% if instance.photos.attached? %>
-                <%= cl_image_tag instance.photos.first.key, class: "event-image" %>
-              <% elsif instance.event.photos.attached? %>
-                <%= cl_image_tag instance.event.photos.first.key, class: "event-image" %>
-              <% else %>
-                <%= image_tag "sexy_lady.jpg", alt: "Default Photo", class: "event-image" %>
-              <% end %>
-            </div>
-          </div>
-          <div class="d-flex justify-content-between ms-3">
-            <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-            <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
             <div>
-              <% if instance.start_time.present? %>
-                <div class="d-flex align-items-center mb-1" style="gap: 13px">
-                  <i class="fa-regular fa-calendar fa-xs text-custom"></i>
-                  <span style="font-size: 13px;" class="text-custom">
-                    <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %>
-                  </span>
-                </div>
-                <div class="d-flex align-items-center mb-1" style="gap: 11px">
-                  <i class="fa-regular fa-clock fa-xs text-custom"></i>
-                  <span style="font-size: 13px;" class="text-custom">
-                    <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> ~
-                    <%# <span style="font-size: 12px;" class="text-custom">~</span> %>
-                    <% if instance.end_time.present? %>
-                      <%# <span style="font-size: 12px;" class="text-custom"> %>
-                      <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-                    </span>
-                  <% else %>
-                    <span style="font-size: 12px;" class="text-custom">End time not available</span>
-                  <% end %>
-                </div>
-              <% else %>
-                <p class="mb-0">No valid date or time available.</p>
-              <% end %>
-              <% if instance.location.present? %>
-                <div class="d-flex align-items-center mb-1" style="gap: 13px">
-                  <i class="fa-solid fa-location-dot fa-xs text-custom" style="padding-left: 2px"></i>
-                  <span style="font-size: 12px;" class="text-custom">
-                    <%= instance.location.name %>
-                  </span>
+              <div class="image-container">
+                <% if instance.photos.attached? %>
+                  <%= cl_image_tag instance.photos.first.key, class: "event-image" %>
+                <% elsif instance.event.photos.attached? %>
+                  <%= cl_image_tag instance.event.photos.first.key, class: "event-image" %>
                 <% else %>
-                  <% if instance.event.location.present? %>
-                    <%= instance.event.location.name %>
-                  <% else %>
-                    <span style="font-size: 12px;" class="text-custom">Location not available</span>
-                  <% end %>
+                  <%= image_tag "sexy_lady.jpg", alt: "Default Photo", class: "event-image" %>
                 <% end %>
               </div>
-              <% if instance.price.present? %>
-                <div class="d-flex align-items-center mb-1"style="gap: 11px">
-                  <i class="fa-regular fa-money-bill-1 fa-xs text-custom"></i>
-                  <span style="font-size: 12px;" class="text-custom">¥<%= instance.price %>
-                  </span>
+            </div>
+            <div class="d-flex justify-content-between ms-3">
+              <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+              <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+              <div style="margin-top: 3px;">
+                <% if instance.start_time.present? %>
+                  <div class="d-flex align-items-center" style="gap: 13px; margin-bottom:13px;">
+                    <i class="fa-regular fa-calendar fa-sm text-custom"></i>
+                    <h4>
+                      <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %>
+                    </h4>
+                  </div>
+                  <div class="d-flex align-items-center" style="gap: 11px; margin-bottom:13px;">
+                    <i class="fa-regular fa-clock fa-sm text-custom"></i>
+                    <h4>
+                      <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> ~
+                      <%# <span style="font-size: 12px;" class="text-custom">~</span> %>
+                      <% if instance.end_time.present? %>
+                        <%# <span style="font-size: 12px;" class="text-custom"> %>
+                        <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                      </h4>
+                    <% else %>
+                      <h4>End time not available</h4>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <h4>No valid date or time available.</h4>
+                <% end %>
+                <% if instance.location.present? %>
+                  <div class="d-flex align-items-center" style="gap: 13px; margin-bottom:13px;">
+                    <i class="fa-solid fa-location-dot fa-sm text-custom" style="padding-left: 2px"></i>
+                    <h4>
+                      <%= instance.location.name %>
+                    </h4>
+                  <% else %>
+                    <% if instance.event.location.present? %>
+                      <%= instance.event.location.name %>
+                    <% else %>
+                      <h4>Location not available</h4>
+                    <% end %>
+                  <% end %>
                 </div>
-              <% else %>
-                <span style="font-size: 12px;" class="text-custom">Price not available</span>
-              <% end %>
-              <%# </div> %>
+                <% if instance.price.present? %>
+                  <div class="d-flex align-items-center"style="gap: 11px;">
+                    <i class="fa-regular fa-money-bill-1 fa-sm text-custom"></i>
+                    <h4>¥<%= instance.price %>
+                    </h4>
+                  </div>
+                <% else %>
+                  <h4>Price not available</h4>
+                <% end %>
+                <%# </div> %>
+              </div>
             </div>
           </div>
         </div>
       <% end %>
       <% if instance.event.user == current_user %>
-        <div class="mt-2 position-relative z-1">
-          <%= link_to edit_event_path(instance.event), class: "btn btn-manage", style: "border-radius: 14px;" do %>
+        <div class="mt-1 position-relative z-1">
+          <%= link_to edit_event_path(instance.event), class: "btn btn-manage", style: "border-radius: 14px; margin-top: 10px; font-family: 'Inter'" do %>
             Edit informations
             <i class="fa-solid fa-pen me-2"></i>
           <% end %>
