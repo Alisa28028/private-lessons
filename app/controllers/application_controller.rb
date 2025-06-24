@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :authenticate_user!, only: [:new, :create, :destroy]
+  before_action :authenticate_user!
 
   # Permit additional fields for user sign-up and account updates
   before_action :configure_permitted_parameters, if: :devise_controller?

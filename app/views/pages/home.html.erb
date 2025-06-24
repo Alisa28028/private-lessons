@@ -1,12 +1,16 @@
 <%# ----------BANNER---------- %>
 <div class="container-home">
   <div class="overlay-text">
-    <h1 class="home" style="margin-top: 10px">Hello <%= current_user.name %>,
-    </h1>
-    <% if @current_user.bookings.joins(:event_instance).where('DATE(event_instances.start_time) = ?', Date.today).where(waitlisted: false).any? %>
-      <h3 class="home">You have 1 booking today.</h3>
+    <% if user_signed_in? %>
+      <h1 class="home" style="margin-top: 10px">Hello <%= current_user.name %>,
+      </h1>
+      <% if @current_user.bookings.joins(:event_instance).where('DATE(event_instances.start_time) = ?', Date.today).where(waitlisted: false).any? %>
+        <h3 class="home">You have 1 booking today.</h3>
+      <% else %>
+        <h3 class="home">You don't have any bookings today.</h3>
+      <% end %>
     <% else %>
-      <h3 class="home">You don't have any bookings today.</h3>
+      <%= link_to "Log in", new_user_session_path %>
     <% end %>
     <%# <h4 style="font-size: 12px">Manage bookings, share progress, and grow your dance community.</h4> %>
   </div>
