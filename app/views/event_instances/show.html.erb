@@ -162,7 +162,9 @@
       method: :delete,
       params: { leave_waitlist: true },
       data: { confirm: "Are you sure you want to leave the waitlist?" },
-      class: "btn btn-card mt-1" %>
+      # class: "btn btn-card mt-1",
+      style: "font-family: 'Inter'; font-size: 15px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; color: #9747FF;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);" %>
             </div>
           <% elsif future_event %>
             <% if @event_instance.effective_capacity - @event_instance.bookings.where(status: "confirmed").count <= 0 %>
