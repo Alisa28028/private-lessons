@@ -41,8 +41,10 @@
                 <% if instance.start_time > Time.current %>
                   <% if instance.spots_left <= 0 %>
                     <div class="overlay-text-availability" style="background-color: #B15CDE">EVENT FULL!</div>
+                  <% elsif instance.spots_left == 1 %>
+                    <div class="overlay-text-availability" style="background-color: #9747FF"><%= instance.spots_left %> spot left!</div>
                   <% elsif instance.spots_left <= 3 %>
-                    <div class="overlay-text-availability" style="background-color: #9747FF"><%= instance.spots_left %> Spots left</div>
+                    <div class="overlay-text-availability" style="background-color: #9747FF"><%= instance.spots_left %> spots left</div>
                   <% end %>
                 <% end %>
                 <% if instance.photos.attached? %>

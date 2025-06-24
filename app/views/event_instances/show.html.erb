@@ -6,7 +6,7 @@
         <%# <h4 style="margin-left: 3px;">approval required</h4> %>
         <i
   class="fa-solid fa-circle-exclamation"
-  style="color: #AA83D7; margin-left: 5px; margin-bottom: 2px; font-size: 12px; cursor: pointer; position: relative; top: -2px;"
+style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cursor: pointer; position: relative; top: -1px;"
   data-bs-toggle="popover"
   data-bs-placement="top"
   data-bs-content="Teacher approval required"
@@ -108,7 +108,7 @@
         <% future_event = @event_instance.start_time > Time.current %>
         <% too_late_to_cancel = future_event && Time.current > cancellation_cutoff && !user_booking.waitlisted %>
         <% if too_late_to_cancel || @event_instance.event.payment_obligation_on_booking? %>
-          <h4 class="show" style="color: #786490">Cancellation not possible.</h4>
+          <h4 class="show" style="color: #B15CDE; margin-bottom: 5px;">Cancellation not possible.</h4>
         <% end %>
       <% end %>
     <% end %>
@@ -128,8 +128,9 @@
               <div class="col-12 px-0">
                 <%= button_to "Pending approval (click to cancel request)", booking_path(user_booking),
             method: :delete,
-            class: "btn btn-card mt-1",
-            style: "background-color: #a58ab5" %>
+            # class: "btn btn-card mt-1",
+            style: "font-family: 'Inter'; font-size: 15px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; color: #9747FF;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);" %>
               </div>
             <% when "cancelled_by_teacher", "rejected_by_teacher" %>
               <p style="font-size: small; border: 1px solid #dc3545; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
@@ -195,8 +196,10 @@
       <% if @event_instance.start_time > Time.current %>
         <% if @event_instance.spots_left <= 0 %>
           <div class="show-overlay-text-availability" style="background-color: #B15CDE">EVENT FULL!</div>
+        <% elsif @event_instance.spots_left == 1 %>
+          <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> spot left!</div>
         <% elsif @event_instance.spots_left <= 3 %>
-          <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> Spots left</div>
+          <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> spots left</div>
         <% end %>
       <% end %>
       <% if @event_instance.photos.attached? %>
@@ -240,7 +243,7 @@
           <h3 class="show" style="margin-bottom: 10px">Informations </h3>
           <% if @event_instance.price_cents.present? && @event_instance.price_cents > 0 %>
             <div class="d-flex flex-row align-items-center mb-2">
-              <i class="fa-regular fa-money-bill-1 fa-md text-custom" style="margin-right: 10px;"></i>
+              <i class="fa-regular fa-money-bill-1 fa-md text-custom" style="margin-right: 9px; margin-top: 2px;"></i>
               <h4 class="show"><strong></strong><%= number_to_currency(@event_instance.price_cents, unit: "¥", delimiter: ",", precision: 0) %></h4>
             <% elsif @event.price_cents.present? && @event.price_cents > 0 %>
               <span style="font-size: 12px; margin-right: 16px;"><strong><%= number_to_currency(@event.price_cents, unit: "¥", delimiter: ",", precision: 0) %></span>
@@ -249,13 +252,24 @@
                 <% end %>
               </div>
               <div class="d-flex flex-row align-items-center mb-2">
+                <% if @event_instance.duration.present? %>
+                  <i class="fa-solid fa-stopwatch fa-md text-custom" style="margin-right: 15px; margin-left: 2px;"></i>
+                  <%= @event_instance.duration %>
+                  <h4 class="show">minutes</h4>
+                <% else %>
+                  <i class="fa-solid fa-stopwatch fa-md text-custom" style="margin-right: 10px; margin-left: 2px;"></i>
+                  <h4 class="show"> <%= @event.duration %></h4>
+                  <h4 class="show">&nbsp;min</h4>
+                <% end %>
+              </div>
+              <div class="d-flex flex-row align-items-center mb-2">
                 <% if @event_instance.present? %>
                   <% if @event_instance.capacity == 1 %>
-                    <i class="fa-solid fa-person me-2"></i>
+                    <i class="fa-solid fa-person fa-md text-custom" style="margin-right: 15px; margin-left: 2px;"></i>
                     <h4 class="show">1 on 1</h4>
                   <% else %>
-                    <i class="fa-solid fa-person me-n2"></i>
-                    <i class="fa-solid fa-person me-2"></i>
+                    <i class="fa-solid fa-person fa-md text-custom"></i>
+                    <i class="fa-solid fa-person fa-md text-custom" style="margin-right: 7px;"></i>
                     <h4 class="show"><%= @event_instance.capacity %> max</h4>
                   <% end %>
                 <% end %>
@@ -263,7 +277,7 @@
               <div class="mb-2">
                 <% if @event_instance.location.present? %>
                   <div class="d-flex flex-row align-items-center mb-2">
-                    <i class="fa-solid fa-location-dot fa-md text-custom" style="padding-top: 3px; margin-right: 13px;"></i>
+                    <i class="fa-solid fa-location-dot fa-md text-custom" style="padding-top: 3px; margin-right: 13px; margin-left: 2px;"></i>
                     <h4 class="show"><%= @event_instance.location.name %></h4>
                     <%# , <%= @event.location.address %>
                     <%# , <%= @event.location.address %>
@@ -275,7 +289,7 @@
               <% if @event.payment_obligation_on_booking? %>
                 <div class="d-flex flex-row align-items-center mb-2">
                   <i class="fa-solid fa-ban fa-md text-custom" style="padding-top: 3px; margin-right: 10px;"></i>
-                  <h4 class="show">No cancellations or refunds once booked.
+                  <h4 class="show" style="margin-bottom: 30px">No cancellations or refunds once booked.
                   </h4>
                 </div>
               <% else %>
