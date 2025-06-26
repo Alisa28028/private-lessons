@@ -27,7 +27,7 @@
       <!-- Hamburger only for not-logged-in users -->
       <% unless user_signed_in? %>
         <div class="hamburger">
-          <i class="fa-solid fa-bars fa-xl <%= current_page?(root_path) ? 'text-white' : 'text-custom' %>" data-action="click->menu#toggle"></i>
+          <i class="fa-solid fa-bars fa-xl text-white" data-action="click->menu#toggle"></i>
         </div>
       <% end %>
     </header>
