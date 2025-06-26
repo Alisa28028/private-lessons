@@ -10,13 +10,13 @@
           <h3><%= instance.event.title.titleize %></h3>
           <% if instance.event.approval_mode == "manual" %>
             <i
-  class="fa-solid fa-circle-exclamation"
-  style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cursor: pointer; position: relative; top: -1px;"
-  data-bs-toggle="popover"
-  data-bs-placement="top"
-  data-bs-content="Teacher approval required"
-  onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
-></i>
+              class="fa-solid fa-circle-exclamation"
+              style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cursor: pointer; position: relative; top: -1px;"
+              data-bs-toggle="popover"
+              data-bs-placement="top"
+              data-bs-content="Teacher approval required"
+              onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
+            ></i>
           <% end %>
         </div>
         <turbo-frame id="like_<%= instance.id %>">
@@ -162,6 +162,26 @@
             <% end %>
           <% end %>
         </div>
+      <% else %>
+        <div style="position: relative; display: inline-flex;">
+          <% if instance.effective_capacity - instance.bookings.where(status: "confirmed").count <= 0 %>
+            <button type="button" class="btn btn-card ml-2 mr-0" style="background-color: #3E34A1;"
+                data-bs-toggle="modal"
+                data-bs-target="#waitinglistModal<%= instance.id %>"
+                data-controller="modal"
+                data-action="click->modal#handleClick">
+              Join Waitlist
+            </button>
+          <% else %>
+            <button type="button" class="btn btn-card ml-2 mr-0"
+                data-bs-toggle="modal"
+                data-bs-target="#bookingModal<%= instance.id %>"
+                data-controller="modal"
+                data-action="click->modal#handleClick">
+              Book Class!
+            </button>
+          <% end %>
+        </div>
       <% end %>
     <% end %>
     <%# --------------------NEW BLOCK----------------------------------------- %>
@@ -273,21 +293,36 @@
   <div class="modal fade" id="bookingModal<%= instance.id %>" tabindex="-1" aria-labelledby="bookingModalLabel<%= instance.id %>" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <% user_time_zone_str = current_user&.time_zone.presence || "UTC" %>
-          <% time_zone = ActiveSupport::TimeZone[user_time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-          <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
-            Book <%= instance.event.title.capitalize %> class on <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <%= simple_form_for [instance, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
-            <div class="d-flex justify-content-end">
-              <%= f.submit "Book!", class: "btn btn-custom my-3" %>
+        <% if user_signed_in? %>
+          <div class="modal-header">
+            <% user_time_zone_str = current_user&.time_zone.presence || "UTC" %>
+            <% time_zone = ActiveSupport::TimeZone[user_time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+            <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
+              Book <%= instance.event.title.capitalize %> class on <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
+            </h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <%= simple_form_for [instance, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
+              <div class="d-flex justify-content-end">
+                <%= f.submit "Book!", class: "btn btn-custom my-3" %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Login Required</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <h4 style="margin-bottom: 8px; margin-top: 23px;">You must be logged in to book the class.</h4>
+            <%= link_to "Log In", new_user_session_path(return_to: request.fullpath), class: "btn btn-card mt-2" %>
+            <div class="d-flex flex-column" style="margin-bottom: 32px;">
+              <h4 style="margin-top: 23px;">Don't have an account yet?</h4>
+              <%= link_to "Create a New Account!", new_user_registration_path(return_to: request.fullpath), style: "text-decoration: underline; text-decoration-thickness: 1px, margin-top: 1px; font-weight: 300; color: #292A5A; font-size: 15px;" %>
             </div>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
@@ -298,23 +333,37 @@
   <div class="modal fade" id="waitinglistModal<%= instance.id %>" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= instance.event.title.capitalize %></strong> Wait List</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="d-flex justify-content-between">
-          <div class="modal-body">
+        <% if user_signed_in? %>
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= instance.event.title.capitalize %></strong> Wait List</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
             <%= simple_form_for [instance.event, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
               <%= f.submit "Join Waitlist", class: "btn btn-custom my-3", style: "background-color: #8d76a7" %>
             <% end %>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <% else %>
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Login Required</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
+          <div class="modal-body text-center">
+            <h4 style="margin-bottom: 8px; margin-top: 23px;">You must be logged in to join the waitlist.</h4>
+            <%= link_to "Log In", new_user_session_path(return_to: request.fullpath), class: "btn btn-card mt-2" %>
+            <div class="d-flex flex-column" style="margin-bottom: 32px;">
+              <h4 style="margin-top: 23px;">Don't have an account yet?</h4>
+              <%= link_to "Create a New Account!", new_user_registration_path(return_to: request.fullpath), style: "text-decoration: underline; text-decoration-thickness: 1px, margin-top: 1px; font-weight: 300; color: #292A5A; font-size: 15px;" %>
+            </div>
+          </div>
+        <% end %>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
   </div>
+  <%# </div> %>
   <script>
     function showTemporaryPopover(el) {
       // Dispose existing

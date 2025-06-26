@@ -1,20 +1,20 @@
 <div class="container px-2 mt-6 mb-4">
   <div class="row tight-row mt-2">
-    <div class="d-flex justify-content-start align-items-baseline">
-      <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
-      <% if @event_instance.event.approval_mode == "manual" %>
-        <%# <h4 style="margin-left: 3px;">approval required</h4> %>
-        <i
-  class="fa-solid fa-circle-exclamation"
-style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cursor: pointer; position: relative; top: -1px;"
-  data-bs-toggle="popover"
-  data-bs-placement="top"
-  data-bs-content="Teacher approval required"
-  onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
-></i>
-      <% end %>
-    </div>
     <% if user_signed_in? %>
+      <div class="d-flex justify-content-start align-items-baseline">
+        <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+        <% if @event_instance.event.approval_mode == "manual" %>
+          <%# <h4 style="margin-left: 3px;">approval required</h4> %>
+          <i
+          class="fa-solid fa-circle-exclamation"
+          style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cursor: pointer; position: relative; top: -1px;"
+          data-bs-toggle="popover"
+          data-bs-placement="top"
+          data-bs-content="Teacher approval required"
+          onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
+        ></i>
+        <% end %>
+      </div>
       <% if current_user == @event.user %>
         <div class="d-flex justify-content-between mt-2">
           <div class="event-buttons mb-2 d-flex justify-content-start" style="margin-left: -3px;">
@@ -67,247 +67,409 @@ style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cu
           </div>
         </div>
       <% end %>
-    <% else %>
-      <!-- Button for unauthenticated users -->
-      <div class="event-buttons mt-3">
-        <%= link_to new_user_session_path, class: "btn btn-warning btn-sm rounded-3" do %>
-          <i class="fa-solid fa-sign-in-alt"></i> Login to Book
-        <% end %>
-      </div>
-    <% end %>
-    <div class="d-flex justify-content-between" style="margin-bottom: 5px;">
-      <div class="d-flex align-items-center gap-2">
-        <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-        <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-        <%# <i class="fa-regular fa-calendar text-custom" style="font-size: 17px;margin-left: 1px;color: black;margin-top: 1px;"></i> %>
-        <h4 class="show" style="font-weight: 300;">
-          <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%B %d, %Y at %H:%M") %>
-          (<%= friendly_time_zone_name(time_zone.name) %>)
-        </h4>
-      </div>
-      <% if @event_instance.likes.exists?(user: current_user) %>
-        <%= button_to event_instance_like_path(@event_instance), method: :delete, class: "btn p-0 border-0 bg-transparent" do %>
-          <i class="fa-solid fa-heart" style="color: #3E34A1; font-size: 21px;"></i>
-        <% end %>
-      <% else %>
-        <%= button_to event_instance_like_path(@event_instance), method: :post, class: "btn p-0 border-0 bg-transparent" do %>
-          <i class="fa-regular fa-heart" style="color: #3E34A1; font-size: 21px;"></i>
-        <% end %>
-      <% end %>
-    </div>
-    <div class="d-flex justify-content-between">
-      <% capacity = @event_instance.respond_to?(:capacity) ? @event_instance.capacity : @event.capacity %>
-      <% bookings_scope = @event_instance.respond_to?(:bookings) ? @event_instance.bookings : @event.bookings %>
-      <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: ["cancelled_by_teacher", "cancelled_by_student", "rejected_by_teacher", "pending"]).count %>
-    </div>
-    <% future_event = @event_instance.start_time > Time.current %>
-    <% if current_user.present? %>
-      <% if @event.cancellation_policy_duration.present? %>
-        <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
-        <% if user_booking %>
-          <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
-          <% future_event = @event_instance.start_time > Time.current %>
-          <% too_late_to_cancel = future_event && Time.current > cancellation_cutoff && !user_booking.waitlisted %>
-          <% if too_late_to_cancel || @event_instance.event.payment_obligation_on_booking? %>
-            <h4 class="show" style="color: #B15CDE; margin-bottom: 5px;">Cancellation not possible.</h4>
+      <div class="d-flex justify-content-between" style="margin-bottom: 5px;">
+        <div class="d-flex align-items-center gap-2">
+          <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+          <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+          <%# <i class="fa-regular fa-calendar text-custom" style="font-size: 17px;margin-left: 1px;color: black;margin-top: 1px;"></i> %>
+          <h4 class="show" style="font-weight: 300;">
+            <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%B %d, %Y at %H:%M") %>
+            (<%= friendly_time_zone_name(time_zone.name) %>)
+          </h4>
+        </div>
+        <% if @event_instance.likes.exists?(user: current_user) %>
+          <%= button_to event_instance_like_path(@event_instance), method: :delete, class: "btn p-0 border-0 bg-transparent" do %>
+            <i class="fa-solid fa-heart" style="color: #3E34A1; font-size: 21px;"></i>
+          <% end %>
+        <% else %>
+          <%= button_to event_instance_like_path(@event_instance), method: :post, class: "btn p-0 border-0 bg-transparent" do %>
+            <i class="fa-regular fa-heart" style="color: #3E34A1; font-size: 21px;"></i>
           <% end %>
         <% end %>
-      <% end %>
-    </div>
-    <div class="mt-0">
-      <div class="row mx-3">
-        <div id="turbo-reload-placeholder">
-          <% if @event.user != current_user %>
+      </div>
+      <div class="d-flex justify-content-between">
+        <% capacity = @event_instance.respond_to?(:capacity) ? @event_instance.capacity : @event.capacity %>
+        <% bookings_scope = @event_instance.respond_to?(:bookings) ? @event_instance.bookings : @event.bookings %>
+        <% bookings_count = bookings_scope.where(waitlisted: false).where.not(status: ["cancelled_by_teacher", "cancelled_by_student", "rejected_by_teacher", "pending"]).count %>
+      </div>
+      <% future_event = @event_instance.start_time > Time.current %>
+      <% if current_user.present? %>
+        <% if @event.cancellation_policy_duration.present? %>
+          <% user_booking = @event_instance.bookings.find_by(user_id: current_user.id) %>
+          <% if user_booking %>
+            <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
             <% future_event = @event_instance.start_time > Time.current %>
-            <% user_booking = @event_instance.bookings
+            <% too_late_to_cancel = future_event && Time.current > cancellation_cutoff && !user_booking.waitlisted %>
+            <% if too_late_to_cancel || @event_instance.event.payment_obligation_on_booking? %>
+              <h4 class="show" style="color: #B15CDE; margin-bottom: 5px;">Cancellation not possible.</h4>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="mt-0">
+        <div class="row mx-3">
+          <div id="turbo-reload-placeholder">
+            <% if @event.user != current_user %>
+              <% future_event = @event_instance.start_time > Time.current %>
+              <% user_booking = @event_instance.bookings
                               .where(user_id: current_user.id)
                               .where.not(status: "cancelled_by_student")
                               .first %>
-            <% if user_booking && !user_booking.waitlisted %>
-              <% case user_booking.status %>
-              <% when "pending" %>
-                <div class="col-12 px-0">
-                  <%= button_to "Pending approval (click to cancel request)", booking_path(user_booking),
+              <% if user_booking && !user_booking.waitlisted %>
+                <% case user_booking.status %>
+                <% when "pending" %>
+                  <div class="col-12 px-0">
+                    <%= button_to "Pending approval (click to cancel request)", booking_path(user_booking),
             method: :delete,
             # class: "btn btn-card mt-1",
             style: "font-family: 'Inter'; font-size: 15px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; color: #9747FF;
       box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);" %>
-                </div>
-              <% when "cancelled_by_teacher", "rejected_by_teacher" %>
-                <p style="font-size: small; border: 1px solid #dc3545; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
-                  Booking Rejected or Cancelled
-                </p>
-              <% when "confirmed" %>
-                <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #3E34A1; color: #3E34A1; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 12px; margin-top: 10px">
-                  <%= future_event ? "Booked!" : "Attended" %>
-                </p>
-                <% if @event.cancellation_policy_duration.present? %>
-                  <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
-                  <% if @event_instance.start_time.future? && Time.current < cancellation_cutoff && !@event.payment_obligation_on_booking %>
-                    <div class="col-12 px-0">
-                      <%= button_to "Cancel Booking!", cancel_booking_path(user_booking),
+                  </div>
+                <% when "cancelled_by_teacher", "rejected_by_teacher" %>
+                  <p style="font-size: small; border: 1px solid #dc3545; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
+                    Booking Rejected or Cancelled
+                  </p>
+                <% when "confirmed" %>
+                  <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #3E34A1; color: #3E34A1; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 12px; margin-top: 10px">
+                    <%= future_event ? "Booked!" : "Attended" %>
+                  </p>
+                  <% if @event.cancellation_policy_duration.present? %>
+                    <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
+                    <% if @event_instance.start_time.future? && Time.current < cancellation_cutoff && !@event.payment_obligation_on_booking %>
+                      <div class="col-12 px-0">
+                        <%= button_to "Cancel Booking!", cancel_booking_path(user_booking),
                 method: :post,
                 data: { confirm: "Are you sure you want to cancel your booking?" },
                 class: "btn btn-card mt-0" %>
-                    </div>
-                  <% end %>
-                <% else %>
-                  <%= button_to "Cancel Booking", cancel_booking_path(user_booking),
+                      </div>
+                    <% end %>
+                  <% else %>
+                    <%= button_to "Cancel Booking", cancel_booking_path(user_booking),
             method: :post,
             data: { confirm: "Are you sure you want to cancel your booking?" },
             class: "btn btn-card ml-2 mb-1 mr-0" %>
+                  <% end %>
                 <% end %>
-              <% end %>
-            <% elsif user_booking && user_booking.waitlisted && future_event %>
-              <div class="col-12 px-0">
-                <%= button_to "On Waitlist (click to leave waitlist)", booking_path(user_booking),
+              <% elsif user_booking && user_booking.waitlisted && future_event %>
+                <div class="col-12 px-0">
+                  <%= button_to "On Waitlist (click to leave waitlist)", booking_path(user_booking),
       method: :delete,
       params: { leave_waitlist: true },
       data: { confirm: "Are you sure you want to leave the waitlist?" },
       # class: "btn btn-card mt-1",
       style: "font-family: 'Inter'; font-size: 15px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; color: #9747FF;
       box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);" %>
-              </div>
-            <% elsif future_event %>
-              <% if @event_instance.effective_capacity - @event_instance.bookings.where(status: "confirmed").count <= 0 %>
-                <div class="col-12 px-0">
-                  <button type="button" style="background-color: #3E34A1;"
+                </div>
+              <% elsif future_event %>
+                <% if @event_instance.effective_capacity - @event_instance.bookings.where(status: "confirmed").count <= 0 %>
+                  <div class="col-12 px-0">
+                    <button type="button" style="background-color: #3E34A1;"
             class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
-                    Join Waitlist!
-                  </button>
-                </div>
-              <% else %>
-                <div class="col-12 px-0">
-                  <button type="button" class="btn btn-card ml-2 mb-1 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
-                    Book class!
-                  </button>
-                </div>
+                      Join Waitlist!
+                    </button>
+                  </div>
+                <% else %>
+                  <div class="col-12 px-0">
+                    <button type="button" class="btn btn-card ml-2 mb-1 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                      Book class!
+                    </button>
+                  </div>
+                <% end %>
               <% end %>
             <% end %>
           <% end %>
-        <% end %>
-      </div>
-    </div>
-  </div>
-  <!-- Button Row -->
-  <!-------------------------------------------------->
-</div>
-<div class="row g-0 mt-3 mx-4">
-  <div class="col-12">
-    <div class="show-image-container">
-      <% if @event_instance.start_time > Time.current %>
-        <% if @event_instance.spots_left <= 0 %>
-          <div class="show-overlay-text-availability" style="background-color: #B15CDE">EVENT FULL!</div>
-        <% elsif @event_instance.spots_left == 1 %>
-          <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> spot left!</div>
-        <% elsif @event_instance.spots_left <= 3 %>
-          <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> spots left</div>
-        <% end %>
-      <% end %>
-      <% if @event_instance.photos.attached? %>
-        <%= cl_image_tag(@event_instance.photos.first.key, class: "image") %>
-      <% elsif @event.photos.attached? %>
-        <%= cl_image_tag(@event.photos.first.key, class: "image") %>
-      <% else %>
-        <%= image_tag "sexy_lady.jpg", class: "image", alt: "Default Photo"  %>
-      <% end %>
-    </div>
-  </div>
-  <% if @event.videos.attached? %>
-    <%= video_tag(url_for(@event.videos.first), controls: true, type: "video/mp4") %>
-    <%# <% else %>
-    <%# <p>no videos</p> %>
-  <% end %>
-  <!-- Description Row -->
-  <div class="mt-3">
-    <div class="mb-3 me-2">
-      <h3 class="show" style="margin-bottom: 10px">Description</h3>
-      <h4 class="show"  style="margin-bottom: 30px"> <%= @event.description %>
-        temporary: Discover the art of pole dance in a fun, supportive environment! This class is perfect for beginners—no experience or upper body strength needed. You'll learn basic spins, transitions, and simple tricks while building confidence, flexibility, and strength at your own pace. Come as you are and get ready to feel empowered and have fun!</h4>
-    </div>
-    <div class="mb-3 me-2">
-      <h3 class="show" style="margin-bottom: 10px">Teacher</h3>
-      <div class="d-flex align-items-center mb-1" style="margin-top: 1px;">
-        <%= link_to user_path(@event.user), class: "d-flex gap-1" do %>
-          <% if @event.user.photo.present? %>
-            <%= cl_image_tag @event.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
-          <% else %>
-            <%= image_tag "default-avatar.png", width: "200px", class: "avatar-showpage" %>
-          <% end %>
-          <h4 class="show" style="margin-bottom: 20px; margin-top: 4px"><%= @event.user.name %></h4>
-        <% end %>
-      </div>
-    </div>
-    <div class="mb-3">
-      <!-- information -->
-      <% if @event.event_instances.any? %>
-        <% if @event.event_instances.first.cancellation_policy_duration != nil %>
-          <h3 class="show" style="margin-bottom: 10px">Informations </h3>
-          <% if @event_instance.price_cents.present? && @event_instance.price_cents > 0 %>
-            <div class="d-flex flex-row align-items-center mb-2">
-              <i class="fa-regular fa-money-bill-1 fa-md text-custom" style="margin-right: 9px; margin-top: 2px;"></i>
-              <h4 class="show"><strong></strong><%= number_to_currency(@event_instance.price_cents, unit: "¥", delimiter: ",", precision: 0) %></h4>
-            <% elsif @event.price_cents.present? && @event.price_cents > 0 %>
-              <span style="font-size: 12px; margin-right: 16px;"><strong><%= number_to_currency(@event.price_cents, unit: "¥", delimiter: ",", precision: 0) %></span>
-              <% else %>
-                <span style="font-size: 12px; margin-right: 16px;"><strong>¥0</span>
-                <% end %>
+        <% else %>
+          <div class="d-flex flex-column justify-content-start align-items-baseline">
+            <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+            <div class="d-flex justify-content-between" style="margin-bottom: 5px;">
+              <div class="d-flex align-items-center gap-2">
+                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+                <%# <i class="fa-regular fa-calendar text-custom" style="font-size: 17px;margin-left: 1px;color: black;margin-top: 1px;"></i> %>
+                <h4 class="show" style="font-weight: 300;">
+                  <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%B %d, %Y at %H:%M") %>
+                  (<%= friendly_time_zone_name(time_zone.name) %>)
+                </h4>
               </div>
-              <div class="d-flex flex-row align-items-center mb-2">
-                <% if @event_instance.duration.present? %>
-                  <i class="fa-solid fa-stopwatch fa-md text-custom" style="margin-right: 15px; margin-left: 2px;"></i>
-                  <%= @event_instance.duration %>
-                  <h4 class="show">minutes</h4>
-                <% else %>
-                  <i class="fa-solid fa-stopwatch fa-md text-custom" style="margin-right: 10px; margin-left: 2px;"></i>
-                  <h4 class="show"> <%= @event.duration %></h4>
-                  <h4 class="show">&nbsp;min</h4>
-                <% end %>
+            </div>
+            <% if @event_instance.effective_capacity - @event_instance.bookings.where(status: "confirmed").count <= 0 %>
+              <div class="col-12 px-0">
+                <button type="button" style="background-color: #3E34A1;"
+            class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
+                  Join Waitlist!
+                </button>
               </div>
-              <div class="d-flex flex-row align-items-center mb-2">
-                <% if @event_instance.present? %>
-                  <% if @event_instance.capacity == 1 %>
-                    <i class="fa-solid fa-person fa-md text-custom" style="margin-right: 15px; margin-left: 2px;"></i>
-                    <h4 class="show">1 on 1</h4>
-                  <% else %>
-                    <i class="fa-solid fa-person fa-md text-custom"></i>
-                    <i class="fa-solid fa-person fa-md text-custom" style="margin-right: 7px;"></i>
-                    <h4 class="show"><%= @event_instance.capacity %> max</h4>
-                  <% end %>
-                <% end %>
-              </div>
-              <div class="mb-2">
-                <% if @event_instance.location.present? %>
-                  <div class="d-flex flex-row align-items-center mb-2">
-                    <i class="fa-solid fa-location-dot fa-md text-custom" style="padding-top: 3px; margin-right: 13px; margin-left: 2px;"></i>
-                    <h4 class="show"><%= @event_instance.location.name %></h4>
-                    <%# , <%= @event.location.address %>
-                    <%# , <%= @event.location.address %>
-                  <% else %>
-                    <h4 class="show"  style="margin-bottom: 30px">No location yet</h4>
-                  </div>
-                <% end %>
-              </div>
-              <% if @event.payment_obligation_on_booking? %>
-                <div class="d-flex flex-row align-items-center mb-2">
-                  <i class="fa-solid fa-ban fa-md text-custom" style="padding-top: 3px; margin-right: 10px;"></i>
-                  <h4 class="show" style="margin-bottom: 30px">No cancellations or refunds once booked.
-                  </h4>
-                </div>
-              <% else %>
-                <h4 class="show" style="margin-bottom: 30px">
-                  <i class="fa-solid fa-ban" style="margin-right: 5px;"></i>
-                  Cancellation possible <%= @event.event_instances.first.cancellation_policy_duration %>h before event starts</h4>
-              <% end %>
             <% else %>
-              <h3 class="show" style="margin-bottom: 30px"> Cancellation policy: not provided</h4>
+              <div class="col-12 px-0">
+                <button type="button" class="btn btn-card ml-2 mb-1 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                  Book class!
+                </button>
+              </div>
             <% end %>
           <% end %>
         </div>
       </div>
-      <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
+    </div>
+    <!-------------------------------------------------->
+    <div class="row g-0 mt-3 mx-4">
+      <div class="col-12">
+        <div class="show-image-container">
+          <% if @event_instance.start_time > Time.current %>
+            <% if @event_instance.spots_left <= 0 %>
+              <div class="show-overlay-text-availability" style="background-color: #B15CDE">EVENT FULL!</div>
+            <% elsif @event_instance.spots_left == 1 %>
+              <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> spot left!</div>
+            <% elsif @event_instance.spots_left <= 3 %>
+              <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> spots left</div>
+            <% end %>
+          <% end %>
+          <% if @event_instance.photos.attached? %>
+            <%= cl_image_tag(@event_instance.photos.first.key, class: "image") %>
+          <% elsif @event.photos.attached? %>
+            <%= cl_image_tag(@event.photos.first.key, class: "image") %>
+          <% else %>
+            <%= image_tag "sexy_lady.jpg", class: "image", alt: "Default Photo"  %>
+          <% end %>
+        </div>
+      </div>
+      <% if @event.videos.attached? %>
+        <%= video_tag(url_for(@event.videos.first), controls: true, type: "video/mp4") %>
+        <%# <% else %>
+        <%# <p>no videos</p> %>
+      <% end %>
+      <!-- Description Row -->
+      <div class="mt-3">
+        <div class="mb-3 me-2">
+          <h3 class="show" style="margin-bottom: 10px">Description</h3>
+          <h4 class="show"  style="margin-bottom: 30px"> <%= @event.description %>
+            temporary: Discover the art of pole dance in a fun, supportive environment! This class is perfect for beginners—no experience or upper body strength needed. You'll learn basic spins, transitions, and simple tricks while building confidence, flexibility, and strength at your own pace. Come as you are and get ready to feel empowered and have fun!</h4>
+        </div>
+        <div class="mb-3 me-2">
+          <h3 class="show" style="margin-bottom: 10px">Teacher</h3>
+          <div class="d-flex align-items-center mb-1" style="margin-top: 1px;">
+            <%= link_to user_path(@event.user), class: "d-flex gap-1" do %>
+              <% if @event.user.photo.present? %>
+                <%= cl_image_tag @event.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+              <% else %>
+                <%= image_tag "default-avatar.png", width: "200px", class: "avatar-showpage" %>
+              <% end %>
+              <h4 class="show" style="margin-bottom: 20px; margin-top: 4px"><%= @event.user.name %></h4>
+            <% end %>
+          </div>
+        </div>
+        <div class="mb-3">
+          <!-- information -->
+          <% if @event.event_instances.any? %>
+            <% if @event.event_instances.first.cancellation_policy_duration != nil %>
+              <h3 class="show" style="margin-bottom: 10px">Informations </h3>
+              <% if @event_instance.price_cents.present? && @event_instance.price_cents > 0 %>
+                <div class="d-flex flex-row align-items-center mb-2">
+                  <i class="fa-regular fa-money-bill-1 fa-md text-custom" style="margin-right: 9px; margin-top: 2px;"></i>
+                  <h4 class="show"><strong></strong><%= number_to_currency(@event_instance.price_cents, unit: "¥", delimiter: ",", precision: 0) %></h4>
+                <% elsif @event.price_cents.present? && @event.price_cents > 0 %>
+                  <span style="font-size: 12px; margin-right: 16px;"><strong><%= number_to_currency(@event.price_cents, unit: "¥", delimiter: ",", precision: 0) %></span>
+                  <% else %>
+                    <span style="font-size: 12px; margin-right: 16px;"><strong>¥0</span>
+                    <% end %>
+                  </div>
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <% if @event_instance.duration.present? %>
+                      <i class="fa-solid fa-stopwatch fa-md text-custom" style="margin-right: 15px; margin-left: 2px;"></i>
+                      <%= @event_instance.duration %>
+                      <h4 class="show">minutes</h4>
+                    <% else %>
+                      <i class="fa-solid fa-stopwatch fa-md text-custom" style="margin-right: 10px; margin-left: 2px;"></i>
+                      <h4 class="show"> <%= @event.duration %></h4>
+                      <h4 class="show">&nbsp;min</h4>
+                    <% end %>
+                  </div>
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <% if @event_instance.present? %>
+                      <% if @event_instance.capacity == 1 %>
+                        <i class="fa-solid fa-person fa-md text-custom" style="margin-right: 15px; margin-left: 2px;"></i>
+                        <h4 class="show">1 on 1</h4>
+                      <% else %>
+                        <i class="fa-solid fa-person fa-md text-custom"></i>
+                        <i class="fa-solid fa-person fa-md text-custom" style="margin-right: 7px;"></i>
+                        <h4 class="show"><%= @event_instance.capacity %> max</h4>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  <div class="mb-2">
+                    <% if @event_instance.location.present? %>
+                      <div class="d-flex flex-row align-items-center mb-2">
+                        <i class="fa-solid fa-location-dot fa-md text-custom" style="padding-top: 3px; margin-right: 13px; margin-left: 2px;"></i>
+                        <h4 class="show"><%= @event_instance.location.name %></h4>
+                        <%# , <%= @event.location.address %>
+                        <%# , <%= @event.location.address %>
+                      <% else %>
+                        <h4 class="show"  style="margin-bottom: 30px">No location yet</h4>
+                      </div>
+                    <% end %>
+                  </div>
+                  <% if @event.payment_obligation_on_booking? %>
+                    <div class="d-flex flex-row align-items-center mb-2">
+                      <i class="fa-solid fa-ban fa-md text-custom" style="padding-top: 3px; margin-right: 10px;"></i>
+                      <h4 class="show" style="margin-bottom: 30px">No cancellations or refunds once booked.
+                      </h4>
+                    </div>
+                  <% else %>
+                    <h4 class="show" style="margin-bottom: 30px">
+                      <i class="fa-solid fa-ban" style="margin-right: 5px;"></i>
+                      Cancellation possible <%= @event.event_instances.first.cancellation_policy_duration %>h before event starts</h4>
+                  <% end %>
+                <% else %>
+                  <h3 class="show" style="margin-bottom: 30px"> Cancellation policy: not provided</h4>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+          <%# <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;"> %>
+          <div class="mt-1 mb-4">
+            <div class="d-flex flex-column w-100">
+              <div class="mb-1">
+                <div class="d-flex justify-content-between">
+                  <% valid_bookings = @bookings.reject{ |b| b.waitlisted || b.status == "cancelled_by_teacher" || b.status == "pending" ||
+                b.status == "cancelled_by_student" || b.status == "rejected_by_teacher" } %>
+                  <% if valid_bookings.any? %>
+                    <h3 class="show mb-1">Attendees</h3>
+                  </div>
+                  <% is_creator = current_user == @event_instance.event.user %>
+                  <% valid_bookings.sort_by(&:created_at).each do |booking| %>
+                    <% if is_creator %>
+                      <turbo-frame id="booking_<%= booking.id %>">
+                        <!-- Creator view with dropdown, payment buttons, etc -->
+                        <div class="d-flex flex-column">
+                          <div class="d-flex justify-content-between align-items-end">
+                            <div class="d-flex align-items-center" style="margin-top: -6px;">
+                              <i class="fa-solid fa-caret-down me-1"></i>
+                              <div class="panel">
+                                <a class="text-decoration-none text-dark" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
+                                  <h6><%= booking.user.name %></h6>
+                                </a>
+                              </div>
+                              <div class="panel">
+                                <h6>- <%= booking.state %> <%= booking.state == 'paid' ? '✅' : '❌' %></h6>
+                              </div>
+                            </div>
+                            <div>
+                              <%= button_to update_status_booking_path(booking, state: (booking.state == 'paid' ? 'unpaid' : 'paid')), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #{booking.state == 'paid' ? 'black' : '#9bdaa7'}; color: white; line-height: 1px; height: 20px; border-radius: 4px; width: 127px;" do %>
+                                Mark as <%= booking.state == 'paid' ? 'Unpaid' : 'Paid' %>
+                              <% end %>
+                            </div>
+                          </div>
+                          <!-- Dropdown -->
+                          <div class="collapse mt-2" id="dropdown_<%= booking.id %>">
+                            <div class="p-2">
+                              <div class="panel">
+                                <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
+                                  <% if booking.user.photo.present? %>
+                                    <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+                                  <% else %>
+                                    <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
+                                  <% end %>
+                                  <h6 class="panel" style="margin-left: 2px;">
+                                    view profile</h6>
+                                </div>
+                              <% end %>
+                              <div class="d-flex">
+                                <div class="panel" style="margin-left: 3px;">
+                                  <h6><i class="fa-solid fa-envelope"></i></h6>
+                                </div>
+                                <div class="panel" style="margin-left: 6px;">
+                                  <h6>  <%= booking.user.email %></h6>
+                                </div>
+                              </div>
+                              <div class="d-flex">
+                                <div class="panel" style="margin-left: 4px;">
+                                  <h6><i class="fa-solid fa-mobile-screen-button"></i></h6>
+                                </div>
+                                <div class="panel" style="margin-left: 8px;">
+                                  <h6>
+                                    <%= booking.user.phone_number %></h6>
+                                </div>
+                              </div>
+                              <div class="panel" style="margin-left: 3px;">
+                                <h6 >Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </turbo-frame>
+                    <% else %>
+                      <!-- Attendee (non-creator) view -->
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                          <%= link_to user_path(booking.user), class: "d-flex align-items-center text-decoration-none text-dark", data: { turbo_frame: "_top" } do %>
+                            <% if booking.user.photo.present? %>
+                              <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar" %>
+                            <% else %>
+                              <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "avatar" %>
+                            <% end %>
+                            <h4 class="mb-0"><%= booking.user.name %></h4>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                  <% end %>
+                <% end %>
+                <!-- Waitlist Section (after attendees) -->
+                <% waitlist = @event_instance.bookings
+                  .where(waitlisted: true)
+                  .where.not(status: ['cancelled_by_teacher', 'cancelled_by_student', 'rejected_by_teacher'])
+                  .order(:joined_at) %>
+                <% if waitlist.any? %>
+                  <h3 class="show mb-2 mt-4">Waitlist</h3>
+                  <% waitlist.each do |booking| %>
+                    <div class="panel d-flex justify-content-between align-items-center mb-2">
+                      <div class="d-flex align-items-center">
+                        <%= link_to user_path(booking.user), class: "d-flex align-items-center text-decoration-none text-dark", data: { turbo_frame: "_top" } do %>
+                          <% if booking.user.photo.present? %>
+                            <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar" %>
+                          <% else %>
+                            <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "avatar" %>
+                          <% end %>
+                          <h6><%= booking.user.name %></h6>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <h3 class="show" style="margin-bottom: 10px">All posts: Temporary picture! </h3>
+          <%= image_tag("posts.jpg", style: "width: 100%; margin-bottom: 10px") %>
+          <div class="d-flex justify-content-center">
+            <%# <% if user_signed_in? %>
+            <%# <% if current_user != @event.user %>
+            <%= link_to new_event_post_path(@event),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
+              <i class="fa-regular fa-square-plus"></i> Add post!
+              <%# <% end %>
+              <%# <% end %>
+            <% end %>
+          </div>
+          <% if @other_upcoming_instances.any? %>
+            <h3 class="show" style="margin-bottom: 10px">
+              <%= @event.user.name.capitalize %>'s other classes:
+            </h3>
+            <div class="col-12 col-md-6 col-lg-6 mx-auto">
+              <div class="card-container mx-auto">
+                <% @other_upcoming_instances.each do |instance| %>
+                  <%= render "shared/event_instances_card", instance: instance, event: instance.event %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <%# </div> %>
+    <%# ---------------booking modal---------------- %>
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <% if user_signed_in? %>
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="bookingModalLabel"> Book <%= @event_instance.event.title.capitalize %> class on <%= @event_instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(@event_instance.event.price) %></strong>?</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -320,209 +482,88 @@ style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cu
                   </div>
                 <% end %>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <% else %>
+              <div class="modal-header">
+                <h1 class="modal-title fs-5">Login Required</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
+              <div class="modal-body text-center">
+                <h4 style="margin-bottom: 8px; margin-top: 23px;">You must be logged in to book the class.</h4>
+                <%= link_to "Log In", new_user_session_path(return_to: request.fullpath), class: "btn btn-card mt-2" %>
+                <div class="d-flex flex-column" style="margin-bottom: 32px;">
+                  <h4 style="margin-top: 23px;">Don't have an account yet?</h4>
+                  <%= link_to "Create a New Account!", new_user_registration_path(return_to: request.fullpath), style: "text-decoration: underline; text-decoration-thickness: 1px, margin-top: 1px; font-weight: 300; color: #292A5A; font-size: 15px;" %>
+                </div>
+              </div>
+            <% end %>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
       </div>
-      <!-- END of Booking Modal -->
-      <!-- Waiting List Modal -->
-      <div class="modal fade" id="waitinglistModal" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
+    </div>
+    <!-------------- END of Booking Modal ------------------------------->
+    <!-- Waiting List Modal -->
+    <div class="modal fade" id="waitinglistModal" tabindex="-1" aria-labelledby="waitinglistModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <% if user_signed_in? %>
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= @event.title.capitalize %></strong> Waitlist</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="d-flex justify-content-between">
               <div class="modal-body">
-                <%= simple_form_for [@event_instance, @new_booking] do |f| %>
+                <%= simple_form_for [@event_instance, Booking.new], url: event_instance_bookings_path(@event_instance), method: :post do |f| %>
                   <div class="col-12">
                     <%= f.submit "Join Waitlist", class: "btn btn-custom my-3", style: "background-color: #8d76a7;" %>
-                  <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="modal-header">
+                <h1 class="modal-title fs-5">Login Required</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center">
+                <h4 style="margin-bottom: 8px; margin-top: 23px;">You must be logged in to book the class.</h4>
+                <%= link_to "Log In", new_user_session_path(return_to: request.fullpath), class: "btn btn-card mt-2" %>
+                <div class="d-flex flex-column" style="margin-bottom: 32px;">
+                  <h4 style="margin-top: 23px;">Don't have an account yet?</h4>
+                  <%= link_to "Create a New Account!", new_user_registration_path(return_to: request.fullpath), style: "text-decoration: underline; text-decoration-thickness: 1px, margin-top: 1px; font-weight: 300; color: #292A5A; font-size: 15px;" %>
                 </div>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              </div>
+            <% end %>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
       </div>
-      <!-- END of Waiting List Modal -->
-      <%# <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;"> %>
-      <div class="mt-1 mb-4">
-        <div class="d-flex flex-column w-100">
-          <div class="mb-1">
-            <div class="d-flex justify-content-between">
-              <% valid_bookings = @bookings.reject{ |b| b.waitlisted || b.status == "cancelled_by_teacher" || b.status == "pending" ||
-                b.status == "cancelled_by_student" || b.status == "rejected_by_teacher" } %>
-              <% if valid_bookings.any? %>
-                <h3 class="show mb-1">Attendees</h3>
-              </div>
-              <% is_creator = current_user == @event_instance.event.user %>
-              <% valid_bookings.sort_by(&:created_at).each do |booking| %>
-                <% if is_creator %>
-                  <turbo-frame id="booking_<%= booking.id %>">
-                    <!-- Creator view with dropdown, payment buttons, etc -->
-                    <div class="d-flex flex-column">
-                      <div class="d-flex justify-content-between align-items-end">
-                        <div class="d-flex align-items-center" style="margin-top: -6px;">
-                          <i class="fa-solid fa-caret-down me-1"></i>
-                          <div class="panel">
-                            <a class="text-decoration-none text-dark" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-                              <h6><%= booking.user.name %></h6>
-                            </a>
-                          </div>
-                          <div class="panel">
-                            <h6>- <%= booking.state %> <%= booking.state == 'paid' ? '✅' : '❌' %></h6>
-                          </div>
-                        </div>
-                        <div>
-                          <%= button_to update_status_booking_path(booking, state: (booking.state == 'paid' ? 'unpaid' : 'paid')), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: #{booking.state == 'paid' ? 'black' : '#9bdaa7'}; color: white; line-height: 1px; height: 20px; border-radius: 4px; width: 127px;" do %>
-                            Mark as <%= booking.state == 'paid' ? 'Unpaid' : 'Paid' %>
-                          <% end %>
-                        </div>
-                      </div>
-                      <!-- Dropdown -->
-                      <div class="collapse mt-2" id="dropdown_<%= booking.id %>">
-                        <div class="p-2">
-                          <div class="panel">
-                            <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
-                              <% if booking.user.photo.present? %>
-                                <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
-                              <% else %>
-                                <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
-                              <% end %>
-                              <h6 class="panel" style="margin-left: 2px;">
-                                view profile</h6>
-                            </div>
-                          <% end %>
-                          <div class="d-flex">
-                            <div class="panel" style="margin-left: 3px;">
-                              <h6><i class="fa-solid fa-envelope"></i></h6>
-                            </div>
-                            <div class="panel" style="margin-left: 6px;">
-                              <h6>  <%= booking.user.email %></h6>
-                            </div>
-                          </div>
-                          <div class="d-flex">
-                            <div class="panel" style="margin-left: 4px;">
-                              <h6><i class="fa-solid fa-mobile-screen-button"></i></h6>
-                            </div>
-                            <div class="panel" style="margin-left: 8px;">
-                              <h6>
-                                <%= booking.user.phone_number %></h6>
-                            </div>
-                          </div>
-                          <div class="panel" style="margin-left: 3px;">
-                            <h6 >Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </turbo-frame>
-                <% else %>
-                  <!-- Attendee (non-creator) view -->
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center">
-                      <%= link_to user_path(booking.user), class: "d-flex align-items-center text-decoration-none text-dark", data: { turbo_frame: "_top" } do %>
-                        <% if booking.user.photo.present? %>
-                          <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar" %>
-                        <% else %>
-                          <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "avatar" %>
-                        <% end %>
-                        <h4 class="mb-0"><%= booking.user.name %></h4>
-                      <% end %>
-                    </div>
-                  </div>
-                <% end %>
-              <% end %>
-            <% end %>
-            <!-- Waitlist Section (after attendees) -->
-            <% waitlist = @event_instance.bookings
-  .where(waitlisted: true)
-  .where.not(status: ['cancelled_by_teacher', 'cancelled_by_student', 'rejected_by_teacher'])
-  .order(:joined_at) %>
-            <% if waitlist.any? %>
-              <h3 class="show mb-2 mt-4">Waitlist</h3>
-              <% waitlist.each do |booking| %>
-                <div class="panel d-flex justify-content-between align-items-center mb-2">
-                  <div class="d-flex align-items-center">
-                    <%= link_to user_path(booking.user), class: "d-flex align-items-center text-decoration-none text-dark", data: { turbo_frame: "_top" } do %>
-                      <% if booking.user.photo.present? %>
-                        <%= cl_image_tag booking.user.photo.key, class: "avatar-attendee-showpage me-1", alt: "avatar" %>
-                      <% else %>
-                        <%= image_tag "default-avatar.png", class: "avatar-attendee-showpage me-1", alt: "avatar" %>
-                      <% end %>
-                      <h6><%= booking.user.name %></h6>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-        <%# <% # Only show 'See all' if there are more bookings than the capacity %>
-        <%# <% if @bookings.count > capacity %>
-        <%# <div class="d-flex justify-content-between"> %>
-        <%# <p class="mt-2">...plus <strong><%= @bookings.count - capacity %>
-        <%# </strong> more</p> %>
-        <%# <a href="#" data-bs-toggle="modal" data-bs-target="#attendeesModal" class="mt-2"><strong>See all</strong></a> %>
-        <%# </div> %>
-        <%# <% end %>
-        <%# END of Iterating through attending users % %>
-        <!-- All Attendees Modal -->
-      </div>
-      <h3 class="show" style="margin-bottom: 10px">All posts: Temporary picture! </h3>
-      <%= image_tag("posts.jpg", style: "width: 100%; margin-bottom: 10px") %>
-      <div class="d-flex justify-content-center">
-        <%# <% if user_signed_in? %>
-        <%# <% if current_user != @event.user %>
-        <%= link_to new_event_post_path(@event),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
-          <i class="fa-regular fa-square-plus"></i> Add post!
-          <%# <% end %>
-          <%# <% end %>
-        <% end %>
-      </div>
-      <% if @other_upcoming_instances.any? %>
-        <h3 class="show" style="margin-bottom: 10px">
-          <%= @event.user.name.capitalize %>'s other classes:
-        </h3>
-        <div class="col-12 col-md-6 col-lg-6 mx-auto">
-          <div class="card-container mx-auto">
-            <% @other_upcoming_instances.each do |instance| %>
-              <%= render "shared/event_instances_card", instance: instance, event: instance.event %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
     </div>
-  </div>
-  <script>
-    function showTemporaryPopover(el) {
-      // Dispose existing
-      const existing = bootstrap.Popover.getInstance(el);
-      if (existing) existing.dispose();
+    <!-- END of Waiting List Modal -->
+    <script>
+      function showTemporaryPopover(el) {
+        // Dispose existing
+        const existing = bootstrap.Popover.getInstance(el);
+        if (existing) existing.dispose();
 
-      const popover = new bootstrap.Popover(el);
-      popover.show();
+        const popover = new bootstrap.Popover(el);
+        popover.show();
 
-      // Wait a bit so the popover gets inserted into DOM
-      setTimeout(() => {
-        const popoverElement = document.querySelector('.popover');
-        if (popoverElement) {
-          popoverElement.classList.add('fade-out');
+        // Wait a bit so the popover gets inserted into DOM
+        setTimeout(() => {
+          const popoverElement = document.querySelector('.popover');
+          if (popoverElement) {
+            popoverElement.classList.add('fade-out');
 
-          // After fade-out completes, dispose the popover
-          setTimeout(() => {
-            const popInstance = bootstrap.Popover.getInstance(el);
-            if (popInstance) popInstance.dispose();
-          }, 800); // matches fade-out duration
-        }
-      }, 1300); // show for 2.5s, then fade out
-    }
-  </script>
-  <%# post %>
+            // After fade-out completes, dispose the popover
+            setTimeout(() => {
+              const popInstance = bootstrap.Popover.getInstance(el);
+              if (popInstance) popInstance.dispose();
+            }, 800); // matches fade-out duration
+          }
+        }, 1300); // show for 2.5s, then fade out
+      }
+    </script>

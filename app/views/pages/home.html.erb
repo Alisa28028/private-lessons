@@ -1,7 +1,7 @@
 <%# ----------BANNER---------- %>
-<div class="container-home">
-  <div class="overlay-text">
-    <% if user_signed_in? %>
+<% if user_signed_in? %>
+  <div class="container-home-signed-in">
+    <div class="overlay-text">
       <h1 class="home" style="margin-top: 10px">Hello <%= current_user.name %>,
       </h1>
       <% if @current_user.bookings.joins(:event_instance).where('DATE(event_instances.start_time) = ?', Date.today).where(waitlisted: false).any? %>
@@ -9,19 +9,35 @@
       <% else %>
         <h3 class="home">You don't have any bookings today.</h3>
       <% end %>
-    <% else %>
-      <%= link_to "Log in", new_user_session_path %>
-    <% end %>
-    <%# <h4 style="font-size: 12px">Manage bookings, share progress, and grow your dance community.</h4> %>
+    </div>
   </div>
-</div>
+<% else %>
+  <div class="container-home">
+    <div class="overlay-text">
+      <div style="margin-bottom: 15px;">
+        <h1 class="home" style="margin-top: -82px">Welcome,
+        </h1>
+        <h3 class="home">Create an account to start booking classes!</h3>
+        <div class="d-flex flex-column">
+          <%= link_to "Create an Account", new_user_registration_path, class: "btn btn-home" %>
+          <div class="d-flex align-items-center" style="margin-bottom: 32px;">
+            <%= link_to new_user_session_path(return_to: request.fullpath) do  %>
+              <h4 style="margin-left: 22px; margin-top: 3px; color: white; text-decoration: underline; text-decoration-thickness: 1px, font-weight: 300; font-size: 14px;">
+                or click here to log in.
+              </h4>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
 <%# ----------END OF BANNER---------- %>
 <div class="mb-4">
 </div>
-<%# <div class="container my-1"> %>
 <%# iterating through some events %>
 <div class="d-flex" style="margin-top: -70px">
-  <div class="col-12 col-md-6 col-lg-6 mx-auto px-3">
+  <div class="col-12 col-md-6 col-lg-6 mx-auto px-4">
     <div class="card-container mx-auto">
       <% @upcoming_event_instances.each do |upcoming_event_instance| %>
         <%= render "shared/event_instances_card", instance: upcoming_event_instance, event: upcoming_event_instance.event %>
@@ -29,4 +45,3 @@
     </div>
   </div>
 </div>
-<%# </div> %>
