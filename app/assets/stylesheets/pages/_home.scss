@@ -43,7 +43,8 @@ body {
   position: absolute;
   color: white;
   top: 55%;
-  margin-left: 20px;
+  margin-left: 26px;
+  z-index: 1;
 
 }
 
@@ -66,9 +67,27 @@ body {
   border-radius: 8px;
 }
 
-.container-home {
+.container-home-signed-in {
   background-color: #3E34A1;
   height: 300px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  width: 100%;
+  position: relative;
+}
+
+.container-home {
+  background-color: #3E34A1;
+  height: 360px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  width: 100%;
+  position: relative;
+}
+
+.container-new {
+  background-color: #3E34A1;
+  // height: 360px;
   border-bottom-left-radius: 14px;
   border-bottom-right-radius: 14px;
   width: 100%;

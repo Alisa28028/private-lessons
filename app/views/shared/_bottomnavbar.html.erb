@@ -1,31 +1,31 @@
-<% if user_signed_in? %>
-  <nav class="pl-nav pl-bottom-nav">
-    <section class="pl-nav-content">
-      <ul class="d-flex justify-content-around w-100" style="padding-left: 0rem;">
-        <li class="pl-nav-item text-center <%= 'active' if current_page?(root_path) %>">
-          <%= link_to "/", class: "d-flex flex-column align-items-center" do %>
-            <div class="d-flex flex-column">
-              <i class="fa-solid fa-house fa-lg pl-icon"></i>
-              <div class="pl-icon-text" style="font-size: 12px;">Home</div>
-            </div>
-          <% end %>
-        </li>
-        <li class="pl-nav-item text-center fa- lg pl-icon <%= 'active' if current_page?(search_path) %>">
-          <%= link_to search_path, class: "d-flex flex-column align-items-center" do %>
-            <div class="d-flex flex-column" style="margin-bottom: 3px;">
-              <i class="fa-solid fa-magnifying-glass fa-lg pl-icon" style="margin-top: 3px !important;"></i>
-              <div class="pl-icon-text" style="font-size: 12px;">Search</div>
-            </div>
-          <% end %>
-        </li>
-        <li class="pl-nav-item text-center <%= 'active' if current_page?(new_event_path) %>">
-          <%= link_to new_event_path, class: "d-flex flex-column align-items-center" do %>
-            <div class="d-flex flex-column">
-              <i class="fa-solid fa-square-plus fa-lg pl-icon" style="font-size: 23px"></i>
-              <div class="pl-icon-text" style="font-size: 12px;">Create class</div>
-            </div>
-          <% end %>
-        </li>
+<nav class="pl-nav pl-bottom-nav">
+  <section class="pl-nav-content">
+    <ul class="d-flex justify-content-around w-100" style="padding-left: 0rem;">
+      <li class="pl-nav-item text-center <%= 'active' if current_page?(root_path) %>">
+        <%= link_to "/", class: "d-flex flex-column align-items-center" do %>
+          <div class="d-flex flex-column">
+            <i class="fa-solid fa-house fa-lg pl-icon"></i>
+            <div class="pl-icon-text" style="font-size: 12px;">Home</div>
+          </div>
+        <% end %>
+      </li>
+      <li class="pl-nav-item text-center fa- lg pl-icon <%= 'active' if current_page?(search_path) %>">
+        <%= link_to search_path, class: "d-flex flex-column align-items-center" do %>
+          <div class="d-flex flex-column" style="margin-bottom: 3px;">
+            <i class="fa-solid fa-magnifying-glass fa-lg pl-icon" style="margin-top: 3px !important;"></i>
+            <div class="pl-icon-text" style="font-size: 12px;">Search</div>
+          </div>
+        <% end %>
+      </li>
+      <li class="pl-nav-item text-center <%= 'active' if current_page?(new_event_path) %>">
+        <%= link_to new_event_path, class: "d-flex flex-column align-items-center" do %>
+          <div class="d-flex flex-column">
+            <i class="fa-solid fa-square-plus fa-lg pl-icon" style="font-size: 23px"></i>
+            <div class="pl-icon-text" style="font-size: 12px;">Create class</div>
+          </div>
+        <% end %>
+      </li>
+      <% if user_signed_in? %>
         <li class="pl-nav-item text-center ms-1 <%= 'active' if current_page?(dashboard_path(current_user)) %>">
           <%= link_to dashboard_path(current_user), class: "d-flex flex-column align-items-center" do %>
             <div class="d-flex flex-column">
@@ -53,7 +53,17 @@
             <%= link_to "Log Out", destroy_user_session_path, data: { turbo_method: :delete } %>
           </div>
         </li>
-      </ul>
-    </section>
-  </nav>
-<% end %>
+      <% else %>
+        <li class="pl-nav-item text-center ms-1">
+          <%= link_to new_user_session_path, class: "d-flex flex-column align-items-center", title: "Log in or Sign up" do %>
+            <div class="d-flex flex-column align-items-center" style="border: 1px solid #AFB3CC; border-radius: 10px; padding-right: 8px; padding-left: 8px;">
+              <%# <i class="fa-solid fa-user-plus fa-lg pl-icon" style="font-size: 23px;"></i> %>
+              <div class="pl-icon-text" style="font-size: 12px; margin-top: 3px; margin-bottom: -5px; font-family: 'Inter';">Log in or</div>
+              <div class="pl-icon-text" style="font-size: 12px; margin-bottom: 3px; font-family: 'Inter';">sign up</div>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+</nav>

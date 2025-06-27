@@ -17,16 +17,17 @@
   </head>
   <body data-controller="sidebar">
     <%# <%= render "shared/navbar" %>
-    <header class="header-overlay d-flex justify-content-start mt-3">
+    <header class="header-overlay d-flex justify-content-between mt-3 pb-2">
       <!-- Logo always shown -->
       <div class="logo">
         <%= link_to root_path do %>
           <%= image_tag "PL_logo.png", class: "pl-logo" %>
-        <% end %>      </div>
+        <% end %>
+      </div>
       <!-- Hamburger only for not-logged-in users -->
       <% unless user_signed_in? %>
         <div class="hamburger">
-          <i class="fa-solid fa-bars fa-xl" data-action="click->menu#toggle"></i>
+          <i class="fa-solid fa-bars fa-xl text-white" data-action="click->menu#toggle"></i>
         </div>
       <% end %>
     </header>

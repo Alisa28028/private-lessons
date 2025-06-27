@@ -1,8 +1,8 @@
 class PagesController < ApplicationController
-  skip_before_action :authenticate_user!
+  skip_before_action :authenticate_user!, only: [:home]
 
   def home
-    return redirect_to new_user_session_path unless current_user
+    # return redirect_to new_user_session_path unless current_user
 
     @event_instances = EventInstance.all.order(start_time: :asc) # Ensure all instances are fetched
 

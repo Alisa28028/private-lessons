@@ -1,10 +1,4 @@
 <nav class="pl-nav pl-top-nav">
-  <%= link_to "#" do %>
-    <div class="logo-container">
-      <%= image_tag "PL_logo.png", class: "pl-logo" %>
-      <p class="logo-text">PRIVATE LESSONS</p>
-    </div>
-  <% end %>
   <% if user_signed_in? %>
     <section class="pl-nav-content">
       <ul class="me-3">
@@ -50,7 +44,17 @@
       </ul>
     </section>
   <% else %>
-    <%= link_to "Sign up", new_user_registration_path, class: "pl-nav-item pl-btn-login" %>
-    <%= link_to "Login", new_user_session_path, class: "pl-nav-item pl-btn-login" %>
+    <header class="header-overlay d-flex justify-content-between mt-3 pb-2">
+      <div class="logo">
+        <%= link_to root_path do %>
+          <%= image_tag "PL_logo.png", class: "pl-logo" %>
+        <% end %>
+      </div>
+      <% unless user_signed_in? %>
+        <div class="hamburger">
+          <i class="fa-solid fa-bars fa-xl text-white %>" data-action="click->menu#toggle"></i>
+        </div>
+      <% end %>
+    </header>
   <% end %>
 </nav>

@@ -1,28 +1,28 @@
-.pl-nav-signup {
-  color: white;
-  background-color: black;
-}
+// .pl-nav-signup {
+//   color: white;
+//   background-color: black;
+// }
 
 .pl-nav {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  position: fixed;
-  background-color: $pl-main;
-  box-sizing: border-box;
-  z-index: 1;
+  // display: flex;
+  // align-items: center;
+  // width: 100%;
+  // position: fixed;
+  // background-color: $pl-main;
+  // box-sizing: border-box;
+  // z-index: 1;
 }
 
 .pl-top-nav {
-  position: fixed;
-  width: 100%;
-  padding-left: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 64px;
-  top: 0;
-  box-sizing: border-box;
+  // position: fixed;
+  // width: 100%;
+  // padding-left: 10px;
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
+  // height: 64px;
+  // top: 0;
+  // box-sizing: border-box;
 
   .pl-nav-item {
     display: flex;
@@ -131,6 +131,7 @@
 
 .pl-icon-text {
   color: #AFB3CC !important;
+  font-family: 'Inter';
 }
 
 .pl-nav-item.active .pl-icon,
@@ -270,7 +271,7 @@
     justify-content: space-between;
 
     .pl-logo {
-      height: 30px;
+      height: 36px;
     }
 
     .pl-nav-content {
