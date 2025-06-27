@@ -1,4 +1,4 @@
-<div class="container px-2 mt-6 mb-4">
+<div class="container px-2 mt-6">
   <div class="row tight-row mt-2">
     <% if user_signed_in? %>
       <div class="d-flex justify-content-start align-items-baseline">
@@ -195,13 +195,13 @@
             <% if @event_instance.effective_capacity - @event_instance.bookings.where(status: "confirmed").count <= 0 %>
               <div class="col-12 px-0">
                 <button type="button" style="background-color: #3E34A1;"
-            class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
+            class="btn btn-card w-100 mt-4" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
                   Join Waitlist!
                 </button>
               </div>
             <% else %>
               <div class="col-12 px-0">
-                <button type="button" class="btn btn-card ml-2 mb-1 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                <button type="button" class="btn btn-card ml-2 mt-4 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
                   Book class!
                 </button>
               </div>
