@@ -4,7 +4,7 @@
       <h1 class="home" style="margin-top: -82px">Sign in
       </h1>
       <%= link_to new_user_registration_path(return_to: request.fullpath) do  %>
-        <h3 class="home" style="margin-top: 3px; color: white; text-decoration: underline; text-decoration-thickness: 1px, font-weight: 300; font-size: 15px;">
+        <h3 class="home" style="margin-top: 3px; color: white; text-decoration: underline; text-decoration-thickness: 0.5px; font-weight: 300; font-size: 15px;">
           Or create an account!</h3>
       <% end %>
     </div>
@@ -12,8 +12,8 @@
 </div>
 <div class="d-flex flex-column" style="position: relative; margin-top: -128px;">
   <div class="d-flex mx-4" style="background-color: white; border-radius: 10px;">
-    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-      <div class="form-inputs" style="width: 121%; margin-left: 27px; margin-top: 33px; font-family: 'Inter';">
+    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "w-100 mx-4" }) do |f| %>
+      <div class="form-inputs w-100" style="margin-top: 33px; font-family: 'Inter';">
         <%= f.input :email,
                 required: false,
                 autofocus: true,
@@ -31,7 +31,7 @@
       </div>
       <div class="form-actions" style="margin-top: 20px;">
         <%= f.button :submit, "Log in", class: "btn btn-login" %>
-        <div style="margin-left: 30px; margin-bottom: 26px; font-family: 'Inter'; text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: #969598;">
+        <div style="margin-bottom: 26px; font-family: 'Inter'; text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: #969598;">
           <%= render "devise/shared/links" %>
         </div>
       <% end %>
