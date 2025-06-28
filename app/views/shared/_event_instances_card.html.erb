@@ -8,7 +8,7 @@
         <!-- EVENT TITLE -->
         <div class="d-flex justify-content-start align-items-baseline mb-2">
           <h3><%= instance.event.title.titleize %></h3>
-          <% if instance.event.approval_mode == "manual" %>
+          <% if instance.approval_mode == "manual" %>
             <i
               class="fa-solid fa-circle-exclamation"
               style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cursor: pointer; position: relative; top: -1px;"
@@ -195,7 +195,7 @@
         <div class="d-flex flex-column justify-content-between">
           <div class="d-flex flex-row justify-content-between">
             <!-- EVENT TITLE -->
-            <h3><%= instance.event.title.capitalize %></h3>
+            <h3><%= instance.event.title.titleize %></h3>
             <div class="d-flex gap-2">
               <i class="fa-solid fa-person text-custom fa-sm mt-2"></i>
               <p class="attendee-number fs-6">
