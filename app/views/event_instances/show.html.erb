@@ -2,18 +2,20 @@
   <div class="row tight-row mt-2">
     <% if user_signed_in? %>
       <div class="d-flex flex-column justify-content-start align-items-baseline">
-        <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
-        <% if @event_instance.event.approval_mode == "manual" %>
-          <%# <h4 style="margin-left: 3px;">approval required</h4> %>
-          <i
+        <div class="d-flex flex-row">
+          <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+          <% if @event_instance.approval_mode == "manual" %>
+            <%# <h4 style="margin-left: 3px;">approval required</h4> %>
+            <i
           class="fa-solid fa-circle-exclamation"
-          style="color: #3E34A1; margin-left: 5px; margin-bottom: 2px; font-size: 16px; cursor: pointer; position: relative; top: -1px;"
+          style="color: #3E34A1; margin-left: 5px; font-size: 16px; cursor: pointer; position: relative; top: 6px;"
           data-bs-toggle="popover"
           data-bs-placement="top"
           data-bs-content="Teacher approval required"
           onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
         ></i>
-        <% end %>
+          <% end %>
+        </div>
       </div>
       <% if current_user == @event.user %>
         <div class="d-flex justify-content-between mt-2">
@@ -186,7 +188,19 @@
           <% end %>
         <% else %>
           <div class="d-flex flex-column justify-content-start align-items-baseline">
-            <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+            <div class="d-flex flex-row">
+              <h2 class="show"><%= @event_instance.event.title.titleize %></h2>
+              <% if @event_instance.approval_mode == "manual" %>
+                <i
+              class="fa-solid fa-circle-exclamation"
+              style="color: #3E34A1; margin-left: 5px; font-size: 16px; cursor: pointer; position: relative; top: 6px;"
+              data-bs-toggle="popover"
+              data-bs-placement="top"
+              data-bs-content="Teacher approval required"
+              onclick="event.stopPropagation(); event.preventDefault(); showTemporaryPopover(this);"
+            ></i>
+              <% end %>
+            </div>
             <div class="d-flex justify-content-between" style="margin-bottom: 5px;">
               <div class="d-flex align-items-center gap-2">
                 <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
