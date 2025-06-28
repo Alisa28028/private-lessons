@@ -77,12 +77,18 @@
             (<%= friendly_time_zone_name(time_zone.name) %>)
           </h4>
         </div>
-        <% if @event_instance.likes.exists?(user: current_user) %>
-          <%= button_to event_instance_like_path(@event_instance), method: :delete, class: "btn p-0 border-0 bg-transparent" do %>
-            <i class="fa-solid fa-heart" style="color: #3E34A1; font-size: 21px;"></i>
+        <% if user_signed_in? %>
+          <% if @event_instance.likes.exists?(user: current_user) %>
+            <%= button_to event_instance_like_path(@event_instance), method: :delete, class: "btn p-0 border-0 bg-transparent" do %>
+              <i class="fa-solid fa-heart" style="color: #3E34A1; font-size: 21px;"></i>
+            <% end %>
+          <% else %>
+            <%= button_to event_instance_like_path(@event_instance), method: :post, class: "btn p-0 border-0 bg-transparent" do %>
+              <i class="fa-regular fa-heart" style="color: #3E34A1; font-size: 21px;"></i>
+            <% end %>
           <% end %>
         <% else %>
-          <%= button_to event_instance_like_path(@event_instance), method: :post, class: "btn p-0 border-0 bg-transparent" do %>
+          <%= link_to new_user_session_path(return_to: request.fullpath), class: "btn p-0 border-0 bg-transparent" do %>
             <i class="fa-regular fa-heart" style="color: #3E34A1; font-size: 21px;"></i>
           <% end %>
         <% end %>

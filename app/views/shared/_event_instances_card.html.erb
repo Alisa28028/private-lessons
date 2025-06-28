@@ -20,13 +20,15 @@
           <% end %>
         </div>
         <turbo-frame id="like_<%= instance.id %>">
-          <% if instance.likes.exists?(user: current_user) %>
-            <%= button_to event_instance_like_path(instance), method: :delete, class: "btn p-0 border-0 bg-transparent z-1000", form: { data: { turbo_frame: "like_#{instance.id}" } }, onclick: "event.stopPropagation()" do %>
-              <i class="fa-solid fa-heart" style="color: #3E34A1; margin-top: 5px; font-size: 20px;"></i>
-            <% end %>
-          <% else %>
-            <%= button_to event_instance_like_path(instance), method: :post, class: "btn p-0 border-0 bg-transparent z-1000", form: { data: { turbo_frame: "like_#{instance.id}" } }, onclick: "event.stopPropagation()" do %>
-              <i class="fa-regular fa-heart z-10" style="color: #3E34A1; margin-top: 5px; font-size: 20px;"></i>
+          <% if user_signed_in? %>
+            <% if instance.likes.exists?(user: current_user) %>
+              <%= button_to event_instance_like_path(instance), method: :delete, class: "btn p-0 border-0 bg-transparent z-1000", form: { data: { turbo_frame: "like_#{instance.id}" } }, onclick: "event.stopPropagation()" do %>
+                <i class="fa-solid fa-heart" style="color: #3E34A1; margin-top: 5px; font-size: 20px;"></i>
+              <% end %>
+            <% else %>
+              <%= button_to event_instance_like_path(instance), method: :post, class: "btn p-0 border-0 bg-transparent z-1000", form: { data: { turbo_frame: "like_#{instance.id}" } }, onclick: "event.stopPropagation()" do %>
+                <i class="fa-regular fa-heart z-10" style="color: #3E34A1; margin-top: 5px; font-size: 20px;"></i>
+              <% end %>
             <% end %>
           <% end %>
           <%# <turbo-frame id="like_<%= instance.id %>
