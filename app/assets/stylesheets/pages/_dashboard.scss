@@ -1,0 +1,16 @@
+.container-dashboard {
+  background-color: #3E34A1;
+  height: 300px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  width: 100%;
+  position: relative;
+}
+
+.overlay-text {
+  position: absolute;
+  color: white;
+  top: 55%;
+  margin-left: 26px;
+  z-index: 1;
+}

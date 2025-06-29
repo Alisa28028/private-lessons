@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  get '/dashboard', to: 'dashboards#show'
+  get '/select_dashboard_preference', to: 'dashboards#select_preference'
+  patch '/update_dashboard_preference', to: 'dashboards#update_preference'
+
+
   devise_for :users, controllers: { registrations: "users/registrations" }
   root to: "pages#home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -73,8 +78,8 @@ Rails.application.routes.draw do
       end
   end
 
-  # Dashboard route for users
-  get "/dashboard", to: "users#dashboard", as: :dashboard
+  # # Dashboard route for users
+  # get "/dashboard", to: "users#dashboard", as: :dashboard
 
   # Search route for events
   get "/search", to: "events#search", as: :search
