@@ -1,0 +1,18 @@
+<% if user_signed_in? %>
+  <div class="container-home-signed-in">
+    <div class="overlay-text">
+      <h1 class="home" style="margin-top: 10px">Hello <%= current_user.name %>, Are you primarily a...
+      </h1>
+      <%= form_with url: update_dashboard_preference_path, method: :patch do %>
+        <div class="mb-3">
+          <%= button_tag type: "submit", name: "dashboard_preference", value: "student", class: "btn btn-primary" do %>
+            Student
+          <% end %>
+          <%= button_tag type: "submit", name: "dashboard_preference", value: "teacher", class: "btn btn-secondary" do %>
+            Teacher
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

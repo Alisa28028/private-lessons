@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="toggle"
 export default class extends Controller {
   static targets = ["checkbox", "label", "description", "section"]
+  static values = { teacherUrl: String, studentUrl: String }
 
   updateLabel() {
     const checked = this.checkboxTarget.checked
@@ -28,5 +29,16 @@ export default class extends Controller {
     if (this.hasSectionTarget) {
       this.sectionTarget.style.display = checked ? "none" : "block"
     }
+  }
+
+  switchView() {
+    const isTeacher = this.checkboxTarget.checked
+    const newLabel = isTeacher ? "TEACHER" : "STUDENT"
+    this.labelTarget.textContent = newLabel
+    this.labelTarget.classList.toggle("switch-label--yes", isTeacher)
+    this.labelTarget.classList.toggle("switch-label--no", !isTeacher)
+
+    const url = isTeacher ? this.teacherUrlValue : this.studentUrlValue
+    Turbo.visit(url)
   }
 }
