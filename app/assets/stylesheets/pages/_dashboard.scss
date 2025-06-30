@@ -1,6 +1,6 @@
 .container-dashboard-top {
   background-color: #3E34A1;
-  height: 300px;
+  height: 450px;
   border-bottom-left-radius: 14px;
   border-bottom-right-radius: 14px;
   width: 100%;
@@ -9,11 +9,21 @@
 
 .container-dashboard-stats {
   background-color: #292A5A;
-  height: 150px;
+  height: 105px;
   border-radius: 14px;
   width: 100%;
   position: relative;
-  margin-top: -40px;
+  margin-top: -215px;
+  color: white;
+}
+
+.container-dashboard-earnings {
+  background-color: #292A5A;
+  height: 105px;
+  border-radius: 14px;
+  width: 100%;
+  position: relative;
+  margin-top: -106px;
   color: white;
 }
 
@@ -23,17 +33,84 @@
   font-size: 15px;
 }
 
-.dashboard-h1 {
+.dashboard-h4 {
+  color: white;
+  font-family: 'Inter';
+  font-size: 16px;
+  font-weight: 200;
+  margin-left: 0px;
+}
+
+.dashboard-h2 {
   color: white;
   font-family: 'Inter';
   font-size: 21px;
   font-weight: 500;
 }
 
+.dashboard-numbers {
+  color: white;
+  font-family: 'Inter';
+  font-size: 40px;
+  font-weight: 500;
+  margin-top: -9px;
+}
+
 .overlay-text {
   position: absolute;
   color: white;
-  top: 55%;
+  top: 29%;
   margin-left: 26px;
   z-index: 1;
+}
+
+.btn-switch-dashboard {
+
+  position: relative;
+  margin-top: 75px;
+  z-index: 1;
+  margin-left: 24px;
+  background-color: #4A4459;
+  color: white;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  padding-left: 7px;
+  padding-right: 0px;
+  display: inline-block;
+  border-radius: 14px;
+  width: 52%;
+  text-align: center;
+  margin-bottom: 2px;
+  font-family: 'Inter';
+
+}
+
+.custom-toggle {
+  width: 46px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 34px;
+  position: relative;
+  appearance: none;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.custom-toggle::before {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 9px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.custom-toggle:checked {
+  background-color: #292A5A !important; // your brand color
+}
+
+.custom-toggle:checked::before {
+  transform: translateX(22px);
 }
