@@ -3,13 +3,17 @@ class DashboardsController < ApplicationController
   before_action :ensure_dashboard_preference
 
   def show
-    case current_user.dashboard_preference
+    view = params[:view] || current_user.dashboard_preference
+
+    case view
     when 'teacher'
       set_teacher_dashboard_data
       render 'dashboards/teacher'
     when 'student'
       set_student_dashboard_data
       render 'dashboards/student'
+    else
+      redirect_to select_dashboard_preference_path
     end
   end
 
@@ -17,7 +21,7 @@ class DashboardsController < ApplicationController
     # Renders selection form
   end
 
-  def update_preference
+  def update_dashboard_preference
     if %w[teacher student].include?(params[:dashboard_preference])
       current_user.update(dashboard_preference: params[:dashboard_preference])
       redirect_to dashboard_path
@@ -32,6 +36,10 @@ class DashboardsController < ApplicationController
     return if current_user.dashboard_preference.present?
 
     redirect_to select_dashboard_preference_path
+  end
+
+  def set_student_dashboard_data
+
   end
 
   def set_teacher_dashboard_data

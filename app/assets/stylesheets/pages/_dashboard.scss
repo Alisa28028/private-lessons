@@ -1,10 +1,33 @@
-.container-dashboard {
+.container-dashboard-top {
   background-color: #3E34A1;
   height: 300px;
   border-bottom-left-radius: 14px;
   border-bottom-right-radius: 14px;
   width: 100%;
   position: relative;
+}
+
+.container-dashboard-stats {
+  background-color: #292A5A;
+  height: 150px;
+  border-radius: 14px;
+  width: 100%;
+  position: relative;
+  margin-top: -40px;
+  color: white;
+}
+
+.dashboard-h3 {
+  color: white;
+  font-family: 'Inter';
+  font-size: 15px;
+}
+
+.dashboard-h1 {
+  color: white;
+  font-family: 'Inter';
+  font-size: 21px;
+  font-weight: 500;
 }
 
 .overlay-text {
