@@ -1,6 +1,6 @@
 class DashboardsController < ApplicationController
   before_action :authenticate_user!
-  before_action :ensure_dashboard_preference
+  # before_action :ensure_dashboard_preference
 
   def show
     view = params[:view] || current_user.dashboard_preference
