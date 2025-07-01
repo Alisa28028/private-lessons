@@ -17,26 +17,41 @@ class DashboardsController < ApplicationController
     end
   end
 
-  def select_preference
+  def select_dashboard_preference
     # Renders selection form
   end
 
   def update_dashboard_preference
-    if %w[teacher student].include?(params[:dashboard_preference])
-      current_user.update(dashboard_preference: params[:dashboard_preference])
-      redirect_to dashboard_path
+    if current_user.update(dashboard_preference_params)
+      redirect_to dashboard_path(view: current_user.dashboard_preference)
     else
-      redirect_to select_dashboard_preference_path, alert: "Please choose a valid option."
+      flash[:alert] = "Could not save preference"
+      render :select_dashboard_preference
     end
   end
 
+
+
+
   private
 
-  def ensure_dashboard_preference
-    return if current_user.dashboard_preference.present?
-
-    redirect_to select_dashboard_preference_path
+  def dashboard_preference_params
+    params.require(:user).permit(:dashboard_preference)
   end
+
+  def ensure_dashboard_preference
+    Rails.logger.debug "Running ensure_dashboard_preference before_action on #{action_name}"
+    if current_user.dashboard_preference.blank?
+      if action_name.in?(%w[select_dashboard_preference update_dashboard_preference])
+        Rails.logger.debug "User missing preference but on allowed action #{action_name}, no redirect"
+      else
+        Rails.logger.debug "User missing preference, redirecting to select_dashboard_preference"
+        redirect_to select_dashboard_preference_path
+      end
+    end
+  end
+
+
 
   def set_student_dashboard_data
 
