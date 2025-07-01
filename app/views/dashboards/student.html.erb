@@ -1,8 +1,20 @@
-<div class="d-flex justify-content-between mt-4 mb-2">
-  <div class="overlay-text">
-    <%= link_to "Switch to Teacher Dashboard", dashboard_path(view: "teacher"), class: "btn btn-secondary" %>
-    <p class="d-flex justify-content-center fs-3 text-dark"><strong>My Student Dashboard</strong></p>
-    <div class="column mx-3">
+<div class="container-dashboard-top">
+  <div class="row">
+    <div class="col-12">
+      <%# <% if current_user.events.any? || current_user.bookings.any? %>
+      <div class="d-flex justify-content-between mt-4 mb-2">
+        <%= link_to dashboard_path(view: "teacher"), class: "btn btn-switch-dashboard" do %>
+          Teacher Dashboard <i class="fa-solid fa-circle-right me-2"></i>
+        <% end %>
+        <div class="overlay-text">
+          <h1 class="d-flex justify-content-center dashboard-h2 mt-6">My Student Dashboard</h1>
+          <h2 class="dashboard-h4 mb-0"> Quick Stats</h2>
+        </div>
+        <div class="d-flex mx-3">
+        </div>
+      </div>
     </div>
   </div>
 </div>
+</div>
+<div data-controller="calendar" class="p-4"></div>

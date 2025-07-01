@@ -157,6 +157,25 @@ class BookingsController < ApplicationController
     redirect_to event_instance_path(@booking.event_instance)
   end
 
+  def index
+    @bookings = current_user.bookings.includes(event_instance: { event: :user })
+
+    respond_to do |format|
+      format.html # optional
+      format.json do
+        render json: @bookings.map { |b|
+          teacher = b.event_instance.event.user
+          teacher_photo_key = teacher&.photo&.key
+
+          {
+            title: b.event_instance.event.title,
+            start: b.event_instance.start_time,
+            teacher_avatar: teacher.photo.attached? ? url_for(teacher.photo) : nil
+          }
+        }
+      end
+    end
+  end
 
   def approve
     booking = Booking.find(params[:id])

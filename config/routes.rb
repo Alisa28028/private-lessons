@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       post :add_video
     end
 
-    resources :bookings, only: [:create]
+    resources :bookings, only: [:create, :index]
     #  Nested posts for events, including edit and update
     resources :posts, only: [:new, :create, :edit, :update, :index, :show] do
       collection do
