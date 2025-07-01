@@ -440,14 +440,28 @@
   <%# Iterating through teaching events %>
   <div class="container p-0">
   </div>
+  <div class="container mb-5">
+    <div class="row mx-0 mt-3">
+      <% if @upcoming_event_instances_created.any? %>
+        <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">My Upcoming Classes</h4>
+        <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
+          <div class="card-container mx-auto">
+            <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances_created %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
   <div class="container">
     <div class="row mx-0 mt-3">
-      <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">My Upcoming classes</h4>
-      <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
-        <div class="card-container mx-auto">
-          <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances_created %>
+      <% if @past_event_instances_created.any? %>
+        <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">My Past Classes</h4>
+        <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
+          <div class="card-container mx-auto">
+            <%= render "shared/event_card_iteration", event_instances: @past_event_instances_created %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </div>
   </div>
   <%# <% else %>

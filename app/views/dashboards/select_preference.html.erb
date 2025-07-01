@@ -3,14 +3,10 @@
     <div class="overlay-text">
       <h1 class="home" style="margin-top: 10px">Hello <%= current_user.name %>, Are you primarily a...
       </h1>
-      <%= form_with url: update_dashboard_preference_path, method: :patch,  data: { turbo: false } do %>
+      <%= form_with url: update_dashboard_preference_path, method: :patch, data: { turbo: false } do |f| %>
         <div class="mb-3">
-          <%= button_tag type: "submit", name: "dashboard_preference", value: "student", class: "btn btn-primary" do %>
-            Student
-          <% end %>
-          <%= button_tag type: "submit", name: "dashboard_preference", value: "teacher", class: "btn btn-secondary" do %>
-            Teacher
-          <% end %>
+          <%= f.submit "Student", name: "user[dashboard_preference]", value: "student", class: "btn btn-primary" %>
+          <%= f.submit "Teacher", name: "user[dashboard_preference]", value: "teacher", class: "btn btn-secondary" %>
         </div>
       <% end %>
     </div>
