@@ -88,3 +88,46 @@ header {
   background-color: #3E34A1 !important;
   border: 1px solid #3E34A1 !important;
 }
+
+.fc-toolbar-title {
+  font-size: 20px !important;
+  margin-top: 2px;
+}
+
+.fc {
+  position: relative;
+  margin-top: -228px;
+  background-color: white;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding: 0.25rem !important;
+  border-radius: 5px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.fc-col-header-cell-cushion {
+  color: #494a7c !important;
+  font-family: 'Inter';
+  font-weight: 500;
+
+}
+
+.fc .fc-button-primary:disabled {
+  background-color: #3E34A1;
+}
+
+.fc .fc-button-primary {
+  background-color: #3E34A1 !important;
+  font-size: 13px;
+  font-family: 'Inter';
+}
+
+
+.fc .fc-toolbar.fc-header-toolbar {
+  padding: 4px;
+}
+
+.fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {
+  margin-left: 23px;
+  margin-right: 0px;
+}

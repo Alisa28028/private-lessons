@@ -12,6 +12,8 @@ export default class extends Controller {
       eventDidMount: function(info) {
         const avatarUrl = info.event.extendedProps.teacher_avatar
         const title = info.event.title
+        const waitlisted = info.event.extendedProps.waitlisted
+
 
         const start = new Date(info.event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
         const end = info.event.end
@@ -31,6 +33,10 @@ export default class extends Controller {
           img.style.marginRight = "5px"
           img.style.verticalAlign = "middle"
           img.style.cursor = "pointer"
+
+          if (waitlisted) {
+            img.style.opacity = "0.4"
+          }
 
           img.addEventListener("click", (e) => {
             e.stopPropagation()
@@ -55,10 +61,12 @@ export default class extends Controller {
             popover.style.fontSize = "13px"
 
             popover.innerHTML = `
-              <strong>${title}</strong><br>
+              <strong>${title} ${waitlisted ? "<small style='color: #9747FF; font-weight: bold;'>(waitlisted)</small>" : ""}</strong><br>
               <small><i class="fa-regular fa-clock fa-sm text-custom"></i> ${timeRange}</small><br>
               <small><i class="fa-solid fa-location-dot fa-md text-custom"></i> ${location}</small>
-            `
+
+              `
+
 
             document.body.appendChild(popover)
 

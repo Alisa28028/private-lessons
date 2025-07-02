@@ -8,7 +8,7 @@
         <% end %>
         <div class="overlay-text">
           <h1 class="d-flex justify-content-center dashboard-h2 mt-6">My Student Dashboard</h1>
-          <h2 class="dashboard-h4 mb-0"> Quick Stats</h2>
+          <%# <h2 class="dashboard-h4 mb-0"> My Calendar</h2> %>
         </div>
         <div class="d-flex mx-3">
         </div>
@@ -18,3 +18,15 @@
 </div>
 </div>
 <div data-controller="calendar" class="p-4"></div>
+<div class="container mt-6 mb-5">
+  <div class="row mx-0 mt-3">
+    <% if @upcoming_event_instances.any? %>
+      <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">My Upcoming Classes</h4>
+      <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
+        <div class="card-container mx-auto">
+          <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
