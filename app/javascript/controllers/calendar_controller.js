@@ -13,6 +13,7 @@ export default class extends Controller {
         const avatarUrl = info.event.extendedProps.teacher_avatar
         const title = info.event.title
         const waitlisted = info.event.extendedProps.waitlisted
+        const status = info.event.extendedProps.status
 
 
         const start = new Date(info.event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -34,7 +35,7 @@ export default class extends Controller {
           img.style.verticalAlign = "middle"
           img.style.cursor = "pointer"
 
-          if (waitlisted) {
+          if (waitlisted || status === "pending") {
             img.style.opacity = "0.4"
           }
 
@@ -60,12 +61,19 @@ export default class extends Controller {
             popover.style.lineHeight = 1.5
             popover.style.fontSize = "13px"
 
+            let statusLabel = ""
+            if (status === "pending" && !waitlisted) {
+              statusLabel = `<div style="color: #9747FF; font-weight: bold;">Pending approval</div>`
+            } else if (waitlisted) {
+              statusLabel = `<div style="color: #9747FF; font-weight: bold;">Waitlisted</div>`
+            }
+
             popover.innerHTML = `
-              <strong>${title} ${waitlisted ? "<small style='color: #9747FF; font-weight: bold;'>(waitlisted)</small>" : ""}</strong><br>
+              <strong>${title}</strong><br>
+              ${statusLabel}
               <small><i class="fa-regular fa-clock fa-sm text-custom"></i> ${timeRange}</small><br>
               <small><i class="fa-solid fa-location-dot fa-md text-custom"></i> ${location}</small>
-
-              `
+            `
 
 
             document.body.appendChild(popover)
