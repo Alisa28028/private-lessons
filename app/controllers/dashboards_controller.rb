@@ -54,6 +54,31 @@ class DashboardsController < ApplicationController
 
 
   def set_student_dashboard_data
+    require 'time'
+
+    @bookings = current_user.bookings
+    @event_instances = EventInstance.joins(:event).where(events: { user_id: current_user.id }).includes(:bookings => :user)
+
+
+    # Ensure @events is an ActiveRecord relation
+    @events = current_user.events.presence || Event.none
+
+    # Fetch upcoming event instances
+    @upcoming_event_instances = EventInstance
+      .left_joins(:event)
+      .where('event_instances.start_time > ? AND event_instances.id IN (?)',
+             Time.now,
+              @bookings.where.not(status: ["cancelled_by_teacher", "cancelled_by_student", "rejected_by_teacher"])
+              .pluck(:event_instance_id))
+      .order(start_time: :asc)
+
+    # Fetch past event instances
+    @past_event_instances = EventInstance
+      .left_joins(:event)
+      .where('event_instances.start_time <= ? AND (events.user_id = ? OR event_instances.id IN (?))',
+             Time.now, current_user.id, @bookings.pluck(:event_instance_id))
+      .order(start_time: :desc)
+
 
   end
 

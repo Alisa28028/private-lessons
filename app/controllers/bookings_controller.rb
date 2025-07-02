@@ -157,6 +157,29 @@ class BookingsController < ApplicationController
     redirect_to event_instance_path(@booking.event_instance)
   end
 
+  def index
+    @bookings = current_user.bookings
+    .where(status: [:pending, :confirmed])
+    .includes(event_instance: { event: :user })
+
+    render json: @bookings.map { |b|
+      teacher = b.event_instance.event.user
+
+      {
+        title: b.event_instance.event.title || "No title",
+        start: b.event_instance.start_time,
+        end: b.event_instance.end_time,
+        location: b.event_instance.location.name || b.event_instance.event.location.name ,
+        teacher_avatar: teacher.photo.attached? ? url_for(teacher.photo) : nil,
+        waitlisted: b.waitlisted,
+        time_html: '<i class="fa-regular fa-clock fa-sm text-custom"></i> ' +
+        "#{b.event_instance.start_time.strftime('%H:%M')} ~ #{b.event_instance.end_time.strftime('%H:%M')}",
+        location_html: '<i class="fa-solid fa-location-dot fa-md text-custom"></i> ' +
+            "#{b.event_instance.location&.name.presence || b.event_instance.event.location&.name.presence || "No location"}"
+      }
+    }
+  end
+
 
   def approve
     booking = Booking.find(params[:id])
