@@ -172,6 +172,7 @@ class BookingsController < ApplicationController
         location: b.event_instance.location.name || b.event_instance.event.location.name ,
         teacher_avatar: teacher.photo.attached? ? url_for(teacher.photo) : nil,
         waitlisted: b.waitlisted,
+        status: b.status,
         time_html: '<i class="fa-regular fa-clock fa-sm text-custom"></i> ' +
         "#{b.event_instance.start_time.strftime('%H:%M')} ~ #{b.event_instance.end_time.strftime('%H:%M')}",
         location_html: '<i class="fa-solid fa-location-dot fa-md text-custom"></i> ' +
