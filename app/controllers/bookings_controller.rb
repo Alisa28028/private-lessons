@@ -160,22 +160,23 @@ class BookingsController < ApplicationController
   def index
     @bookings = current_user.bookings.includes(event_instance: { event: :user })
 
-    respond_to do |format|
-      format.html # optional
-      format.json do
-        render json: @bookings.map { |b|
-          teacher = b.event_instance.event.user
-          teacher_photo_key = teacher&.photo&.key
+    render json: @bookings.map { |b|
+      teacher = b.event_instance.event.user
 
-          {
-            title: b.event_instance.event.title,
-            start: b.event_instance.start_time,
-            teacher_avatar: teacher.photo.attached? ? url_for(teacher.photo) : nil
-          }
-        }
-      end
-    end
+      {
+        title: b.event_instance.event.title || "No title",
+        start: b.event_instance.start_time,
+        end: b.event_instance.end_time,
+        location: b.event_instance.location.name || b.event_instance.event.location.name ,
+        teacher_avatar: teacher.photo.attached? ? url_for(teacher.photo) : nil,
+        time_html: '<i class="fa-regular fa-clock fa-sm text-custom"></i> ' +
+        "#{b.event_instance.start_time.strftime('%H:%M')} ~ #{b.event_instance.end_time.strftime('%H:%M')}",
+        location_html: '<i class="fa-solid fa-location-dot fa-md text-custom"></i> ' +
+            "#{b.event_instance.location&.name.presence || b.event_instance.event.location&.name.presence || "No location"}"
+      }
+    }
   end
+
 
   def approve
     booking = Booking.find(params[:id])
