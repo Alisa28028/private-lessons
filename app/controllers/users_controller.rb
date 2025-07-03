@@ -33,6 +33,22 @@ def show
     .where(events: { user_id: @user.id }) # Events created by this user
     .where('event_instances.start_time > ?', Time.current) # Only future events
     .order(start_time: :asc)
+
+    @weekly_availabilities = @user.weekly_availabilities.group_by(&:day)
+    @weekly_schedule = (0..6).map do |day|
+    {
+      day: Date::DAYNAMES[day],
+      slots: (@weekly_availabilities[day] || []).map do |wa|
+        {
+          time: "#{wa.start_time.strftime('%H:%M')}–#{wa.end_time.strftime('%H:%M')}",
+          style: wa.style,
+          location: wa.location,
+          icon: studio_icon_url(wa.location) # custom helper
+        }
+      end
+    }
+  end
+
 end
 
 def home
@@ -120,7 +136,10 @@ end
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :time_zone, :password_confirmation, :description, :photo, :instagram, :x, :tiktok)
+    params.require(:user).permit(:name, :email, :password, :time_zone, :password_confirmation, :description, :photo, :instagram, :x, :tiktok,
+      weekly_availabilities_attributes: [
+      :id, :day, :start_time, :end_time, :style, :location, :_destroy
+    ])
   end
 
   def set_user

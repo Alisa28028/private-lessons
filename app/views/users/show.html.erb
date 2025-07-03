@@ -1,19 +1,39 @@
-<div class="container my-5 w-100 bg-white mt-3">
+<div class="container mt-0 my-5 w-100 bg-white">
   <div class="row">
-    <div class="col-12 col-md-6 col-lg-6 mx-auto">
-      <div class="column mt-4 d-flex justify-content-left">
+    <div class="col-12 col-md-6 col-lg-6 mt-6">
+      <div class="column mt-4 d-flex justify-content-center">
         <br>
         <%# <div class="d-flex flex-row align-items-start justify-content-center"> %>
         <div class="d-flex flex-column">
           <div class="">
             <% if @user.photo.attached? %>
-              <%= image_tag(@user.photo, width: "200px", class: "avatar-bordered me-2") %>
+              <%= image_tag(@user.photo, width: "200px", class: "avatar-bordered-profile me-2") %>
             <% else %>
               <%= image_tag "default-avatar.png", width: "200px", class: "avatar-large" %>
             <% end %>
-            <div class="mb-0"  style="font-size: 18px;">
-              <strong><%= @user.name %></strong></div>
-            <%= @user.description %>
+            <div class="mt-2 mb-0"  style="font-size: 18px;">
+              <h3 style="font-weight: 700;"><%= @user.name %></h3>
+            </div>
+            <h4 style="margin-bottom: 0px;"><%= @user.description %></h4>
+            <h2 class="text-xl font-semibold mb-4">Weekly Schedule</h2>
+            <div class="grid grid-cols-7 gap-4 text-center">
+              <% @weekly_schedule.each do |day| %>
+                <div class="border rounded-lg p-2 min-h-[100px] bg-white">
+                  <div class="font-semibold mb-2"><%= day[:day] %></div>
+                  <% day[:slots].each do |slot| %>
+                    <div class="inline-block mr-2 mb-2 relative group">
+                      <img src="<%= slot[:icon] %>" class="w-8 h-8 rounded-full cursor-pointer hover:opacity-80" />
+                      <!-- Popover -->
+                      <div class="absolute z-10 hidden group-hover:block bg-white shadow-lg rounded p-2 text-xs text-left w-40 top-10 left-1/2 -translate-x-1/2">
+                        <div class="font-bold text-indigo-600"><%= slot[:style] %></div>
+                        <div><%= slot[:time] %></div>
+                        <div class="text-gray-500"><%= slot[:location] %></div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
             <div class="d-flex justify-content-start mt-1">
               <% if @user.instagram.present? %>
                 <a href="<%= @user.instagram.starts_with?('http') ? @user.instagram : "https://#{@user.instagram}" %>" target="_blank" class="btn btn-link p-0 me-1">
@@ -32,7 +52,7 @@
               <% end %>
             </div>
           </div>
-          <div class="d-flex justify-content-center mt-3 mb-5">
+          <div class="d-flex justify-content-between mt-3 mb-5">
             <% if @user == current_user %>
               <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom-gray" %>
               <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom-gray" %>

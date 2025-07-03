@@ -4,6 +4,19 @@
   <%= simple_form_for @user do |f| %>
     <%= f.input :name %>
     <%= f.input :description %>
+    <div id="availabilities">
+      <%= f.simple_fields_for :weekly_availabilities do |wa| %>
+        <div class="border p-3 rounded mb-2 flex flex-wrap gap-2 items-center">
+          <%= wa.input :day, collection: Date::DAYNAMES.each_with_index.map { |d, i| [d, i] }, include_blank: false, label: false %>
+          <%= wa.input :start_time, as: :time, label: false %>
+          <%= wa.input :end_time, as: :time, label: false %>
+          <%= wa.input :style, placeholder: "Dance style", label: false %>
+          <%= wa.input :location, placeholder: "Studio", label: false %>
+          <%= wa.input :_destroy, as: :boolean, label: "Remove" %>
+        </div>
+      <% end %>
+    </div>
+    <%= link_to "Add Availability", "#", id: "add-availability", class: "text-blue-500 mt-2 block" %>
     <%= f.input :instagram, placeholder: "Enter link to profile" %>
     <%= f.input :x %>
     <%= f.input :tiktok %>

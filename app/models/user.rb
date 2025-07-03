@@ -19,6 +19,9 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :videos, dependent: :destroy
   has_many :likes, dependent: :destroy
+  has_many :weekly_availabilities, dependent: :destroy
+  accepts_nested_attributes_for :weekly_availabilities, allow_destroy: true
+
   has_many :liked_event_instances, through: :likes, source: :event_instance
   has_and_belongs_to_many :locations, join_table: 'locations_users'
 
