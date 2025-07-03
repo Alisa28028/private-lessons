@@ -68,7 +68,7 @@ class DashboardsController < ApplicationController
       .left_joins(:event)
       .where('event_instances.start_time > ? AND event_instances.id IN (?)',
              Time.now,
-              @bookings.where.not(status: ["cancelled_by_teacher", "cancelled_by_student", "rejected_by_teacher"])
+              @bookings.where.not(status: "cancelled_by_student")
               .pluck(:event_instance_id))
       .order(start_time: :asc)
 
