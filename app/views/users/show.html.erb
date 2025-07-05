@@ -22,7 +22,13 @@
                   <div class="font-semibold mb-2"><%= day[:day] %></div>
                   <% day[:slots].each do |slot| %>
                     <div class="inline-block mr-2 mb-2 relative group">
-                      <img src="<%= slot[:icon] %>" class="w-8 h-8 rounded-full cursor-pointer hover:opacity-80" />
+                      <% if slot[:icon].present? %>
+                        <img src="<%= slot[:icon] %>" class="w-8 h-8 rounded-full cursor-pointer hover:opacity-80" style="height: 25px;" />
+                      <% else %>
+                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs text-white">
+                          <%= slot[:location].to_s.first&.upcase || "?" %>
+                        </div>
+                      <% end %>
                       <!-- Popover -->
                       <div class="absolute z-10 hidden group-hover:block bg-white shadow-lg rounded p-2 text-xs text-left w-40 top-10 left-1/2 -translate-x-1/2">
                         <div class="font-bold text-indigo-600"><%= slot[:style] %></div>

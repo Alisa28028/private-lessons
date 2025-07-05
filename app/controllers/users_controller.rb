@@ -1,8 +1,9 @@
 class UsersController < ApplicationController
   skip_before_action :authenticate_user!
   before_action :set_user, only: [:show, :edit, :update, :classes, :teacher_posts, :student_posts]
-
-
+  include ActionView::Helpers::AssetUrlHelper
+  include ActionView::Helpers::AssetTagHelper
+  include ApplicationHelper
 
   # def show
   #   @bookings = current_user.bookings
@@ -34,7 +35,7 @@ def show
     .where('event_instances.start_time > ?', Time.current) # Only future events
     .order(start_time: :asc)
 
-    @weekly_availabilities = @user.weekly_availabilities.group_by(&:day)
+    @weekly_availabilities = @user.weekly_availabilities.group_by(&:day_before_type_cast)
     @weekly_schedule = (0..6).map do |day|
     {
       day: Date::DAYNAMES[day],
@@ -42,8 +43,8 @@ def show
         {
           time: "#{wa.start_time.strftime('%H:%M')}–#{wa.end_time.strftime('%H:%M')}",
           style: wa.style,
-          location: wa.location,
-          icon: studio_icon_url(wa.location) # custom helper
+          location: wa.studio&.name || wa.location,
+          icon: wa.studio&.icon&.attached? ? url_for(wa.studio.icon) : nil
         }
       end
     }
@@ -56,7 +57,8 @@ def home
 end
 
 def edit
-  # @user is already set in the before_action
+  @user = current_user
+  @user.weekly_availabilities.build if @user.weekly_availabilities.empty?
 end
 
 def update
@@ -138,7 +140,7 @@ end
   def user_params
     params.require(:user).permit(:name, :email, :password, :time_zone, :password_confirmation, :description, :photo, :instagram, :x, :tiktok,
       weekly_availabilities_attributes: [
-      :id, :day, :start_time, :end_time, :style, :location, :_destroy
+      :id, :day, :start_time_str, :end_time_str, :style, :studio_id, :location, :_destroy
     ])
   end
 

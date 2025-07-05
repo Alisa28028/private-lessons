@@ -34,6 +34,10 @@ Rails.application.routes.draw do
     resource :like, only: [:create, :destroy], controller: 'likes'
   end
 
+  resources :weekly_availabilities do
+    get :new_fields, on: :collection
+  end
+
 
   # Standalone video routes (for independent uploads)
   resources :videos, only: [:create, :index, :show, :destroy]

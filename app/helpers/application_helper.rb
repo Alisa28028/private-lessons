@@ -8,11 +8,11 @@ module ApplicationHelper
   def studio_icon_url(location_name)
     case location_name&.downcase
     when /en studio/
-      asset_path("studios/en_studio.png")
+      helpers.asset_path("studios/en_dance.png")
     when /noa studio/
-      asset_path("studios/noa_dance.png")
+      helpers.asset_path("studios/noa_dance.png")
     else
-      asset_path("PL_logo.png")
+      helpers.asset_path("PL_logo.png")
     end
   end
 
