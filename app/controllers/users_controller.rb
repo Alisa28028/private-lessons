@@ -29,14 +29,23 @@ class UsersController < ApplicationController
 
 def show
   @user = User.find(params[:id])
-  @upcoming_event_instances = EventInstance
-    .joins(:event)
-    .where(events: { user_id: @user.id }) # Events created by this user
-    .where('event_instances.start_time > ?', Time.current) # Only future events
+
+  # Count upcoming and past event instances for this user (as creator)
+  event_instances = EventInstance.joins(:event).where(events: { user_id: @user.id })
+  upcoming_count = event_instances.where('event_instances.start_time > ?', Time.current).count
+  past_count     = event_instances.where('event_instances.start_time <= ?', Time.current).count
+
+  @has_events = upcoming_count.positive? || past_count.positive?
+
+  # Load upcoming event instances to display
+  @upcoming_event_instances = event_instances
+    .where('event_instances.start_time > ?', Time.current)
     .order(start_time: :asc)
 
-    @weekly_availabilities = @user.weekly_availabilities.group_by(&:day_before_type_cast)
-    @weekly_schedule = (0..6).map do |day|
+  # Weekly availability formatting
+  @weekly_availabilities = @user.weekly_availabilities.group_by(&:day_before_type_cast)
+
+  @weekly_schedule = (0..6).map do |day|
     {
       day: Date::DAYNAMES[day],
       slots: (@weekly_availabilities[day] || []).map do |wa|
@@ -49,8 +58,8 @@ def show
       end
     }
   end
-
 end
+
 
 def home
 
@@ -81,17 +90,34 @@ end
   # end
 
   def classes
-    # Ensure @events is an ActiveRecord relation
-    @events = current_user.events.presence || Event.none
-    # Fetch upcoming event instances
+    # Support viewing another user's classes (e.g., from their profile page)
+    @user = User.find_by(id: params[:id]) || current_user
+
     @upcoming_event_instances = EventInstance
       .joins(:event)
-      .where(events: { user_id: current_user.id })
+      .where(events: { user_id: @user.id })
       .where('event_instances.start_time > ?', Time.current)
       .order(start_time: :asc)
-    puts "All upcoming Event Instances: #{@upcoming_event_instances.count}"  # Debugging line
-    render partial: 'users/classes', locals: { event_instances: @upcoming_event_instances }, formats: [:html]
+
+    @past_event_instances = EventInstance
+      .joins(:event)
+      .where(events: { user_id: @user.id })
+      .where('event_instances.start_time <= ?', Time.current)
+      .order(start_time: :desc)
+
+
+    if @upcoming_event_instances.blank? && @past_event_instances.blank?
+      head :no_content # return empty response, useful if using Turbo or JS
+    else
+    render partial: 'users/classes',
+           locals: {
+             upcoming_event_instances: @upcoming_event_instances,
+             past_event_instances: @past_event_instances
+           },
+           formats: [:html]
+    end
   end
+
 
 
   def teacher_posts

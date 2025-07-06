@@ -1,16 +1,26 @@
 <div class="teacher-events">
   <%# ---------Rendering events the teacher has created---------- %>
   <% if @upcoming_event_instances.present? %>
-    <%# <h6 class="d-flex justify-content-center mb-3">Your Events</h6> %>
-    <div class="col-12 col-md-6 col-lg-6 mx-auto px-3">
+    <div class="col-12 col-md-6 col-lg-6 px-4">
+      <h6 class="mb-2 font-bold">Upcoming Events</h6>
       <div class="card-container mx-auto">
-        <%# <%= render "shared/event_card_iteration", event_instances: @all_event_instances.select { |instance| instance.start_time >= Time.now } %>
         <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances %>
+      <% else %>
+        <div class="col-12 col-md-6 col-lg-6 px-4">
+          <p>No upcoming events.</p>
+        </div>
       </div>
-    <% else %>
-      <p>You don't have any events.</p>
-    <% end %>
-    <%# <%= link_to events_path, class: "btn-custom d-flex justify-content-center", style: "padding: 10px; margin-right: 50px; margin-left: 50px; border-radius: 6px; margin-top: 40px;", data: { action: "click->teacher#reloadPage" } do %>
-      <%# Find other classes! %>
-      <%# <% end %>
     </div>
+  <% end %>
+  <% if @past_event_instances.present? %>
+    <div class="col-12 col-md-6 col-lg-6 px-4">
+      <h6 class="mt-4 mb-2 font-bold">Past Events</h6>
+      <div class="card-container mx-auto">
+        <%= render "shared/event_card_iteration", event_instances: @past_event_instances %>
+      </div>
+    </div>
+  <% end %>
+  <%# <%= link_to events_path, class: "btn-custom d-flex justify-content-center", style: "padding: 10px; margin-right: 50px; margin-left: 50px; border-radius: 6px; margin-top: 40px;", data: { action: "click->teacher#reloadPage" } do %>
+    <%# Find other classes! %>
+    <%# <% end %>
+  </div>
