@@ -1,0 +1,18 @@
+<div class="border p-3 rounded mb-2 flex flex-wrap gap-2 items-center">
+  <%= f.input :day, collection: WeeklyAvailability.days.keys.map { |d| [d.humanize.capitalize, d] }, include_blank: false, label: false %>
+  <% start_val = f.object.start_time ? f.object.start_time.strftime("%H:%M") : nil %>
+  <% end_val = f.object.end_time ? f.object.end_time.strftime("%H:%M") : nil %>
+  <%= f.input :start_time_str, as: :string, label: false, input_html: { value: start_val } %>
+  <%= f.input :end_time_str, as: :string, label: false, input_html: { value: end_val } %>
+  <%= f.input :style, placeholder: "Dance style", label: false %>
+  <!-- Studio dropdown -->
+  <%= f.collection_select :studio_id, Studio.all, :id, :name, { include_blank: "Select a studio" }, { class: "form-control" } %>
+  <!-- Show only if user selects 'Add new studio' -->
+  <div id="new-studio-fields" style="display: none;">
+    <%= f.fields_for :new_studio do |ns| %>
+      <%= ns.input :name, placeholder: "Studio name", label: false %>
+      <%= ns.input :icon, as: :file, label: "Upload icon" %>
+    <% end %>
+  </div>
+  <%= f.input :_destroy, as: :boolean, label: "Remove" %>
+</div>

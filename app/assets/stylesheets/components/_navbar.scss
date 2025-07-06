@@ -59,7 +59,7 @@
   justify-content: center;
   width: 100%;
   position: fixed;
-  height: 60px;
+  height: 65px;
   bottom: 0;
   display: flex;
   z-index: 1000;
@@ -92,6 +92,7 @@
   height: 36px;
   filter: saturate(40%)drop-shadow(1px 1px 5px rgba(30, 4, 52, 0.5));
   margin-right: 8px;
+  margin-top: 15px;
 }
 
 .logo-text {

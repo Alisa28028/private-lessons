@@ -12,13 +12,16 @@ before_action :set_event, only: [:new, :create, :show, :create_from_event, :dest
   end
 
   def new
-    if @event
-      @post = @event.posts.new
-      @post.videos.attach(@event.videos.first.download) if @event.videos.attached?
-    else
-      @post = Post.new
+    @event = Event.find(params[:event_id])
+    @event_instance = @event.event_instances.find_by(id: params[:event_instance_id]) # safe lookup
+
+    @post = @event.posts.new
+
+    if @event.videos.attached? && @event.videos.first.present?
+      @post.videos.attach(@event.videos.first.blob)
     end
   end
+
 
   def create
     if @event

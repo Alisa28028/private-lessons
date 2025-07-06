@@ -1,8 +1,9 @@
 class UsersController < ApplicationController
   skip_before_action :authenticate_user!
   before_action :set_user, only: [:show, :edit, :update, :classes, :teacher_posts, :student_posts]
-
-
+  include ActionView::Helpers::AssetUrlHelper
+  include ActionView::Helpers::AssetTagHelper
+  include ApplicationHelper
 
   # def show
   #   @bookings = current_user.bookings
@@ -28,19 +29,49 @@ class UsersController < ApplicationController
 
 def show
   @user = User.find(params[:id])
-  @upcoming_event_instances = EventInstance
-    .joins(:event)
-    .where(events: { user_id: @user.id }) # Events created by this user
-    .where('event_instances.start_time > ?', Time.current) # Only future events
+
+  # All event instances created by the user
+  event_instances = EventInstance.joins(:event).where(events: { user_id: @user.id })
+
+  # Split into upcoming and past
+  @upcoming_event_instances = event_instances
+    .where('event_instances.start_time > ?', Time.current)
     .order(start_time: :asc)
+
+  @past_event_instances = event_instances
+    .where('event_instances.start_time <= ?', Time.current)
+    .order(start_time: :desc)
+
+  # Show classes tab only if either exist
+  @has_events = @upcoming_event_instances.any? || @past_event_instances.any?
+
+  # Weekly availability formatting
+  @weekly_availabilities = @user.weekly_availabilities.group_by(&:day_before_type_cast)
+
+  @weekly_schedule = (0..6).map do |day|
+    {
+      day: Date::DAYNAMES[day],
+      slots: (@weekly_availabilities[day] || []).map do |wa|
+        {
+          time: "#{wa.start_time.strftime('%H:%M')}–#{wa.end_time.strftime('%H:%M')}",
+          style: wa.style,
+          location: wa.studio&.name || wa.location,
+          icon: wa.studio&.icon&.attached? ? url_for(wa.studio.icon) : nil
+        }
+      end
+    }
+  end
 end
+
+
 
 def home
 
 end
 
 def edit
-  # @user is already set in the before_action
+  @user = current_user
+  @user.weekly_availabilities.build if @user.weekly_availabilities.empty?
 end
 
 def update
@@ -63,17 +94,35 @@ end
   # end
 
   def classes
-    # Ensure @events is an ActiveRecord relation
-    @events = current_user.events.presence || Event.none
-    # Fetch upcoming event instances
+    # Support viewing another user's classes (e.g., from their profile page)
+    @user = User.find_by(id: params[:id]) || current_user
+
     @upcoming_event_instances = EventInstance
       .joins(:event)
-      .where(events: { user_id: current_user.id })
+      .where(events: { user_id: @user.id })
       .where('event_instances.start_time > ?', Time.current)
       .order(start_time: :asc)
-    puts "All upcoming Event Instances: #{@upcoming_event_instances.count}"  # Debugging line
-    render partial: 'users/classes', locals: { event_instances: @upcoming_event_instances }, formats: [:html]
+
+    @past_event_instances = EventInstance
+      .joins(:event)
+      .where(events: { user_id: @user.id })
+      .where('event_instances.start_time <= ?', Time.current)
+      .order(start_time: :desc)
+
+
+    if @upcoming_event_instances.blank? && @past_event_instances.blank?
+      head :no_content # return empty response, useful if using Turbo or JS
+    else
+    render partial: 'users/classes',
+           locals: {
+
+             upcoming_event_instances: @upcoming_event_instances,
+             past_event_instances: @past_event_instances
+           },
+           formats: [:html]
+    end
   end
+
 
 
   def teacher_posts
@@ -120,7 +169,10 @@ end
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :time_zone, :password_confirmation, :description, :photo, :instagram, :x, :tiktok)
+    params.require(:user).permit(:name, :email, :password, :time_zone, :password_confirmation, :description, :photo, :instagram, :x, :tiktok,
+      weekly_availabilities_attributes: [
+      :id, :day, :start_time_str, :end_time_str, :style, :studio_id, :location, :_destroy
+    ])
   end
 
   def set_user

@@ -1,23 +1,14 @@
 <div class="mt-6 ms-3">
   <%= simple_form_for @post, url: (@event ? event_posts_path(@event) : posts_path) do |f| %>
     <% if @event %>
-      <!-- Pre-fill form with event details if @event is present -->
+      <h3>Create a post for </h3>
+      <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+      <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
       <div class="form-group">
+        <%= @event.title %>
+        (<%= @event_instance&.start_time&.in_time_zone(time_zone)&.strftime("%B %d, %Y at %H:%M") %>)
         <%= f.input :title, input_html: { class: "form-control", value: @event.title } %>
       </div>
-      <div class="form-group">
-        <%= f.input :description, input_html: {
-          class: "form-control",
-          value: (current_user == @event.user ? @event.description : '' ) } %>
-      </div>
-      <!-- Common form fields -->
-      <% if @event.videos.attached? %>
-        <%= video_tag(url_for(@event.videos.first), controls: true, type: "video/mp4") %>
-      <% else %>
-        <div class="form-group mb-4">
-          <%= f.input :videos, as: :file, input_html: { multiple: true, class: "form-control" }, label: "Add Video", input_html: { class: "form-control" } %>
-        </div>
-      <% end %>
     <% end %>
     <div class="form-group">
       <%= f.submit "Create Post", class: "btn btn-primary" %>

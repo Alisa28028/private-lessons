@@ -4,6 +4,9 @@
   <%= simple_form_for @user do |f| %>
     <%= f.input :name %>
     <%= f.input :description %>
+    <%= f.simple_fields_for :weekly_availabilities do |wa| %>
+      <%= render "weekly_availabilities/fields", f: wa %>
+    <% end %>
     <%= f.input :instagram, placeholder: "Enter link to profile" %>
     <%= f.input :x %>
     <%= f.input :tiktok %>
