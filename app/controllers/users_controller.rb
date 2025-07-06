@@ -30,17 +30,20 @@ class UsersController < ApplicationController
 def show
   @user = User.find(params[:id])
 
-  # Count upcoming and past event instances for this user (as creator)
+  # All event instances created by the user
   event_instances = EventInstance.joins(:event).where(events: { user_id: @user.id })
-  upcoming_count = event_instances.where('event_instances.start_time > ?', Time.current).count
-  past_count     = event_instances.where('event_instances.start_time <= ?', Time.current).count
 
-  @has_events = upcoming_count.positive? || past_count.positive?
-
-  # Load upcoming event instances to display
+  # Split into upcoming and past
   @upcoming_event_instances = event_instances
     .where('event_instances.start_time > ?', Time.current)
     .order(start_time: :asc)
+
+  @past_event_instances = event_instances
+    .where('event_instances.start_time <= ?', Time.current)
+    .order(start_time: :desc)
+
+  # Show classes tab only if either exist
+  @has_events = @upcoming_event_instances.any? || @past_event_instances.any?
 
   # Weekly availability formatting
   @weekly_availabilities = @user.weekly_availabilities.group_by(&:day_before_type_cast)
@@ -59,6 +62,7 @@ def show
     }
   end
 end
+
 
 
 def home
@@ -111,6 +115,7 @@ end
     else
     render partial: 'users/classes',
            locals: {
+
              upcoming_event_instances: @upcoming_event_instances,
              past_event_instances: @past_event_instances
            },

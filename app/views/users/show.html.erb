@@ -1,7 +1,7 @@
 <div class="container mt-0 my-5 w-100 bg-white">
   <div class="row">
     <div class="col-12 col-md-6 col-lg-6 mt-6">
-      <div class="column mt-4 mx-3 d-flex justify-content-center">
+      <div class="column mt-4 mx-3 d-flex justify-content-start">
         <br>
         <%# <div class="d-flex flex-row align-items-start justify-content-center"> %>
         <div class="d-flex flex-column">
@@ -36,7 +36,7 @@
           </div>
           <div class="d-flex justify-content-between mt-3 mb-5">
             <% if @user == current_user %>
-              <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom-gray" %>
+              <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom-gray", style: "margin-right: 3px;" %>
               <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom-gray" %>
             <% end %>
           </div>
@@ -45,6 +45,7 @@
     </div>
   </div>
 </div>
+<!-- Icons section for switching content -->
 <!-- Icons section for switching content -->
 <div data-controller="teacher" data-teacher-user-id="<%= @user.id %>">
   <div class="row mx-3">
@@ -56,19 +57,28 @@
           <% end %>
         <% end %>
         <%= link_to "#", data: { action: "click->teacher#loadPosts", class: "icon-link" } do %>
-          <i class="fa-solid fa-user"></i> My Posts
+          <i class="fa-solid fa-user"></i>
+          <%= current_user == @user ? "My Posts" : "#{@user.name}'s Posts" %>
         <% end %>
-        <%= link_to "#", data: { action: "click->teacher#loadStudentPosts", class: "icon-link" } do %>
-          <i class="fa-solid fa-user-group"></i> Student Posts
+        <% if @has_events %>
+          <%= link_to "#", data: { action: "click->teacher#loadStudentPosts", class: "icon-link" } do %>
+            <i class="fa-solid fa-user-group"></i> Student Posts
+          <% end %>
         <% end %>
       </div>
     </div>
   </div>
+  <!-- Dynamic content loads here -->
   <div class="teacher-content mt-4" data-teacher-target="content">
     <% if @has_events %>
-      <%= render partial: 'users/classes', locals: { event_instances: @upcoming_event_instances } %>
+      <%= render partial: 'users/classes',
+        locals: {
+          upcoming_event_instances: @upcoming_event_instances,
+          past_event_instances: @past_event_instances
+        } %>
     <% else %>
-      <%= render partial: 'users/teacher_posts', locals: { teacher_posts: @user.posts } %> <!-- or whatever partial shows My Posts -->
+      <%= render partial: 'users/teacher_posts', locals: { teacher_posts: @user.posts } %>
     <% end %>
   </div>
+</div>
 </div>

@@ -465,7 +465,7 @@
           <div class="d-flex justify-content-center">
             <%# <% if user_signed_in? %>
             <%# <% if current_user != @event.user %>
-            <%= link_to new_event_post_path(@event),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
+            <%= link_to new_event_post_path(@event, event_instance_id: @event_instance.id),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
               <i class="fa-regular fa-square-plus"></i> Add post!
               <%# <% end %>
               <%# <% end %>
