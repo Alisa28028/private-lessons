@@ -131,3 +131,77 @@ header {
   margin-left: 23px;
   margin-right: 0px;
 }
+
+trix-toolbar {
+  white-space: normal;
+}
+
+/* Hide unwanted toolbar groups */
+.trix-button-group--file-tools,
+.trix-button-group--history-tools {
+  display: none;
+}
+
+/* Remove borders and background from all Trix buttons */
+.trix-button {
+  border: none !important;
+  box-shadow: none !important;
+  background-color: #3E34A1 !important;
+  padding-left: 14px;
+  padding-right: 14px;
+  color: white !important;
+  margin-left: 2px !important;
+  border-radius: 2px;
+  // padding: 0.25rem !important; /* Optional: adjust padding */
+}
+
+/* Remove spacing between button groups */
+.trix-button-group {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  // padding: 0 !important;
+  gap: 0 !important;
+  // border-radius: 2px;
+}
+
+/* Specifically remove spacing from text tools group */
+.trix-button-group--text-tools {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  margin: 0 !important;
+  // padding: 0 !important;
+  gap: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin-bottom: 2px !important;
+  // border-radius: 2px;
+}
+
+/* Ensure individual buttons inside text-tools group are tight */
+.trix-button-group--text-tools .trix-button {
+  margin-left: 2px !important;
+  padding-left: 14px;
+  padding-right: 14px;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 2px;
+
+}
+
+.trix-button.trix-active {
+  background-color: #292A5A !important;
+  color: white !important;
+}
+
+.trix-content {
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px;     /* Optional: rounded corners */
+  padding: 1rem;          /* Optional: space inside */
+  min-height: 200px;      /* Optional: ensure it's tall enough */
+  box-sizing: border-box; /* Ensures padding doesn't overflow */
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

@@ -1,17 +1,19 @@
 <div class="mt-6 ms-3">
+  <div class="d-flex flex-column mb-5">
+    <h2>Create a post for this class: </h2>
+    <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+    <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+    <div class="form-group">
+      <%= @event.title %>
+      (<%= @event_instance&.start_time&.in_time_zone(time_zone)&.strftime("%B %d, %Y at %H:%M") %>)
+    </div>
+  </div>
   <%= simple_form_for @post, url: (@event ? event_posts_path(@event) : posts_path) do |f| %>
     <% if @event %>
-      <h3>Create a post for </h3>
-      <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-      <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-      <div class="form-group">
-        <%= @event.title %>
-        (<%= @event_instance&.start_time&.in_time_zone(time_zone)&.strftime("%B %d, %Y at %H:%M") %>)
-        <%= f.input :title, input_html: { class: "form-control", value: @event.title } %>
+      <div class="d-flex flex-column mt-1">
+        <%= f.rich_text_area :content, label: false, data: { controller: "trix" }, placeholder: "Write anything you'd like about this class!" %>
       </div>
     <% end %>
-    <div class="form-group">
-      <%= f.submit "Create Post", class: "btn btn-primary" %>
-    </div>
+    <%= f.submit "Create Post", class: "btn btn-primary" %>
   <% end %>
 </div>
