@@ -4,6 +4,7 @@ class EventInstance < ApplicationRecord
   has_many :bookings
   has_many :likes, dependent: :destroy
   has_many :liked_users, through: :likes, source: :user
+  has_many :posts
 
   validates :date, presence: true
   validates :start_time, presence: true

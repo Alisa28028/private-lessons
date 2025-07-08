@@ -1,81 +1,40 @@
-// import { Controller } from "@hotwired/stimulus"
-
-// // Connects to data-controller="teacher"
-// export default class extends Controller {
-//   static targets = ["classes", "teacherPosts", "studentPosts"]  // Add studentPosts as a target
-
-//   // Load the teacher's events (classes)
-//   loadEvents(event) {
-//     event.preventDefault()
-//     fetch(`/users/${this.data.get("userId")}/classes`, {
-//       headers: {
-//         "Accept": "application/vnd.turbo-stream.html"
-//       }
-//     })
-//     .then(response => response.text())
-//     .then(html => {
-//       this.contentTarget.innerHTML = html
-//     })
-//   }
-
-//   // Load the teacher's posts
-//   loadPosts(event) {
-//     event.preventDefault()
-//     fetch(`/users/${this.data.get("userId")}/teacher_posts`, {
-//       headers: {
-//         "Accept": "application/vnd.turbo-stream.html"
-//       }
-//     })
-//     .then(response => response.text())
-//     .then(html => {
-//       this.contentTarget.innerHTML = html
-//     })
-//   }
-
-//   // Load the student posts for this teacher
-//   loadStudentPosts(event) {
-//     event.preventDefault()
-//     fetch(`/users/${this.data.get("userId")}/student_posts`, {
-//       headers: {
-//         "Accept": "application/vnd.turbo-stream.html"
-//       }
-//     })
-//     .then(response => response.text())
-//     .then(html => {
-//       this.studentPostsTarget.innerHTML = html  // Populate the studentPosts target
-//     })
-//   }
-
-//   // For full page reload
-//   reloadPage(event) {
-//     event.preventDefault()
-//     window.location.href = event.target.href
-//   }
-// }
-
-
 import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["content"];
-  loadEvents(event) {
-    event.preventDefault();
-    this.loadContent(`/users/${this.data.get("userId")}/classes`);
-  }
+
 
   connect() {
     if (window.location.hash === "#posts-tab") {
-      this.loadPosts()
+      this.setSelectedTab("posts-tab-link");
+      this.loadPosts();
     }
+  }
+
+  loadEvents(event) {
+    event?.preventDefault();
+    this.setSelectedTab("events-tab-link");
+    this.loadContent(`/users/${this.data.get("userId")}/classes`);
   }
 
   loadPosts(event) {
     event?.preventDefault();
+    this.setSelectedTab("posts-tab-link");
     this.loadContent(`/users/${this.data.get("userId")}/teacher_posts`);
   }
 
   loadStudentPosts(event) {
-    event.preventDefault();
+    event?.preventDefault();
+    this.setSelectedTab("student-posts-tab-link");
     this.loadContent(`/users/${this.data.get("userId")}/student_posts`);
+  }
+
+  setSelectedTab(selectedId) {
+    document.querySelectorAll(".icon-tab").forEach(link => {
+      link.classList.remove("selected");
+    });
+
+    const selectedTab = document.getElementById(selectedId);
+    selectedTab?.classList.add("selected");
   }
 
   loadContent(url) {

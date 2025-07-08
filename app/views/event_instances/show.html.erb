@@ -461,11 +461,18 @@
             </div>
           </div>
           <h3 class="show" style="margin-bottom: 10px">All posts: Temporary picture! </h3>
+          <% if @event_instance.posts.any? %>
+            <div class="posts-list">
+              <%= render partial: "posts/post", collection: @event_instance.posts, as: :post %>
+            </div>
+          <% else %>
+            <p>No posts available for this event instance yet.</p>
+          <% end %>
           <%= image_tag("posts.jpg", style: "width: 100%; margin-bottom: 10px") %>
           <div class="d-flex justify-content-center">
             <%# <% if user_signed_in? %>
             <%# <% if current_user != @event.user %>
-            <%= link_to new_event_post_path(@event, event_instance_id: @event_instance.id),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
+            <%= link_to new_from_event_instance_event_posts_path(@event, event_instance_id: @event_instance.id),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
               <i class="fa-regular fa-square-plus"></i> Add post!
               <%# <% end %>
               <%# <% end %>

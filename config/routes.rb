@@ -23,15 +23,17 @@ Rails.application.routes.draw do
     #  Nested posts for events, including edit and update
     resources :posts, only: [:new, :create, :edit, :update, :index, :show] do
       collection do
-        get :create_from_event #Allows creating posts from events
+        get :new_from_event_instance
+        post :create_from_event_instance
       end
         resources :comments, only: :create
     end
     resources :videos, only: [:create, :destroy]
   end
 
-  resources :event_instances, only: [] do
+  resources :event_instances, only: [:show] do
     resource :like, only: [:create, :destroy], controller: 'likes'
+    resources :posts, only: [:new, :create]
   end
 
   resources :weekly_availabilities do
