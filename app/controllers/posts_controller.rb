@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
-before_action :set_event, only: [:new, :create, :show, :create_from_event, :destroy]
+  before_action :set_event_instance, only: [:new, :create]
+  before_action :set_event, only: [:new, :create, :show, :create_from_event, :destroy]
 
   def index
     @user = current_user
@@ -39,10 +40,15 @@ before_action :set_event, only: [:new, :create, :show, :create_from_event, :dest
     end
 
     if @post.save
-      redirect_to @post, notice: 'Post was successfully created.'
+      if params[:event_instance_id].present?
+        redirect_to event_instance_path(params[:event_instance_id]), notice: "Post created successfully."
+      else
+        redirect_to teacher_posts_user_path(current_user), notice: "Post created successfully."
+      end
     else
       render :new
     end
+
   end
 
 
@@ -58,10 +64,15 @@ before_action :set_event, only: [:new, :create, :show, :create_from_event, :dest
       @post.videos.attach(video)
     end
     if @post.save
-      redirect_to @post, notice: 'Post created from event successfully.'
+      if @event
+        redirect_to event_instance_path(@event), notice: 'Post was successfully created for this event.'
+      else
+        redirect_to user_path(current_user, anchor: "posts-tab"), notice: 'Post was successfully created.'
+      end
     else
       render :new, status: :unprocessable_entity
     end
+
   end
 
   def save
@@ -82,11 +93,15 @@ before_action :set_event, only: [:new, :create, :show, :create_from_event, :dest
 
   private
 
+  def set_event_instance
+    @event_instance = EventInstance.find(params[:event_instance_id]) if params[:event_instance_id].present?
+  end
+
   def set_event
     @event = Event.find_by(id: params[:event_id])
   end
 
   def post_params
-    params.require(:post).permit(:title, :description, :event_id, :is_video, photos: [], videos: [])
+    params.require(:post).permit(:title, :content, :description, :event_id, :is_video, photos: [], videos: [])
   end
 end

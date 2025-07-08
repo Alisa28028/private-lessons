@@ -56,7 +56,7 @@
             <i class="fa-regular fa-calendar"></i> Classes
           <% end %>
         <% end %>
-        <%= link_to "#", data: { action: "click->teacher#loadPosts", class: "icon-link" } do %>
+        <%= link_to "#", data: { action: "click->teacher#loadPosts", class: "icon-link" }, id: "posts-tab-link" do %>
           <i class="fa-solid fa-user"></i>
           <%= current_user == @user ? "My Posts" : "#{@user.name}'s Posts" %>
         <% end %>

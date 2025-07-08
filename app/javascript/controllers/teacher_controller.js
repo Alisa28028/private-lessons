@@ -62,8 +62,14 @@ export default class extends Controller {
     this.loadContent(`/users/${this.data.get("userId")}/classes`);
   }
 
+  connect() {
+    if (window.location.hash === "#posts-tab") {
+      this.loadPosts()
+    }
+  }
+
   loadPosts(event) {
-    event.preventDefault();
+    event?.preventDefault();
     this.loadContent(`/users/${this.data.get("userId")}/teacher_posts`);
   }
 

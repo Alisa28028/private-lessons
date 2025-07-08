@@ -8,12 +8,15 @@
       (<%= @event_instance&.start_time&.in_time_zone(time_zone)&.strftime("%B %d, %Y at %H:%M") %>)
     </div>
   </div>
-  <%= simple_form_for @post, url: (@event ? event_posts_path(@event) : posts_path) do |f| %>
+  <%= simple_form_for @post, url: (@event ? event_posts_path(@event) : posts_path), html: { data: { turbo: false } } do |f| %>
     <% if @event %>
-      <div class="d-flex flex-column mt-1">
-        <%= f.rich_text_area :content, label: false, data: { controller: "trix" }, placeholder: "Write anything you'd like about this class!" %>
-      </div>
+      <%= f.hidden_field :title, value: @event.title %>
+    <% else %>
+      <%= f.input :title, label: "Title", placeholder: "Give your post a title" %>
     <% end %>
+    <div class="d-flex flex-column mt-1">
+      <%= f.rich_text_area :content, label: false, data: { controller: "trix" }, placeholder: "Write anything you'd like about this class!" %>
+    </div>
     <%= f.submit "Create Post", class: "btn btn-primary" %>
   <% end %>
 </div>
