@@ -1,7 +1,8 @@
 class Post < ApplicationRecord
   belongs_to :user
 
-  has_rich_text :content
+  # has_rich_text :content
+  has_rich_text :description
   has_many :comments, dependent: :destroy
   has_many_attached :photos
   has_many_attached :videos

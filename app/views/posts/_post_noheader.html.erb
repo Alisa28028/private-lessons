@@ -1,0 +1,68 @@
+<turbo-frame id="post_<%= post.id %>">
+  <div class="card-post">
+    <div class="d-flex flex-row justify-content-between mb-3">
+      <div class="d-flex align-items-center">
+        <% if post.user.photo.present? %>
+          <%= post.hidden? %>
+          <%= cl_image_tag post.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+        <% else %>
+          <%= image_tag "default-avatar.png", width: "200px", class: "avatar-showpage" %>
+        <% end %>
+        <h4 class="show ms-1" style="font-weight: 500;">
+          <%= post.user.name %></h4>
+      </div>
+      <div class="dropdown">
+        <i class="fa-solid fa-ellipsis" role="button" id="postDropdown<%= post.id %>" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+        <ul class="dropdown-menu" aria-labelledby="postDropdown<%= post.id %>">
+          <% if current_user == post.user %>
+            <li>
+              <%= link_to edit_post_path(post, from_event_show: true),
+                    data: { turbo_frame: "post_#{post.id}" },
+                    class: "dropdown-item btn btn-link" do %>
+                <div class="d-flex flex-row align-items-baseline mb-1">
+                  <i class="fa-solid fa-sm fa-pen"></i>
+                  <h4 style="font-weight: 400; margin-left: 7px;"> Edit </h4>
+                </div>
+              <% end %>
+            </li>
+            <li>
+              <%= button_to post_path(post),
+                      method: :delete,
+                      data: { turbo_confirm: "Are you sure you want to delete?" },
+                      class: "dropdown-item btn btn-link" do %>
+                <div class="d-flex flex-row align-items-baseline mb-1">
+                  <i class="fa-solid fa-sm fa-trash-can"></i>
+                  <h4 style="font-weight: 400; margin-left: 7px;">Delete</h4>
+                </div>
+              <% end %>
+            </li>
+          <% end %>
+          <%# Logic for hide button %>
+          <% can_hide = false %>
+          <% can_hide ||= (current_user == post.user) %>
+          <%# Check event_instance user if present %>
+          <% if post.event_instance.present? %>
+            <% can_hide ||= (current_user == post.event_instance.event.user) %>
+          <% end %>
+          <%# Example: on profile page, you may set a local like profile_user %>
+          <% can_hide ||= (defined?(profile_user) && current_user == profile_user) %>
+          <% if can_hide %>
+            <li>
+              <%= button_to hide_post_path(post),
+                      method: :post,
+                      data: { turbo_confirm: "Are you sure you want to hide this post?" },
+                      class: "dropdown-item btn btn-link" do %>
+                <div class="d-flex flex-row align-items-baseline mb-1">
+                  <i class="fa-solid fa-sm fa-eye-slash"></i>
+                  <h4 style="font-weight: 400; margin-left: 7px;">Hide</h4>
+                </div>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+    <%= post.description %>
+    <small>Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
+  </div>
+</turbo-frame>

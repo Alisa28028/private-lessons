@@ -460,15 +460,18 @@
               </div>
             </div>
           </div>
-          <h3 class="show" style="margin-bottom: 10px">All posts: Temporary picture! </h3>
+          <h3 class="show" style="margin-bottom: 10px">All posts for this class: Temporary picture! </h3>
           <% if @event_instance.posts.any? %>
-            <div class="posts-list">
-              <%= render partial: "posts/post", collection: @event_instance.posts, as: :post %>
+            <div class="card-post-container">
+              <%= render partial: "posts/post_noheader",
+           collection: @event_instance.posts,
+           as: :post,
+           locals: { from_event_show: true } %>
             </div>
           <% else %>
             <p>No posts available for this event instance yet.</p>
           <% end %>
-          <%= image_tag("posts.jpg", style: "width: 100%; margin-bottom: 10px") %>
+          <%= image_tag("posts.jpg", style: "width: 100%; margin-top: 10px; margin-bottom: 10px") %>
           <div class="d-flex justify-content-center">
             <%# <% if user_signed_in? %>
             <%# <% if current_user != @event.user %>

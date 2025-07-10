@@ -1,7 +1,9 @@
 class PostsController < ApplicationController
   before_action :set_event, only: [:new, :create, :show, :destroy, :create_from_event_instance]
   before_action :set_event_instance, only: [:new, :create_from_event_instance]
-  before_action :set_post, only: [:destroy]
+  before_action :set_post, only: [:edit, :cancel_edit, :update, :destroy]
+  before_action :authorize_post_owner, only: [:edit, :update, :destroy, :hide, :cancel_edit]
+
 
 
   def index
@@ -60,7 +62,7 @@ class PostsController < ApplicationController
 
     @post = @event.posts.new(
       title: @event.title,
-      description: @event.description,
+      description: params[:post][:description],
       user: current_user,
       event_instance_id: @event_instance.id
     )
@@ -85,24 +87,131 @@ class PostsController < ApplicationController
     end
   end
 
+  def edit
+    from_event_show = params[:from_event_show] == "true"
 
-  def destroy
-    if @post.user != current_user
-      redirect_back fallback_location: root_path, alert: "You are not authorized to delete this post."
-      return
-    end
-
-    @post.destroy
-
-    if params[:from] == "event_instance"
-      redirect_to event_instance_path(params[:event_instance_id]), notice: "Post deleted.", status: :see_other
-    else
-      redirect_to user_path(current_user, anchor: "posts-tab"), notice: "Post deleted.", status: :see_other
+    respond_to do |format|
+      format.html do
+        if turbo_frame_request?
+          partial = from_event_show ? "posts/edit_form_noheader" : "posts/edit_form"
+          render partial: partial, locals: { post: @post, from_event_show: from_event_show }
+        else
+          render :edit
+        end
+      end
     end
   end
 
 
+
+  def cancel_edit
+    from_event_show = params[:from_event_show] == "true"
+    partial = from_event_show ? "posts/post_noheader" : "posts/post"
+    render partial: partial, locals: { post: @post, from_event_show: from_event_show }
+  end
+
+  def update
+    @post = Post.find(params[:id])
+    from_event_show = params[:from_event_show] == "true"
+
+    if @post.update(post_params)
+      partial = from_event_show ? "posts/post_noheader" : "posts/post"
+
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "post_#{@post.id}",
+            partial: partial,
+            locals: { post: @post, from_event_show: from_event_show }
+          )
+        end
+        format.html { redirect_to @post, notice: "Post updated" }
+      end
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+
+
+  def hide
+    @post = Post.find(params[:id])
+
+    if can_hide_post?(@post) # your authorization method
+      @post.update(hidden: true) # or however you hide it
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "post_#{@post.id}",
+            partial: "posts/post_noheader", # or whichever partial
+            locals: { post: @post }
+          )
+        end
+        format.html { redirect_back fallback_location: root_path, notice: "Post hidden" }
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "post_#{@post.id}",
+            partial: "posts/post_noheader", # or a partial showing an error message *inside* the frame
+            locals: { post: @post, error: "You are not authorized to hide this post." }
+          )
+        end
+        format.html { redirect_back fallback_location: root_path, alert: "Not authorized" }
+      end
+    end
+  end
+
+
+
+  def destroy
+    if @post.user != current_user
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.update("flash", partial: "shared/flashes", locals: { alert: "You are not authorized to delete this post." }) }
+        format.html { redirect_back fallback_location: root_path, alert: "You are not authorized to delete this post." }
+      end
+      return
+    end
+
+    @post_id = @post.id
+    @post.destroy
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html do
+        if params[:from] == "event_instance"
+          redirect_to event_instance_path(params[:event_instance_id]), notice: "Post deleted.", status: :see_other
+        elsif params[:from] == "user_profile"
+          redirect_to user_path(current_user, anchor: "posts-tab"), notice: "Post deleted.", status: :see_other
+        else
+          redirect_back fallback_location: root_path, notice: "Post deleted.", status: :see_other
+        end
+      end
+    end
+  end
+
+
+
   private
+
+  def can_hide_post?(post)
+    return false unless current_user
+
+    # Allow if current_user owns the post
+    return true if post.user == current_user
+
+    # Allow if current_user owns the event instance the post belongs to
+    return true if post.event_instance.present? && post.event_instance.user == current_user
+
+    false
+  end
+
+
+  def authorize_post_owner
+    @post = Post.find(params[:id])
+    redirect_to root_path, alert: "Not authorized." unless @post.user == current_user
+  end
 
   def set_event_instance
     @event_instance = EventInstance.find(params[:event_instance_id]) if params[:event_instance_id].present?

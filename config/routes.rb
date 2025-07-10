@@ -46,11 +46,21 @@ Rails.application.routes.draw do
    # Routes for managing event instances independently
    resources :event_instances, only: [:show, :index, :edit, :update, :destroy] do
     resources :bookings, only: [:create]
+    resources :posts, only: [:new, :create, :edit, :update, :destroy, :show] do
+      member do
+        get :cancel_edit
+        post :hide
+      end
+    end
    end
    # Non-nested posts resource for standalone posts
-   resources :posts, only: [:new, :create, :index, :show, :destroy] do
+   resources :posts, only: [:new, :create, :edit, :update, :index, :show, :destroy] do
     collection do
       post :save
+    end
+    member do
+      get :cancel_edit
+      post :hide
     end
   end
     # User routes (show, edit, update)

@@ -16,7 +16,7 @@
       <%= f.input :title, label: "Title", placeholder: "Give your post a title" %>
     <% end %>
     <div class="d-flex flex-column mt-1">
-      <%= f.rich_text_area :content, label: false, data: { controller: "trix" }, placeholder: "Write anything you'd like about this class!" %>
+      <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Write anything you'd like about this class!" %>
     </div>
     <%= f.file_field :videos, multiple: true %>
     <%= f.submit "Create Post", class: "btn btn-primary" %>

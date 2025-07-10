@@ -66,8 +66,13 @@
           </ul>
         </div>
       </div>
-      <%= post.description %>
-      <small>Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
+      <%= form_with(model: post, local: false) do |f| %>
+        <h4><%= f.text_area :description, rows: 3, style: "width: 100%;" %></h4>
+        <div class="d-flex flex-row align-items-center justify-content-end">
+          <%= f.submit "Save" %>
+          <%= link_to "Cancel", cancel_edit_post_path(post), data: { turbo_frame: "post_#{post.id}" }, class: "btn btn-link" %>
+        </div>
+      <% end %>      <small>Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
     </div>
   </div>
 </turbo-frame>
