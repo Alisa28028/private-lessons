@@ -77,7 +77,7 @@
           past_event_instances: @past_event_instances
         } %>
     <% else %>
-      <%= render partial: 'users/teacher_posts', locals: { teacher_posts: @user.posts } %>
+      <%= render partial: 'users/teacher_posts', locals: { teacher_posts: @user.posts.visible } %>
     <% end %>
   </div>
 </div>

@@ -57,7 +57,10 @@
               <% end %>
             </li>
             <li>
-              <%= button_to hide_post_path(post), method: :post, data: { turbo_confirm: "Are you sure you want to hide this post?" }, class: "dropdown-item btn btn-link", form: { class: "d-inline" } do %>
+              <%= button_to hide_post_path(post),
+              method: :post,
+              data: { turbo_confirm: "Are you sure you want to hide this post?" },
+              class: "dropdown-item btn btn-link", form: { class: "d-inline" } do %>
                 <div class="d-flex flex-row align-items-baseline mb-1"> <i class="fa-solid fa-sm fa-eye-slash"></i>
                   <h4 style="font-weight: 400; margin-left: 5px;">Hide</h4>
                 </div>
@@ -67,6 +70,7 @@
         </div>
       </div>
       <%= post.description %>
+      <%= post.id %>
       <small>Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
     </div>
   </div>

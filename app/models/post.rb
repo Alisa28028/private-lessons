@@ -12,6 +12,9 @@ class Post < ApplicationRecord
   validates :title, presence: true
   validates :user, presence: true
   validates :videos, presence: true, if: :is_video
+  # app/models/post.rb
+
+
 
   attr_accessor :is_video
 end

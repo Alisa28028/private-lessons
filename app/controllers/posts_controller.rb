@@ -2,8 +2,8 @@ class PostsController < ApplicationController
   before_action :set_event, only: [:new, :create, :show, :destroy, :create_from_event_instance]
   before_action :set_event_instance, only: [:new, :create_from_event_instance]
   before_action :set_post, only: [:edit, :cancel_edit, :update, :destroy]
-  before_action :authorize_post_owner, only: [:edit, :update, :destroy, :hide, :cancel_edit]
-
+  before_action :authorize_post_owner, only: [:edit, :update, :destroy, :cancel_edit]
+  before_action :authorize_hide_permission, only: [:hide]
 
 
   def index
@@ -15,6 +15,37 @@ class PostsController < ApplicationController
   def show
     @post = Post.find(params[:id])
   end
+
+  def teacher_posts
+    @user = User.find(params[:id])
+    teacher_posts = @user.posts.where(hidden: false)
+
+    respond_to do |format|
+      format.html { render partial: "users/teacher_posts", locals: { teacher_posts: teacher_posts } }
+      format.turbo_stream
+    end
+  end
+
+  def student_posts
+    @user = User.find(params[:id])
+
+    student_posts = Post
+      .joins(:event_instance)
+      .where(event_instances: { event_id: @user.events.pluck(:id) })
+      .where.not(user_id: @user.id)
+      .where("posts.hidden IS NULL OR posts.hidden = false")
+
+    respond_to do |format|
+      format.html {
+        render partial: "users/student_posts",
+               locals: { student_posts: student_posts }
+      }
+      format.turbo_stream
+    end
+  end
+
+
+
 
   def new
       @event_instance = EventInstance.find(params[:event_instance_id])
@@ -133,32 +164,46 @@ class PostsController < ApplicationController
   end
 
 
+  # def hide
+  #   @post = Post.find(params[:id])
+  #   if @post.update(hidden: true)
+  #     respond_to do |format|
+  #       format.turbo_stream { render turbo_stream: turbo_stream.remove("post_#{@post.id}") }
+  #       format.html { redirect_back fallback_location: root_path, notice: "Post hidden." }
+  #     end
+  #   else
+  #     respond_to do |format|
+  #       format.turbo_stream { render turbo_stream: turbo_stream.prepend("flash", partial: "shared/flash", locals: { alert: "Could not hide post." }) }
+  #       format.html { redirect_back fallback_location: root_path, alert: "Could not hide post." }
+  #     end
+  #   end
+  # end
 
   def hide
     @post = Post.find(params[:id])
+    event = @post.event_instance&.event
 
-    if can_hide_post?(@post) # your authorization method
-      @post.update(hidden: true) # or however you hide it
+    unless event && event.user == current_user
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "post_#{@post.id}",
-            partial: "posts/post_noheader", # or whichever partial
-            locals: { post: @post }
-          )
+          render turbo_stream: turbo_stream.replace("post_#{@post.id}", partial: "posts/post", locals: { post: @post, alert: "You are not authorized to hide this post." })
         end
-        format.html { redirect_back fallback_location: root_path, notice: "Post hidden" }
+        format.html { redirect_back fallback_location: root_path, alert: "You are not authorized to hide this post." }
+      end
+      return
+    end
+
+    if @post.update(hidden: true)
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_back fallback_location: root_path, notice: "Post hidden." }
       end
     else
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "post_#{@post.id}",
-            partial: "posts/post_noheader", # or a partial showing an error message *inside* the frame
-            locals: { post: @post, error: "You are not authorized to hide this post." }
-          )
+          render turbo_stream: turbo_stream.replace("post_#{@post.id}", partial: "posts/post", locals: { post: @post, alert: "Could not hide post." })
         end
-        format.html { redirect_back fallback_location: root_path, alert: "Not authorized" }
+        format.html { redirect_back fallback_location: root_path, alert: "Could not hide post." }
       end
     end
   end
@@ -212,6 +257,21 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
     redirect_to root_path, alert: "Not authorized." unless @post.user == current_user
   end
+
+  def authorize_hide_permission
+    @post = Post.find(params[:id])
+    # Allow if current_user owns the post
+    return if @post.user == current_user
+
+    # Or allow if current_user owns the event that the event_instance belongs to
+    if @post.event_instance.present?
+      event_owner = @post.event_instance.event.user
+      return if event_owner == current_user
+    end
+
+    redirect_to root_path, alert: "Not authorized to hide this post."
+  end
+
 
   def set_event_instance
     @event_instance = EventInstance.find(params[:event_instance_id]) if params[:event_instance_id].present?
