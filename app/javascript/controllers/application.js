@@ -15,5 +15,5 @@ export { application }
 
 import "trix"
 import "@rails/actiontext"
-import "./trix_underline_extension"
-import "./trix_underline"
+import "./trix_underline_extension_controller"
+import "./trix_underline_controller"
