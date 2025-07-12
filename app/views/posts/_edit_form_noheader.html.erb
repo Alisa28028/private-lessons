@@ -1,0 +1,57 @@
+<turbo-frame id="post_<%= post.id %>">
+  <div class="card-post">
+    <div class="d-flex flex-row justify-content-between mb-3">
+      <div class="d-flex align-items-center">
+        <% if post.user.photo.present? %>
+          <%= cl_image_tag post.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+        <% else %>
+          <%= image_tag "default-avatar.png", width: "200px", class: "avatar-showpage" %>
+        <% end %>
+        <h4 class="show ms-1" style="font-weight: 500;">
+          <%= post.user.name %></h4>
+      </div>
+      <div class="dropdown">
+        <i class="fa-solid fa-ellipsis" role="button" id="postDropdown<%= post.id %>" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+        <ul class="dropdown-menu" aria-labelledby="postDropdown<%= post.id %>">
+          <li>
+            <%= button_to edit_post_path(post), method: :get, data: { turbo_frame: "post_#{post.id}" }, class: "dropdown-item btn btn-link" do %>
+              <div class="d-flex flex-row align-items-baseline mb-1">
+                <i class="fa-solid fa-sm fa-pen"></i>
+                <h4 style="font-weight: 400; margin-left: 7px;"> Edit </h4>
+              </div>
+            <% end %>
+          </li>
+          <li>
+            <%= button_to post_path(post), method: :delete, data: { turbo_confirm: "Are you sure you want to delete?" }, class: "dropdown-item btn btn-link" do %>
+              <div class="d-flex flex-row align-items-baseline mb-1">
+                <i class="fa-solid fa-sm fa-trash-can"></i>
+                <h4 style="font-weight: 400; margin-left: 7px;">Delete</h4>
+              </div>
+            <% end %>
+          </li>
+          <li>
+            <%= button_to hide_post_path(post), method: :post, data: { turbo_confirm: "Are you sure you want to hide this post?" }, class: "dropdown-item btn btn-link", form: { class: "d-inline" } do %>
+              <div class="d-flex flex-row align-items-baseline mb-1"> <i class="fa-solid fa-sm fa-eye-slash"></i>
+                <h4 style="font-weight: 400; margin-left: 5px;">Hide</h4>
+              </div>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="post-edit-form">
+      <%= form_with(model: post, local: false) do |f| %>
+        <%= hidden_field_tag :from_event_show, params[:from_event_show] %>
+        <div class="mb-3">
+          <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Edit your post..." %>
+        </div>
+        <div class="d-flex flex-row align-items-center justify-content-end">
+          <%= f.submit "Save" %>
+          <%= link_to "Cancel", cancel_edit_post_path(post,  from_event_show: true), data: { turbo_frame: "post_#{post.id}" }, class: "btn btn-link" %>
+        </div>
+      <% end %>
+    </div>
+    <small>Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
+  </div>
+</div>
+</turbo-frame>

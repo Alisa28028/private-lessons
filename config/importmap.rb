@@ -10,3 +10,5 @@ pin "@popperjs/core", to: "popper.js", preload: true
 pin "flatpickr" # @4.6.13
 pin "fullcalendar", to: "https://cdn.skypack.dev/@fullcalendar/core"
 pin "fullcalendar-daygrid", to: "https://cdn.skypack.dev/@fullcalendar/daygrid"
+pin "trix"
+pin "@rails/actiontext", to: "actiontext.esm.js"

@@ -28,6 +28,46 @@
   // }
 
 
+  .card-post-container {
+    display: grid;
+    // width: 100%;
+    gap: 20px; /* Spacing between cards */
+  }
+
+  .card-post {
+    width: 100%; /* Default to full width */
+    max-width: 400px;
+    flex: 1 1 300px;
+    height: auto;
+    background: #FFFFFF;
+    border-radius: 14px;
+    position: relative;
+    padding-left: 19px;
+    padding-right: 19px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+    // box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+
+  }
+
+  .card-post-top {
+    width: 100%; /* Default to full width */
+    max-width: 400px;
+    flex: 1 1 300px;
+    height: auto;
+    background: #4E41C9;
+    border-radius: 14px;
+    position: relative;
+    // padding-top: 8px;
+    // box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+    // color: #FFFFFF;
+    font-family: 'Inter';
+    font-size: 15px;
+    // box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+
+  }
+
 
   .card-info-grid {
     display: flex;

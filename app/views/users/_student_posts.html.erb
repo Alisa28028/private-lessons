@@ -1,47 +1,14 @@
-<div class="student-posts">
-  <div class="mt-1 mb-5">
-    <div class="container w-100 my-5 d-flex justify-content-center align-items-center" style="min-height: 30vh;">
-      <div class="row w-100">
-        <div class="column w-100 d-flex flex-column align-items-center">
-          <% if student_posts.present? %>
-            <% student_posts.each do |post| %>
-              <div class="d-flex flex-row align-items-center">
-                <% if post.user.photo.attached? %>
-                  <%= cl_image_tag(post.user.photo.key, class: "avatar-bordered me-2", alt: "avatar-bordered") %>
-                <% else %>
-                  <%= image_tag "default-avatar.png", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
-                <% end %>
-                <div class="d-flex flex-column align-items-start">
-                  <p class="mb-0"><%= post.user.name %></p>
-                  <div class="d-flex flex-row align-items-center w-100">
-                    <p class="mb-0"><%= post.event ? post.event.title : "No event associated" %></p>
-                    <% if post.event.present? && post.event.start_date.present? %>
-                      <p class="mb-0 ms-2"> - <%= post.event.start_date.strftime("%Y/%m/%d %H:%M") %></p>
-                    <% end %>
-                    <!-- ICON TO DELETE POST -->
-                    <div class="ms-auto">
-                      <%= button_to post_path(post), method: :delete, data: { turbo_confirm: "Are you sure?" }, style: "border: none; background: none; padding: 0; color: #543A70;", class: "py-0 px-1 z-up" do %>
-                        <i class="fa-regular fa-trash-can"></i>
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div style="width: 350px">
-                <% if post.videos.attached? %>
-                  <%= video_tag(url_for(post.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto; margin-top: 8px; margin-bottom: 16px;") %>
-                <% elsif post.event && post.event.videos.attached? %>
-                  <%= video_tag(url_for(post.event.videos.first), controls: true, type: "video/mp4", style: "width: 100%; height: auto; height: auto; margin-top: 8px; margin-bottom: 16px;") %>
-                <% else %>
-                  <p class="mt-3">No video attached.</p>
-                <% end %>
-              </div>
-            <% end %>
-          <% else %>
-            <p class="mt-3">No posts yet.</p>
-          <% end %>
-        </div>
-      </div>
-    </div>
+<div class="col-12 col-md-6 col-lg-6 px-4">
+  <div class="card-post-container">
+    <% visible_student_posts = student_posts.select { |post| post.event_instance&.event&.user_id == current_user.id && !post.hidden? } %>
+    <%# <%= "Student posts count!!: #{visible_student_posts.count}" %>
+    <% if visible_student_posts.present? %>
+      <% visible_student_posts.each do |post| %>
+        <%= render partial: (post.event_instance.present? ? "posts/post" : "posts/post_noheader"),
+                   locals: { post: post } %>
+      <% end %>
+    <% else %>
+      <p class="mt-3">No posts yet.</p>
+    <% end %>
   </div>
 </div>

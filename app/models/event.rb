@@ -13,6 +13,7 @@ class Event < ApplicationRecord
   has_many :videos, dependent: :destroy
   has_many_attached :photos
   has_many_attached :videos
+  has_rich_text :description
 
   validates :title, presence: true
   validates :price_cents, presence: true

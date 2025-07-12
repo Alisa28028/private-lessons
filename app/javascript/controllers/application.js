@@ -11,3 +11,9 @@ window.Stimulus = application
 
 // Export the Stimulus application for later use in your Stimulus controllers
 export { application }
+
+
+import "trix"
+import "@rails/actiontext"
+import "./trix_underline_extension"
+import "./trix_underline"

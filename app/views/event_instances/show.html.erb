@@ -460,12 +460,22 @@
               </div>
             </div>
           </div>
-          <h3 class="show" style="margin-bottom: 10px">All posts: Temporary picture! </h3>
-          <%= image_tag("posts.jpg", style: "width: 100%; margin-bottom: 10px") %>
+          <h3 class="show" style="margin-bottom: 10px">All posts for this class: Temporary picture! </h3>
+          <% if @event_instance.posts.reject(&:hidden?).any? %>
+            <div class="card-post-container">
+              <%= render partial: "posts/post_noheader",
+           collection: @event_instance.posts.reject(&:hidden?),
+           as: :post,
+           locals: { from_event_show: true } %>
+            </div>
+          <% else %>
+            <p>No posts available for this event instance yet.</p>
+          <% end %>
+          <%= image_tag("posts.jpg", style: "width: 100%; margin-top: 10px; margin-bottom: 10px") %>
           <div class="d-flex justify-content-center">
             <%# <% if user_signed_in? %>
             <%# <% if current_user != @event.user %>
-            <%= link_to new_event_post_path(@event, event_instance_id: @event_instance.id),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
+            <%= link_to new_from_event_instance_event_posts_path(@event, event_instance_id: @event_instance.id),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
               <i class="fa-regular fa-square-plus"></i> Add post!
               <%# <% end %>
               <%# <% end %>

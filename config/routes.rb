@@ -23,15 +23,17 @@ Rails.application.routes.draw do
     #  Nested posts for events, including edit and update
     resources :posts, only: [:new, :create, :edit, :update, :index, :show] do
       collection do
-        get :create_from_event #Allows creating posts from events
+        get :new_from_event_instance
+        post :create_from_event_instance
       end
         resources :comments, only: :create
     end
     resources :videos, only: [:create, :destroy]
   end
 
-  resources :event_instances, only: [] do
+  resources :event_instances, only: [:show] do
     resource :like, only: [:create, :destroy], controller: 'likes'
+    resources :posts, only: [:new, :create]
   end
 
   resources :weekly_availabilities do
@@ -44,11 +46,21 @@ Rails.application.routes.draw do
    # Routes for managing event instances independently
    resources :event_instances, only: [:show, :index, :edit, :update, :destroy] do
     resources :bookings, only: [:create]
+    resources :posts, only: [:new, :create, :edit, :update, :destroy, :show] do
+      member do
+        get :cancel_edit
+        post :hide
+      end
+    end
    end
    # Non-nested posts resource for standalone posts
-   resources :posts, only: [:new, :create, :index, :show, :destroy] do
+   resources :posts, only: [:new, :create, :edit, :update, :index, :show, :destroy] do
     collection do
       post :save
+    end
+    member do
+      get :cancel_edit
+      post :hide
     end
   end
     # User routes (show, edit, update)

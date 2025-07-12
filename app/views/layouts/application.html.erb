@@ -32,7 +32,9 @@
       <% end %>
     </header>
     <%= render "shared/sidebar", data: { sidebar_target: "sidebar" } %>
-    <%= render "shared/flashes" %>
+    <turbo-frame id="flash">
+      <%= render "shared/flashes" %>
+    </turbo-frame>
     <!-- Main content, wrapped in the div with the sidebar target -->
     <div class="main-content" data-sidebar-target="content">
       <%= yield %>

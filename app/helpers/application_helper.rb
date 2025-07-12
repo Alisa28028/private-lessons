@@ -16,4 +16,9 @@ module ApplicationHelper
     end
   end
 
+  def formatted_content(text)
+    sanitize(text, tags: %w[b i em strong u ul ol li br p], attributes: [])
+  end
+
+
 end
