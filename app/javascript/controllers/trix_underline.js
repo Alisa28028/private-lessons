@@ -1,3 +1,10 @@
+import { Controller } from "@hotwired/stimulus"
+export default class extends Controller {
+  connect() {
+    console.log("Stimulus controller connected")
+  }
+}
+
 document.addEventListener("trix-initialize", (event) => {
   const editor = event.target;
   const toolbar = editor.toolbarElement;
