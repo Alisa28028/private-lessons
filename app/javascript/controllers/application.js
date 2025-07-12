@@ -1,19 +1,16 @@
-// Import Turbo (so Turbo frames and Turbo streams can work)
-import { Turbo } from "@hotwired/turbo-rails"
-
-// Import Stimulus (for managing front-end interactivity)
 import { Application } from "@hotwired/stimulus"
+
 const application = Application.start()
 
-// Configure Stimulus development experience (optional for production)
-application.debug = false
-window.Stimulus = application
-
-// Export the Stimulus application for later use in your Stimulus controllers
 export { application }
 
 
+// Import Turbo (no need to assign if unused)
+import "@hotwired/turbo-rails"
+
+// Import Stimulus application (starts Stimulus and registers all controllers)
+import "controllers"
+
+// Import ActionText and Trix
 import "trix"
 import "@rails/actiontext"
-import "./trix_underline_extension_controller"
-import "./trix_underline_controller"
