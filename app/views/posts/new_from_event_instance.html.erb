@@ -1,24 +1,26 @@
 <div class="mt-6 ms-3">
   <div class="d-flex flex-column mb-5">
     <h2>Create a post for this class: </h2>
-    <%= simple_form_for @post, url: create_from_event_instance_event_posts_path(@event, event_instance_id: @event_instance.id) do |f| %>
-      <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-      <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-      <div class="form-group">
-        <%= @event.title %>
-        (<%= @event_instance&.start_time&.in_time_zone(time_zone)&.strftime("%B %d, %Y at %H:%M") %>)
-      </div>
+    <div class="post-edit-form">
+      <%= simple_form_for @post, url: create_from_event_instance_event_posts_path(@event, event_instance_id: @event_instance.id) do |f| %>
+        <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+        <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+        <div class="form-group">
+          <%= @event.title %>
+          (<%= @event_instance&.start_time&.in_time_zone(time_zone)&.strftime("%B %d, %Y at %H:%M") %>)
+        </div>
+        <%= hidden_field_tag :event_instance_id, params[:event_instance_id] %>
+        <% if @event %>
+          <%= f.hidden_field :title, value: @event.title %>
+        <% else %>
+          <%= f.input :title, label: "Title", placeholder: "Give your post a title" %>
+        <% end %>
+        <div class="d-flex flex-column mt-1">
+          <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Write anything you'd like about this class!" %>
+        </div>
+        <%= f.file_field :videos, multiple: true %>
+        <%= f.submit "Create Post", class: "btn btn-primary" %>
+      <% end %>
     </div>
-    <%= hidden_field_tag :event_instance_id, params[:event_instance_id] %>
-    <% if @event %>
-      <%= f.hidden_field :title, value: @event.title %>
-    <% else %>
-      <%= f.input :title, label: "Title", placeholder: "Give your post a title" %>
-    <% end %>
-    <div class="d-flex flex-column mt-1">
-      <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Write anything you'd like about this class!" %>
-    </div>
-    <%= f.file_field :videos, multiple: true %>
-    <%= f.submit "Create Post", class: "btn btn-primary" %>
-  <% end %>
+  </div>
 </div>

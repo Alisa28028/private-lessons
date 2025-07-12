@@ -132,6 +132,8 @@ class PostsController < ApplicationController
   end
 
   def update
+    Rails.logger.info "Description param: #{params[:post][:description]}"
+
     @post = Post.find(params[:id])
     from_event_show = params[:from_event_show] == "true"
 

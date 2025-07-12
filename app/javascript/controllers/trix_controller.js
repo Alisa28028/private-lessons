@@ -58,7 +58,16 @@ export default class extends Controller {
 
 
   setupEditor = (event) => {
-    const toolbar = event.target.toolbarElement
+    const editor = event.target;            // <trix-editor> element
+    const toolbar = editor.toolbarElement;  // the toolbar DOM
+
+    const isPostEdit = editor.closest(".post-edit-form");
+
+    if (isPostEdit) {
+      const headingButtons = toolbar.querySelectorAll("button[data-trix-attribute^='heading']");
+      headingButtons.forEach(button => button.style.display = "none");
+    }
+
 
     // 1. Remove unused toolbar buttons first
     this.constructor.UNUSED_TOOLBAR_CLASSES?.forEach?.((cls) => {
@@ -137,12 +146,12 @@ export default class extends Controller {
 
 
 
-    Trix.config.blockAttributes.blockquote = {
-      tagName: "blockquote",
-      terminal: true,
-      breakOnReturn: true,
-      group: false
-    }
+    // Trix.config.blockAttributes.blockquote = {
+    //   tagName: "blockquote",
+    //   terminal: true,
+    //   breakOnReturn: true,
+    //   group: false
+    // }
 
 
     // 5. Define heading block attributes
@@ -207,22 +216,24 @@ if (blockGroup) {
   blockGroup.appendChild(addUnorderedListButton())
   blockGroup.appendChild(addOrderedListButton())
   // Add heading buttons
+  if (!isPostEdit) {
   blockGroup.appendChild(addHeadingButton("H1", "heading1"))
   blockGroup.appendChild(addHeadingButton("H2", "heading2"))
   blockGroup.appendChild(addHeadingButton("H3", "heading3"))
-
-  // Add blockquote button
-  const addBlockquoteButton = () => {
-    const button = document.createElement("button")
-    button.setAttribute("type", "button")
-    button.setAttribute("data-trix-attribute", "blockquote")
-    button.setAttribute("title", "Blockquote")
-    button.classList.add("trix-button")
-    button.innerHTML = '<i class="fa-solid fa-quote-right"></i>'
-    return button
   }
 
-  blockGroup.appendChild(addBlockquoteButton())
+//   // Add blockquote button
+//   const addBlockquoteButton = () => {
+//     const button = document.createElement("button")
+//     button.setAttribute("type", "button")
+//     button.setAttribute("data-trix-attribute", "blockquote")
+//     button.setAttribute("title", "Blockquote")
+//     button.classList.add("trix-button")
+//     button.innerHTML = '<i class="fa-solid fa-quote-right"></i>'
+//     return button
+//   }
+
+//   blockGroup.appendChild(addBlockquoteButton())
 }
 
   }

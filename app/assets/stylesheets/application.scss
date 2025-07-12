@@ -213,3 +213,11 @@ trix-toolbar {
   min-height: auto !important;
   background: transparent;
 }
+
+u {
+  text-decoration: underline !important;
+}
+
+trix-editor u {
+  text-decoration: underline;
+}

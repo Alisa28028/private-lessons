@@ -87,8 +87,7 @@
           </ul>
         </div>
       </div>
-      <%= post.description %>
-      <%= post.id %>
+      <%= raw post.description.body.to_html %>
       <small>Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
     </div>
   </div>

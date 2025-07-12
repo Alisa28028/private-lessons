@@ -60,10 +60,7 @@
         </ul>
       </div>
     </div>
-    <%= post.description %>
-    <%= post.event.title %>
-    <%= post.id %>
-    <%= post.hidden? %>
+    <%= raw post.description.body.to_html %>
     <small>Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
   </div>
 </turbo-frame>
