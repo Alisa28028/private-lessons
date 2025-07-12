@@ -1,4 +1,11 @@
+import { Controller } from "@hotwired/stimulus"
 import "trix"
+
+export default class extends Controller {
+  connect() {
+    console.log("Stimulus controller connected")
+  }
+}
 
 function setupUnderline() {
   const Trix = window.Trix
