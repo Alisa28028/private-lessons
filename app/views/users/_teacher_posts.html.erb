@@ -4,7 +4,7 @@
       <% teacher_posts.each do |post| %>
         <% if !post.hidden? %>
           <% if post.event_instance.present? %>
-            <%= render partial: "posts/post", locals: { post: post } %>
+            <%= render partial: "posts/post", locals: { post: post, from_event_show: false } %>
           <% else %>
             <%= render partial: "posts/post_noheader", locals: { post: post } %>
           <% end %>

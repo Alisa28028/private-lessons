@@ -16,35 +16,24 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
   end
 
-  def teacher_posts
-    @user = User.find(params[:id])
-    teacher_posts = @user.posts.where(hidden: false)
-
-    respond_to do |format|
-      format.html { render partial: "users/teacher_posts", locals: { teacher_posts: teacher_posts } }
-      format.turbo_stream
-    end
-  end
-
   def student_posts
     @user = User.find(params[:id])
 
-    student_posts = Post
-      .joins(:event_instance)
-      .where(event_instances: { event_id: @user.events.pluck(:id) })
-      .where.not(user_id: @user.id)
-      .where("posts.hidden IS NULL OR posts.hidden = false")
+    # Get all event instances from events this teacher owns
+    event_instance_ids = @user.events.includes(:event_instances).flat_map(&:event_instances).map(&:id)
+
+    # Get posts from students (not the teacher), tied to those instances
+    student_posts = Post.where(event_instance_id: event_instance_ids)
+                        .where.not(user_id: @user.id)
+                        .where(hidden: false)
 
     respond_to do |format|
       format.html {
-        render partial: "users/student_posts",
-               locals: { student_posts: student_posts }
+        render partial: "users/student_posts", locals: { student_posts: student_posts }
       }
       format.turbo_stream
     end
   end
-
-
 
 
   def new
@@ -126,6 +115,7 @@ class PostsController < ApplicationController
         if turbo_frame_request?
           partial = from_event_show ? "posts/edit_form_noheader" : "posts/edit_form"
           render partial: partial, locals: { post: @post, from_event_show: from_event_show }
+          puts "Rendering edit partial: #{partial}"
         else
           render :edit
         end

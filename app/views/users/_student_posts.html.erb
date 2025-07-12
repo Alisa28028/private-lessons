@@ -1,12 +1,11 @@
 <div class="col-12 col-md-6 col-lg-6 px-4">
   <div class="card-post-container">
-    <%= "Student posts count!!: #{student_posts&.count}" %>
-    <% if student_posts.present? %>
-      <% student_posts.each do |post| %>
-        <% if !post.hidden? %>
-          <%= render partial: (post.event_instance.present? ? "posts/post" : "posts/post_noheader"),
-                 locals: { post: post } %>
-        <% end %>
+    <% visible_student_posts = student_posts.select { |post| post.event_instance&.event&.user_id == current_user.id && !post.hidden? } %>
+    <%# <%= "Student posts count!!: #{visible_student_posts.count}" %>
+    <% if visible_student_posts.present? %>
+      <% visible_student_posts.each do |post| %>
+        <%= render partial: (post.event_instance.present? ? "posts/post" : "posts/post_noheader"),
+                   locals: { post: post } %>
       <% end %>
     <% else %>
       <p class="mt-3">No posts yet.</p>
