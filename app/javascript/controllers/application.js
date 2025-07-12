@@ -1,3 +1,10 @@
+import { Application } from "@hotwired/stimulus"
+
+const application = Application.start()
+
+export { application }
+
+
 // Import Turbo (no need to assign if unused)
 import "@hotwired/turbo-rails"
 
