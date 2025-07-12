@@ -69,7 +69,7 @@
       <div class="post-edit-form">
         <%= form_with(model: post, local: false) do |f| %>
           <div class="mb-3">
-            <%= f.rich_text_area :description, label: false, data: { controller: "trix trix-underline" }, placeholder: "Edit your post..." %>
+            <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Edit your post..." %>
           </div>
           <div class="d-flex flex-row align-items-center justify-content-end">
             <%= f.submit "Save" %>
