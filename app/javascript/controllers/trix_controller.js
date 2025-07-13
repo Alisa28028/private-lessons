@@ -1,6 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-import "./trix_underline_controller"
-import "./trix_underline_extension_controller"
 
 export default class extends Controller {
   static UNUSED_TOOLBAR_CLASSES = [
