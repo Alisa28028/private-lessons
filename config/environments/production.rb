@@ -114,4 +114,8 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+# Precompile your icon PNG files inside app/assets/images/icons/
+config.assets.precompile += Dir.glob(
+  Rails.root.join("app/assets/images/icons/*")
+).map { |f| "icons/#{File.basename(f)}" }
 end
