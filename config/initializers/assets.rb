@@ -7,6 +7,8 @@ Rails.application.config.assets.precompile += %w(
   bootstrap.min.js
   popper.js
   manifest.json
+  application.css
+  application.js
 )
 
 # Precompile all PNGs inside app/assets/images/icons/
