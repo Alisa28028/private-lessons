@@ -11,7 +11,9 @@
           <%= post.user.name %></h4>
       </div>
       <div class="dropdown">
-        <i class="fa-solid fa-ellipsis" role="button" id="postDropdown<%= post.id %>" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+        <% if current_user == post.user %>
+          <i class="fa-solid fa-ellipsis" role="button" id="postDropdown<%= post.id %>" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+        <% end %>
         <ul class="dropdown-menu" aria-labelledby="postDropdown<%= post.id %>">
           <% if current_user == post.user %>
             <li>

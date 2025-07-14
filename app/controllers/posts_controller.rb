@@ -35,6 +35,21 @@ class PostsController < ApplicationController
     end
   end
 
+  def teacher_posts
+    @user = User.find(params[:id])
+
+    # Get the teacher's own visible (non-hidden) posts
+    teacher_posts = @user.posts.where(hidden: false)
+
+    respond_to do |format|
+      format.html {
+        render partial: "users/teacher_posts", locals: { teacher_posts: teacher_posts }
+      }
+      format.turbo_stream
+    end
+  end
+
+
 
   def new
       @event_instance = EventInstance.find(params[:event_instance_id])
