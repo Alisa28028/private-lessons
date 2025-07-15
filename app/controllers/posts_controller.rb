@@ -39,7 +39,7 @@ class PostsController < ApplicationController
     @user = User.find(params[:id])
 
     # Get the teacher's own visible (non-hidden) posts
-    teacher_posts = @user.posts.where(hidden: false)
+    teacher_posts = @user.posts.where(hidden: [false, nil])
 
     respond_to do |format|
       format.html {

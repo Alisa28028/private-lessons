@@ -2,7 +2,7 @@
   <div class="card-post-container">
     <% if teacher_posts.present? %>
       <% teacher_posts.each do |post| %>
-        <% if !post.hidden? %>
+        <% if post.hidden != true %>
           <% if post.event_instance.present? %>
             <%= render partial: "posts/post", locals: { post: post, from_event_show: false } %>
           <% else %>

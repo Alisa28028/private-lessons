@@ -77,7 +77,8 @@
           past_event_instances: @past_event_instances
         } %>
     <% else %>
-      <%= render partial: 'users/teacher_posts', locals: { teacher_posts: @teacher_posts } %>
+      <%# <%= render partial: 'users/teacher_posts', locals: { teacher_posts: @teacher_posts } %>
+      <%= render partial: 'users/teacher_posts', locals: { teacher_posts: @user.posts.where(hidden: [false, nil]) } %>
     <% end %>
   </div>
 </div>
