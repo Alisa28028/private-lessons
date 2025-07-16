@@ -23,13 +23,13 @@ export default class extends Controller {
 
     // Reset button styles for all event type buttons
   document.querySelectorAll('[data-event-type]').forEach(button => {
-    button.classList.remove("btn-primary");
-    button.classList.add("btn-outline-primary");
+    button.classList.remove("btn-selected");
+
   });
 
   // Highlight the selected button
-  event.target.classList.remove("btn-outline-primary");
-  event.target.classList.add("btn-primary");
+  event.target.classList.add("btn-selected");
+
 
     // hide all forms initially
     this.oneTimeEventFormTarget.classList.add("d-none");
@@ -60,13 +60,13 @@ export default class extends Controller {
 
        // Reset button styles for all recurring event options buttons
   document.querySelectorAll('[data-recurrence-type]').forEach(button => {
-    button.classList.remove("btn-primary");
-    button.classList.add("btn-outline-primary");
+    button.classList.remove("btn-selected");
+
   });
 
   // Highlight the selected button
-  event.target.classList.remove("btn-outline-primary");
-  event.target.classList.add("btn-primary");
+
+  event.target.classList.add("btn-selected");
 
     // hide both forms
     this.everyWeekEventFormTarget.classList.add("d-none");

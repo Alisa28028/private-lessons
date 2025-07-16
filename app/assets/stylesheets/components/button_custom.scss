@@ -7,8 +7,8 @@
 }
 
 .btn-card {
-  background-color: #3E34A1;
-  color: white;
+  background-color: #3E34A1 !important;
+  color: white !important;
   font-size: 15px;
   padding: 12px;
   width: 100%;
@@ -17,6 +17,8 @@
   margin-bottom: 2px;
   font-family: 'Inter';
 }
+
+
 
 .btn-home {
   background-color: #ffffff;
@@ -59,6 +61,12 @@
 
 }
 
+.btn-selected {
+  background-color: #292A5A !important;
+  color: white !important;
+  border-color: #292A5A !important;
+}
+
 .btn-card:focus {
   outline: 1px solid rgb(0, 0, 0);
   outline-offset: 1px;
@@ -78,7 +86,7 @@
   // margin-left: auto; /* Flexbox way */
   float: right; /* Alternatively, you can use float */
   background-color: #c4bfc9 !important;
-  color: white;
+  color: white !important;
   border-radius: 5px;
   padding-left: 36px;
   padding-right: 36px;
