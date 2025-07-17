@@ -223,13 +223,20 @@ class EventsController < ApplicationController
     end
   end
 
+
   def search
     if params[:query].present?
-      @events = Event.search_by_title_and_description_and_user(params[:query])
+      @events = Event.search_by_title_and_description_and_user_and_location(params[:query])
+      @event_instances = EventInstance
+        .joins(:event)
+        .where(events: { id: @events.pluck(:id) })
+        .where("event_instances.start_time >= ?", Date.today)
     else
       @events = []
+      @event_instances = []
     end
   end
+
 
   def end_time
     (start_time + duration.minutes).strftime("%H:%M")

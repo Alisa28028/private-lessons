@@ -34,10 +34,11 @@ class Event < ApplicationRecord
   accepts_nested_attributes_for :event_instances, allow_destroy: true
 
   include PgSearch::Model
-  pg_search_scope :search_by_title_and_description_and_user,
+  pg_search_scope :search_by_title_and_description_and_user_and_location,
   against: [ :title, :description ],
   associated_against: {
-    user: [ :name ]
+    user: [ :name ],
+    location: [ :name ]
   },
   using: {
     tsearch: { prefix: true }

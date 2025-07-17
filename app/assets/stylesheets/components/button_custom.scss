@@ -111,6 +111,19 @@
   border: 1px solid #543A70; /* Add border with the same color as the background */
 }
 
+.btn-search {
+  color: white;
+  border-radius: 20px;
+  background: #3E34A1;
+  transition: background 0.3s ease;
+}
+
+.btn-search:hover {
+  background: #3E34A1;
+  color: white;
+}
+
+
 
 .btn-navbar {
   margin-left: auto; /* Flexbox way */

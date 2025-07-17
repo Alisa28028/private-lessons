@@ -1,16 +1,3 @@
 // Import page-specific CSS files here.
 @import "home";
 @import "dashboard";
-
-.btn-flat {
-  color: white;
-  padding: 8px 24px;
-  border-radius: 4px;
-  background: #543A70;
-  transition: background 0.3s ease;
-}
-
-.btn-flat:hover {
-  background: #543A70;
-  color: white;
-}
