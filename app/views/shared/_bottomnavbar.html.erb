@@ -2,7 +2,7 @@
   <section class="pl-nav-content">
     <ul class="d-flex justify-content-around w-100" style="padding-left: 0rem; <% unless user_signed_in? %> margin-top: 7px;">
     <% end %>
-    <li class="pl-nav-item text-center <%= 'active' if current_page?(root_path) %>">
+    <li class="pl-nav-item text-center pl-icon <%= 'active' if current_page?(root_path) %>">
       <%= link_to "/", class: "d-flex flex-column align-items-center" do %>
         <div class="d-flex flex-column ms-4 me-3">
           <i class="fa-solid fa-house fa-lg pl-icon"></i>
@@ -10,7 +10,7 @@
         </div>
       <% end %>
     </li>
-    <li class="pl-nav-item text-center fa- lg pl-icon <%= 'active' if current_page?(search_path) %>">
+    <li class="pl-nav-item text-center pl-icon <%= 'active' if current_page?(search_path) %>">
       <%= link_to search_path, class: "d-flex flex-column align-items-center" do %>
         <div class="d-flex flex-column" style="margin-bottom: 3px;">
           <i class="fa-solid fa-magnifying-glass fa-lg pl-icon" style="margin-top: 3px !important;"></i>
