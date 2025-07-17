@@ -9,7 +9,11 @@
           </button>
         </div>
       <% end %>
-      <%= render '/shared/event_card_iteration', events: @events, event_instances: @event_instances %>
+      <div class="col-12 col-md-6 col-lg-6 mx-auto px-2">
+        <div class="card-container mx-auto">
+          <%= render '/shared/event_card_iteration', events: @events, event_instances: @event_instances %>
+        </div>
+      </div>
     </div>
   </div>
 </div>
