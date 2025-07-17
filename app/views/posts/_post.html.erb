@@ -38,7 +38,7 @@
             <%= post.user.name %></h4>
         </div>
         <div class="dropdown">
-          <% if current_user == post.user || post.event.user %>
+          <% if current_user && (current_user == post.user || post.event.user) %>
             <i class="fa-solid fa-ellipsis" role="button" id="postDropdown<%= post.id %>" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
           <% end %>
           <ul class="dropdown-menu" aria-labelledby="postDropdown<%= post.id %>">
