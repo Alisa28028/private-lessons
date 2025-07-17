@@ -2,7 +2,8 @@
   <br>
   <% @user = current_user %>
   <%= simple_form_for @user do |f| %>
-    <%= f.input :name %>
+    <%= f.input :first_name %>
+    <%= f.input :last_name %>
     <%= f.input :description %>
     <%= f.simple_fields_for :weekly_availabilities do |wa| %>
       <%= render "weekly_availabilities/fields", f: wa %>
