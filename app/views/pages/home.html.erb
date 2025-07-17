@@ -2,7 +2,7 @@
 <% if user_signed_in? %>
   <div class="container-home-signed-in">
     <div class="overlay-text">
-      <h1 class="home" style="margin-top: 10px">Hello <%= current_user.name %>,
+      <h1 class="home" style="margin-top: 10px">Hello <%= current_user.first_name %>,
       </h1>
       <% if @current_user.bookings.joins(:event_instance).where('DATE(event_instances.start_time) = ?', Date.today).where(waitlisted: false).any? %>
         <h3 class="home">You have 1 booking today.</h3>

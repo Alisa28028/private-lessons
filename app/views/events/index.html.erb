@@ -3,7 +3,7 @@
     <div class="column">
       <% if @user %>
         <div class="col-12 col-md-6 col-lg-6 mx-auto px-3">
-          <h2 class="my-3 fw-bold d-flex justify-content-center">Welcome <%= current_user.name.capitalize %>!</h2>
+          <h2 class="my-3 fw-bold d-flex justify-content-center">Welcome <%= current_user.first_name.capitalize %>!</h2>
           <p class="my-2 d-flex justify-content-center mb-3">Upcoming Events</p>
           <div class="card-container mx-auto">
             <% @event_instances.each do |upcoming_event_instance| %>

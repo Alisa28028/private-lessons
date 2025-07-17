@@ -160,7 +160,7 @@
                       <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 1px;"></i>
                       <h6 class="panel">
                         <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-                          <%= booking.user.name %>
+                          <%= booking.user.first_name %>
                         </a>
                       </h6>
                       <% if booking.state == 'paid' %>
@@ -264,7 +264,7 @@
                       <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 1px;"></i>
                       <h6 class="panel">
                         <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-                          <%= booking.user.name %>
+                          <%= booking.user.first_name %>
                         </a>
                       </h6>
                       <% if booking.state == 'paid' %>

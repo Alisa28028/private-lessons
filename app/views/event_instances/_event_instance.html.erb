@@ -12,7 +12,7 @@
               <div class="d-flex mt-2">
                 <div class="d-flex <%= 'mt-1' if booking.status.in?(%w[cancelled_by_teacher cancelled_by_student]) %>">
                   <%= booking.id %>
-                  <%= booking.user.name %> –&nbsp;
+                  <%= booking.user.first_name %> –&nbsp;
                   <% if booking.status == "pending" && booking.waitlisted? %>
                     <div style="color: #9d94ad;"> waitlisted</div>
                   <% else %>
