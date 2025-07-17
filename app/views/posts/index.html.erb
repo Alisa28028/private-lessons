@@ -10,7 +10,7 @@
               <%= image_tag "profilepic.jpg", class: "avatar-bordered me-2", alt: "avatar-bordered" %>
             <% end %>
             <div class="d-flex flex-column align-items-start">
-              <p class="mb-0"><%= post.user.name %></p>
+              <p class="mb-0"><%= post.user.username %></p>
               <div class="d-flex flex-row align-items-center w-100">
                 <p class="mb-0"><%= post.event ? post.event.title : "No event associated" %></p>
                 <% if post.event.present? %>

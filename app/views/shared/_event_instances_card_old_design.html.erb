@@ -55,7 +55,7 @@
                   <% else %>
                     <p>No valid date or time available.</p>
                   <% end %>
-                  <p><%= instance.event.user.name %></p>
+                  <p><%= instance.event.user.first_name %></p>
                 <% elsif instance.event.recurrence_type == "every-week" %>
                   <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
                   <div class="d-flex align-items-center gap-1">
@@ -68,7 +68,7 @@
                       <p class="justify-content-end date-text text-custom">End time not available</p>
                     <% end %>
                   </div>
-                  <p><%= instance.event.user.name %></p>
+                  <p><%= instance.event.user.first_name %></p>
                 <% elsif instance.event.recurrence_type == "custom-dates" %>
                   <% if instance.start_time.present? %>
                     <p class="justify-content-end date-text"><%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></p>
@@ -83,7 +83,7 @@
                       <% end %>
                     </div>
                   <% end %>
-                  <p><%= instance.event.user.name %></p>
+                  <p><%= instance.event.user.first_name %></p>
                 <% end %>
               </div>
             </div>

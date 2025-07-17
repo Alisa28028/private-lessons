@@ -4,7 +4,7 @@
 <% else %>
   <h1>Booking Confirmation: <%= @event_instance.event.title %></h1>
 <% end %>
-<p>Dear <%= @user.name %>,</p>
+<p>Dear <%= @user.first_name %>,</p>
 <% if @moved_from_waitlist %>
   <p>Good news! A spot has opened up for <strong><%= @event_instance.event.title %></strong>, and you've been automatically moved from the waitlist to a confirmed spot. 🎉</p>
 <% elsif @booking.status == "pending" %>
@@ -21,7 +21,7 @@
   <li><strong>Date:</strong> <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %></li>
   <li><strong>Time:</strong> <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %></li>
   <%# <li><strong>Location:</strong> <%= @event.location.name %>
-  <li><strong>Instructor:</strong> <%= @event_instance.event.user.name %></li>
+  <li><strong>Instructor:</strong> <%= @event_instance.event.user.first_name %></li>
 </ul>
 <% if @booking.status != "pending" %>
   <p>If you need to cancel or reschedule, please contact us as soon as possible.</p>

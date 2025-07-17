@@ -169,7 +169,7 @@ end
   private
 
   def user_params
-    params.require(:user).permit(:name, :first_name, :last_name, :email, :password, :time_zone, :password_confirmation, :description, :photo, :instagram, :x, :tiktok,
+    params.require(:user).permit(:name, :first_name, :last_name, :username, :email, :password, :time_zone, :password_confirmation, :description, :photo, :instagram, :x, :tiktok,
       weekly_availabilities_attributes: [
       :id, :day, :start_time_str, :end_time_str, :style, :studio_id, :location, :_destroy
     ])

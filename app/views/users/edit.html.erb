@@ -4,14 +4,15 @@
   <%= simple_form_for @user do |f| %>
     <%= f.input :first_name %>
     <%= f.input :last_name %>
+    <%= f.input :username %>
     <%= f.input :description %>
-    <%= f.simple_fields_for :weekly_availabilities do |wa| %>
-      <%= render "weekly_availabilities/fields", f: wa %>
+    <%# <%= f.simple_fields_for :weekly_availabilities do |wa| %>
+      <%# <%= render "weekly_availabilities/fields", f: wa %>
+      <%# <% end %>
+      <%= f.input :instagram, placeholder: "Enter link to profile" %>
+      <%= f.input :x %>
+      <%= f.input :tiktok %>
+      <%= f.input :photo, as: :file %>
+      <%= f.submit "Update your profile", class: "btn btn-custom my-3" %>
     <% end %>
-    <%= f.input :instagram, placeholder: "Enter link to profile" %>
-    <%= f.input :x %>
-    <%= f.input :tiktok %>
-    <%= f.input :photo, as: :file %>
-    <%= f.submit "Update your profile", class: "btn btn-custom my-3" %>
-  <% end %>
-</div>
+  </div>
