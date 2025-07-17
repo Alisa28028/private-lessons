@@ -8,9 +8,9 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :password, presence: true, confirmation: true, length: { minimum: 6 }, on: :create
   validates :phone_number, presence: true, on: :create
-  validates_inclusion_of :time_zone, in: ActiveSupport::TimeZone.all.map(&:name), allow_nil: true
+  validates :time_zone, presence: true,
+                      inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
   validates :tiktok, :x, :instagram, length: { maximum: 255 }, allow_nil: true
-
   has_many :events, dependent: :destroy
   has_many :event_instances, through: :events
   has_many :bookings, dependent: :destroy
