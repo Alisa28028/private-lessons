@@ -6,3 +6,16 @@ import "bootstrap"
 
 import "trix"
 import "@rails/actiontext"
+
+// 2. Add custom underline attribute if not already defined
+if (!Trix.config.textAttributes.underline) {
+  Trix.config.textAttributes.underline = {
+    tagName: "u",
+    style: { textDecoration: "underline" },
+    inheritable: true,
+    parser(element) {
+      const style = window.getComputedStyle(element)
+      return style.textDecoration === "underline"
+    }
+  }
+}

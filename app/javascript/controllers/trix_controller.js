@@ -1,6 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-import "./trix_underline_controller"
-import "./trix_underline_extension_controller"
 
 export default class extends Controller {
   static UNUSED_TOOLBAR_CLASSES = [
@@ -92,19 +90,6 @@ export default class extends Controller {
       if (button) button.remove()
     })
 
-
-    // 2. Add custom underline attribute if not already defined
-    if (!Trix.config.textAttributes.underline) {
-      Trix.config.textAttributes.underline = {
-        tagName: "u",
-        style: { textDecoration: "underline" },
-        inheritable: true,
-        parser(element) {
-          const style = window.getComputedStyle(element)
-          return style.textDecoration === "underline"
-        }
-      }
-    }
 
     // 3. Add underline button if it doesn't exist
     const textGroup = toolbar.querySelector(".trix-button-group--text-tools")
