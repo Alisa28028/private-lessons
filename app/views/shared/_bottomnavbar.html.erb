@@ -1,70 +1,70 @@
 <nav class="pl-nav pl-bottom-nav">
   <section class="pl-nav-content">
-    <ul class="d-flex justify-content-around w-100" style="padding-left: 0rem; <% unless user_signed_in? %> margin-top: 7px;">
-    <% end %>
-    <li class="pl-nav-item text-center <%= 'active' if current_page?(root_path) %>">
-      <%= link_to "/", class: "d-flex flex-column align-items-center" do %>
-        <div class="d-flex flex-column ms-4 me-3">
-          <i class="fa-solid fa-house fa-lg pl-icon"></i>
-          <div class="pl-icon-text" style="font-size: 12px;">Home</div>
-        </div>
-      <% end %>
-    </li>
-    <li class="pl-nav-item text-center fa- lg pl-icon <%= 'active' if current_page?(search_path) %>">
-      <%= link_to search_path, class: "d-flex flex-column align-items-center" do %>
-        <div class="d-flex flex-column" style="margin-bottom: 3px;">
-          <i class="fa-solid fa-magnifying-glass fa-lg pl-icon" style="margin-top: 3px !important;"></i>
-          <div class="pl-icon-text" style="font-size: 12px;">Search</div>
-        </div>
-      <% end %>
-    </li>
-    <li class="pl-nav-item text-center <%= 'active' if current_page?(new_event_path) %>">
-      <%= link_to new_event_path, class: "d-flex flex-column align-items-center" do %>
-        <div class="d-flex flex-column">
-          <i class="fa-solid fa-square-plus fa-lg pl-icon" style="font-size: 23px"></i>
-          <div class="pl-icon-text" style="font-size: 12px;">Create class</div>
-        </div>
-      <% end %>
-    </li>
-    <% if user_signed_in? %>
-      <li class="pl-nav-item text-center ms-1 <%= 'active' if current_page?(dashboard_path(current_user)) %>">
-        <%= link_to dashboard_path(current_user), class: "d-flex flex-column align-items-center" do %>
+    <ul class="d-flex justify-content-around w-100"
+    style="<%= 'margin-top: 7px;' unless user_signed_in? %> padding-left: 0rem;">
+      <li class="pl-nav-item text-center pl-icon <%= 'active' if current_page?(root_path) %>">
+        <%= link_to "/", class: "d-flex flex-column align-items-center" do %>
+          <div class="d-flex flex-column mb-3 ms-4 me-3">
+            <i class="fa-solid fa-house fa-lg pl-icon"></i>
+            <div class="pl-icon-text" style="font-size: 12px;">Home</div>
+          </div>
+        <% end %>
+      </li>
+      <li class="pl-nav-item text-center pl-icon <%= 'active' if current_page?(search_path) %>">
+        <%= link_to search_path, class: "d-flex flex-column align-items-center" do %>
+          <div class="d-flex flex-column" style="margin-bottom: 3px;">
+            <i class="fa-solid fa-magnifying-glass fa-lg pl-icon" style="margin-top: 3px !important;"></i>
+            <div class="pl-icon-text" style="font-size: 12px;">Search</div>
+          </div>
+        <% end %>
+      </li>
+      <li class="pl-nav-item text-center <%= 'active' if current_page?(new_event_path) %>">
+        <%= link_to new_event_path, class: "d-flex flex-column align-items-center" do %>
           <div class="d-flex flex-column">
-            <i class="fa-solid fa-rectangle-list fa-lg pl-icon" style="font-size: 23px"></i>
-            <div class="pl-icon-text" style="font-size: 12px;">Dashboard</div>
+            <i class="fa-solid fa-square-plus fa-lg pl-icon" style="font-size: 23px"></i>
+            <div class="pl-icon-text" style="font-size: 12px;">Create class</div>
           </div>
         <% end %>
       </li>
-      <!-- Profile Dropdown -->
-      <li class="pl-dropdown-menu text-center mx-4" data-controller="dropdown">
-        <a href="#" class="d-flex flex-column align-items-center mb-2" data-action="click->dropdown#toggle">
-          <div class="d-flex flex-column align-items-center" style="margin-top: 12px;">
-            <% if current_user.photo.attached? %>
-              <%= cl_image_tag(current_user.photo.key, class: "pl-avatar-bottom") %>
-            <% else %>
-              <%= image_tag "default-avatar.png", class: "pl-avatar-bottom" %>
-            <% end %>
-            <div class="pl-icon-text <%= 'active' if request.path.start_with?(user_path(current_user)) %>" style="font-size: 12px;">Profile</div>
+      <% if user_signed_in? %>
+        <li class="pl-nav-item text-center ms-1 <%= 'active' if request.fullpath.starts_with?("/dashboard") %>">
+          <%= link_to dashboard_path(current_user), class: "d-flex flex-column align-items-center" do %>
+            <div class="d-flex flex-column">
+              <i class="fa-solid fa-rectangle-list fa-lg pl-icon" style="font-size: 23px"></i>
+              <div class="pl-icon-text" style="font-size: 12px;">Dashboard</div>
+            </div>
+          <% end %>
+        </li>
+        <!-- Profile Dropdown -->
+        <li class="pl-dropdown-menu text-center mx-4" data-controller="dropdown">
+          <a href="#" class="d-flex flex-column align-items-center mb-2" data-action="click->dropdown#toggle">
+            <div class="d-flex flex-column align-items-center" style="margin-top: 12px;">
+              <% if current_user.photo.attached? %>
+                <%= cl_image_tag(current_user.photo.key, class: "pl-avatar-bottom") %>
+              <% else %>
+                <%= image_tag "default-avatar.png", class: "pl-avatar-bottom" %>
+              <% end %>
+              <div class="pl-icon-text <%= 'active' if request.path.start_with?(user_path(current_user)) %>" style="font-size: 12px;">Profile</div>
+            </div>
+            <%# <span class="nav-label mt-1">Menu</span> %>
+          </a>
+          <div class="pl-dropdown-content" data-dropdown-target="dropdown" style="display: none;">
+            <%= link_to "Profile", user_path(current_user), data: { action: "click->dropdown#activateLink" } %>
+            <%= link_to "Dashboard", dashboard_path(current_user), data: { action: "click->dropdown#activateLink" } %>
+            <%= link_to "Log Out", destroy_user_session_path, data: { turbo_method: :delete } %>
           </div>
-          <%# <span class="nav-label mt-1">Menu</span> %>
-        </a>
-        <div class="pl-dropdown-content" data-dropdown-target="dropdown" style="display: none;">
-          <%= link_to "Profile", user_path(current_user), data: { action: "click->dropdown#activateLink" } %>
-          <%= link_to "Dashboard", dashboard_path(current_user), data: { action: "click->dropdown#activateLink" } %>
-          <%= link_to "Log Out", destroy_user_session_path, data: { turbo_method: :delete } %>
-        </div>
-      </li>
-    <% else %>
-      <li class="pl-nav-item text-center ms-1">
-        <%= link_to new_user_session_path, class: "d-flex flex-column align-items-center", title: "Log in or Sign up" do %>
-          <div class="d-flex flex-column align-items-center" style="border: 1px solid #AFB3CC; border-radius: 10px; padding-right: 8px; padding-left: 8px;">
-            <%# <i class="fa-solid fa-user-plus fa-lg pl-icon" style="font-size: 23px;"></i> %>
-            <div class="pl-icon-text" style="font-size: 12px; margin-top: 3px; margin-bottom: -5px; font-family: 'Inter';">Log in or</div>
-            <div class="pl-icon-text" style="font-size: 12px; margin-bottom: 3px; font-family: 'Inter';">sign up</div>
-          </div>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
-</section>
+        </li>
+      <% else %>
+        <li class="pl-nav-item text-center ms-1">
+          <%= link_to new_user_session_path, class: "d-flex flex-column align-items-center", title: "Log in or Sign up" do %>
+            <div class="d-flex flex-column align-items-center" style="border: 1px solid #AFB3CC; border-radius: 10px; padding-right: 8px; padding-left: 8px;">
+              <%# <i class="fa-solid fa-user-plus fa-lg pl-icon" style="font-size: 23px;"></i> %>
+              <div class="pl-icon-text" style="font-size: 12px; margin-top: 3px; margin-bottom: -5px; font-family: 'Inter';">Log in or</div>
+              <div class="pl-icon-text" style="font-size: 12px; margin-bottom: 3px; font-family: 'Inter';">sign up</div>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
 </nav>
