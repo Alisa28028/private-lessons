@@ -91,19 +91,6 @@ export default class extends Controller {
     })
 
 
-    // 2. Add custom underline attribute if not already defined
-    if (!Trix.config.textAttributes.underline) {
-      Trix.config.textAttributes.underline = {
-        tagName: "u",
-        style: { textDecoration: "underline" },
-        inheritable: true,
-        parser(element) {
-          const style = window.getComputedStyle(element)
-          return style.textDecoration === "underline"
-        }
-      }
-    }
-
     // 3. Add underline button if it doesn't exist
     const textGroup = toolbar.querySelector(".trix-button-group--text-tools")
     if (textGroup && !textGroup.querySelector("[data-trix-attribute='underline']")) {

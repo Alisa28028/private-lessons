@@ -69,8 +69,8 @@
         <h4 class="form-label">Title:</h4>
         <%= f.input :title, label:false, input_html: { placeholder: "Ex: Hiphop Advanced" } %>
         <h4 class="form-label">Description:</h4>
-        <%# <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Edit your post..." %>
-        <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+        <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Edit your post..." %>
+        <%# <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
         <h4 class="form-label">Duration:</h4>
         <%= f.input :duration, as: :integer, label: false, input_html: { placeholder: "Ex: 120" } %>
         <h4 class="form-label">Capacity:</h4>

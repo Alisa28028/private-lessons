@@ -1,13 +1,16 @@
 Rails.application.config.after_initialize do
   sanitizer_class = Rails::Html::SafeListSanitizer
 
-  # Override allowed_tags method to include 'u'
-  sanitizer_class.define_singleton_method(:allowed_tags) do
-    super + Set.new(['u'])
-  end
+  sanitizer_class.class_eval do
+    alias_method :original_allowed_tags, :allowed_tags
+    alias_method :original_allowed_attributes, :allowed_attributes
 
-  # Override allowed_attributes method to include 'style'
-  sanitizer_class.define_singleton_method(:allowed_attributes) do
-    super + Set.new(['style'])
+    def allowed_tags(*args, **kwargs)
+      original_allowed_tags(*args, **kwargs) + ['u']
+    end
+
+    def allowed_attributes(*args, **kwargs)
+      original_allowed_attributes(*args, **kwargs) + ['style']
+    end
   end
 end
