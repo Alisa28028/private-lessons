@@ -16,7 +16,7 @@
         <!-- Nested form for the associated event -->
         <%= f.fields_for :event do |event_fields| %>
           <%= event_fields.input :title, label: "Event Title", input_html: { placeholder: "Event title (this will apply to all instances)" } %>
-          <%= event_fields.input :description, label: "Description", input_html: { placeholder: "Description (this will apply to all instances)" } %>
+          <%= event_fields.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Edit the description..." %>
           <!-- Hidden field for location, if needed later -->
           <%# <%= event_fields.input :location_id, as: :hidden %>
         <% end %>
