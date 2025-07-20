@@ -17,6 +17,10 @@ Rails.application.configure do
     enable_starttls_auto: true
   }
 
+  # adding this line temporarily to disable email notifs. Remove when sendgrid account is upgraded!!
+  config.action_mailer.perform_deliveries = false
+
+
   config.action_mailer.default_options = {
     from: 'arisa.segawa@gmail.com' # <- this must match what you verified in SendGrid
   }
