@@ -19,6 +19,7 @@ Rails.application.configure do
 
   # adding this line temporarily to disable email notifs. Remove when sendgrid account is upgraded!!
   config.action_mailer.perform_deliveries = false
+  config.action_mailer.raise_delivery_errors = false
 
 
   config.action_mailer.default_options = {
