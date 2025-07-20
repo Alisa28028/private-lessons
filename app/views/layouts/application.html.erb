@@ -17,7 +17,7 @@
   </head>
   <body data-controller="sidebar">
     <%# <%= render "shared/navbar" %>
-    <header class="header-overlay d-flex justify-content-between pb-2">
+    <header class="header-overlay d-flex align-items-center justify-content-between pb-2">
       <!-- Logo always shown -->
       <div class="logo">
         <%= link_to root_path do %>
@@ -25,12 +25,28 @@
         <% end %>
       </div>
       <!-- Hamburger only for not-logged-in users -->
-      <% unless user_signed_in? %>
-        <div class="hamburger">
-          <i class="fa-solid fa-bars fa-xl text-white" data-action="click->menu#toggle"></i>
-        </div>
-      <% end %>
+      <%# <% unless user_signed_in? %>
+      <div class="hamburger">
+        <i class="fa-solid fa-bars fa-xl mt-4"
+   style="<%= request.path == '/' || request.fullpath.starts_with?('/dashboard') ? 'color: white;' : 'color: #3E34A1;' %>"
+   data-bs-toggle="offcanvas"
+   data-bs-target="#sideMenu"
+   aria-controls="sideMenu"></i>
+      </div>
     </header>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="sideMenuLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="list-unstyled">
+          <li><%= link_to "Home", root_path %></li>
+          <li><%= link_to "Dashboard", dashboard_path %></li>
+          <li><%= link_to "Bookings", bookings_path %></li>
+        </ul>
+      </div>
+    </div>
     <%= render "shared/sidebar", data: { sidebar_target: "sidebar" } %>
     <turbo-frame id="flash">
       <%= render "shared/flashes" %>

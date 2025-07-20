@@ -50,11 +50,11 @@
           <%= image_tag "PL_logo.png", class: "pl-logo" %>
         <% end %>
       </div>
-      <% unless user_signed_in? %>
-        <div class="hamburger">
-          <i class="fa-solid fa-bars fa-xl text-white %>" data-action="click->menu#toggle"></i>
-        </div>
-      <% end %>
+      <%# <% unless user_signed_in? %>
+      <div class="hamburger">
+        <i class="fa-solid fa-bars fa-xl text-white" data-action="click->menu#toggle"></i>
+      </div>
+      <%# <% end %>
     </header>
   <% end %>
 </nav>
