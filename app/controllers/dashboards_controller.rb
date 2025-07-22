@@ -1,6 +1,8 @@
 class DashboardsController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_dashboard_preference, except: [:select_preference, :update_preference]
+  before_action :set_student_dashboard_data, only: [:student]
+
 
   def show
     view = params[:view] || current_user.dashboard_preference

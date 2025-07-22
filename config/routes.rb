@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get '/dashboard', to: 'dashboards#show'
   get '/select_dashboard_preference', to: 'dashboards#select_preference'
   patch '/update_dashboard_preference', to: 'dashboards#update_dashboard_preference'
+  get '/student_dashboard', to: 'dashboards#student', as: :student_dashboard
 
   get "locations/search", to: "locations#search"
 

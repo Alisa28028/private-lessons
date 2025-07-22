@@ -73,7 +73,7 @@ header {
 .header-overlay {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 5px;
   z-index: 1000; // make sure it's above everything
   background: transparent;
   width: 100%;

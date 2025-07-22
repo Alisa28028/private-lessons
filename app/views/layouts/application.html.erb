@@ -42,11 +42,36 @@
       <div class="offcanvas-body">
         <ul class="list-unstyled">
           <% if user_signed_in? %>
-            <li><%= link_to "Account settings", edit_user_registration_path %></li>
-            <li><%= link_to "My bookings", bookings_path %></li>
-            <li><%= link_to "My favorites", favorites_path %></li>
-            <li><%= link_to "About us", about_us_path %></li>
-            <li><%= link_to "Contact us", contact_path %></li>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+              <i class="fa-solid fa-gear fa-sm text-custom me-2"></i>
+              <%= link_to edit_user_registration_path do %>
+                <h4>Account settings</h4>
+              <% end %>
+            </div>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+              <i class="fa-regular fa-calendar fa-sm text-custom me-2"></i>
+              <%= link_to student_dashboard_path do %>
+                <h4>My bookings</h4>
+              <% end %>
+            </div>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+              <i class="fa-solid fa-heart fa-sm text-custom me-2"></i>
+              <%= link_to favorites_path do %>
+                <h4>My favorites</h4>
+              <% end %>
+            </div>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+              <i class="fa-solid fa-circle-info fa-sm text-custom me-2"></i>
+              <%= link_to about_us_path do %>
+                <h4>About us</h4>
+              <% end %>
+            </div>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+              <i class="fa-solid fa-envelope fa-sm text-custom me-2"></i>
+              <%= link_to contact_path do %>
+                <h4>Contact us</h4>
+              <% end %>
+            </div>
             <li><%= link_to "Log out", destroy_user_session_path, method: :delete, data: { confirm: "Are you sure you want to log out?" } %></li>
           <% else %>
             <li><%= link_to "Find classes", root_path %></li>
