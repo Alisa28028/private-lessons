@@ -1,0 +1,12 @@
+<h2 class="d-flex justify-content-center mt-6 mb-4">My Favorites</h1>
+<% if @favorites.any? %>
+  <div class="row gx-2 gy-4">
+    <% @favorites.each do |event_instance| %>
+      <div class="col-12 col-md-6 col-lg-6 mx-auto px-4">
+        <%= render partial: "shared/event_instances_card", locals: { instance: event_instance } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="text-muted">You haven't liked any classes yet.</p>
+<% end %>

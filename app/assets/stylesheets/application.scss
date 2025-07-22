@@ -313,6 +313,9 @@ font-family: 'Inter';
   color: white !important;
 }
 
-.offcanvas.offcanvas-end {
-  width: 95%;
+.offcanvas.offcanvas-end-burger {
+  width: 70%;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
 }
