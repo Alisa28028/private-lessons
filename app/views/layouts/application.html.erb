@@ -72,7 +72,7 @@
                 <h4>Contact us</h4>
               <% end %>
             </div>
-            <li><%= link_to "Log out", destroy_user_session_path, method: :delete, data: { confirm: "Are you sure you want to log out?" } %></li>
+            <%= link_to "Log out", destroy_user_session_path, method: :delete, data: { confirm: "Are you sure you want to log out?" } %>
           <% else %>
             <li><%= link_to "Find classes", root_path %></li>
             <li><%= link_to "What is Private Lessons?", what_is_path %></li>

@@ -27,6 +27,7 @@ class UsersController < ApplicationController
 #   # Render the user show page with the necessary instance variables
 # end
 
+
 def show
   @user = User.find(params[:id])
 

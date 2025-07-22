@@ -1,4 +1,6 @@
-<h2 class="d-flex justify-content-center mt-6 mb-4">My Favorites</h1>
+<div class="d-flex justify-content-center mt-6 mb-4">
+  <h2>My Favorites</h2>
+</div>
 <% if @favorites.any? %>
   <div class="row gx-2 gy-4">
     <% @favorites.each do |event_instance| %>
@@ -8,5 +10,7 @@
     <% end %>
   </div>
 <% else %>
-  <p class="text-muted">You haven't liked any classes yet.</p>
+  <div class="d-flex justify-content-center mb-4">
+    <h4> You haven't liked any classes yet.</h4>
+  </div>
 <% end %>
