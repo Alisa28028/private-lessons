@@ -1,4 +1,7 @@
-<div class="container w-100 my-5 bg-white">
+<div class="d-flex justify-content-center mt-6 mb-4">
+  <h2>Edit profile</h2>
+</div>
+<div class="col-12 col-md-6 col-lg-6 mx-auto px-4">
   <br>
   <% @user = current_user %>
   <%= simple_form_for @user do |f| %>
@@ -13,6 +16,7 @@
       <%= f.input :x %>
       <%= f.input :tiktok %>
       <%= f.input :photo, as: :file %>
-      <%= f.submit "Update your profile", class: "btn btn-custom my-3" %>
+      <%= f.submit "Update profile", class: "btn btn-card" %>
     <% end %>
+    <%= link_to "Back", :back, class: "btn btn-manage" %>
   </div>

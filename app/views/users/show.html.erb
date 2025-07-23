@@ -33,12 +33,11 @@
                 </a>
               <% end %>
             </div>
-          </div>
-          <div class="d-flex justify-content-between mt-3 mb-5">
-            <% if @user == current_user %>
-              <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom-gray", style: "margin-right: 3px;" %>
-              <%= link_to "My Dashboard", dashboard_path(current_user), class: "btn btn-custom-gray" %>
-            <% end %>
+            <div class="d-flex justify-content-between mt-3 mb-5">
+              <% if @user == current_user %>
+                <%= link_to "Edit profile", edit_user_path(current_user), class: "btn btn-custom-gray", style: "margin-right: 3px;" %>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
