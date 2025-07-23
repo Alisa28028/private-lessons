@@ -58,9 +58,6 @@
                 <i class="fa-regular fa-pen-to-square"></i>
               <% end %>
               <!-- ICON TO DUPLICATE EVENT -->
-              <%= link_to duplicate_event_path(@event), class: "btn btn-outline-primary btn-sm rounded-3 me-1" do %>
-                <i class="fa-regular fa-copy"></i>
-              <% end %>
               <!-- ICON TO DELETE EVENT -->
               <%= button_to event_path(@event), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn btn-outline-primary btn-sm rounded-3" do %>
                 <i class="fa-regular fa-trash-can"></i>
@@ -506,14 +503,14 @@
         <div class="modal-content">
           <% if user_signed_in? %>
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="bookingModalLabel"> Book <%= @event_instance.event.title.capitalize %> class on <%= @event_instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(@event_instance.event.price) %></strong>?</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h3 class="modal-title" id="bookingModalLabel"> Book <%= @event_instance.event.title.capitalize %> class on <%= @event_instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(@event_instance.event.price) %></strong>?</h3>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -33px;"></button>
             </div>
             <div class="d-flex justify-content-between">
               <div class="modal-body">
                 <%= simple_form_for [@event_instance, Booking.new], url: event_instance_bookings_path(@event_instance), method: :post do |f| %>
                   <div class="d-flex justify-content-end">
-                    <%= f.submit "Book!", class: "btn btn-custom my-3" %>
+                    <%= f.submit "Book!", class: "btn btn-card" %>
                   </div>
                 <% end %>
               </div>
@@ -531,9 +528,6 @@
                 </div>
               </div>
             <% end %>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
           </div>
         </div>
       </div>
@@ -545,14 +539,14 @@
         <div class="modal-content">
           <% if user_signed_in? %>
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= @event.title.capitalize %></strong> Waitlist</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h3 class="modal-title" id="waitinglistModalLabel">Join the <strong><%= @event.title.capitalize %></strong> Waitlist</h3>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -14px;"></button>
             </div>
             <div class="d-flex justify-content-between">
               <div class="modal-body">
                 <%= simple_form_for [@event_instance, Booking.new], url: event_instance_bookings_path(@event_instance), method: :post do |f| %>
                   <div class="col-12">
-                    <%= f.submit "Join Waitlist", class: "btn btn-custom my-3", style: "background-color: #8d76a7;" %>
+                    <%= f.submit "Join Waitlist", class: "btn btn-card" %>
                   </div>
                 <% end %>
               </div>
@@ -570,9 +564,6 @@
                 </div>
               </div>
             <% end %>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
           </div>
         </div>
       </div>

@@ -126,6 +126,20 @@
 }
 
 
+.btn-outline-primary {
+  // background-color: #ffffff !important; /* Replace with your desired color */
+  color: #292A5A !important;           /* Optional: change text color */
+  border-color: #292A5A !important;    /* Optional: match border */
+}
+
+.btn-outline-primary:active {
+  background-color: #292A5A !important; /* Replace with your desired color */
+  color: #ffffff !important;           /* Optional: change text color */
+  border-color: #292A5A !important;    /* Optional: match border */
+}
+
+
+
 
 // .btn-profile {
 //   margin-left: auto; /* Flexbox way */

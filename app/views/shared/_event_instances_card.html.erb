@@ -277,7 +277,7 @@
       <% end %>
       <% if instance.event.user == current_user %>
         <div class="mt-1 position-relative z-1">
-          <%= link_to edit_event_path(instance.event), class: "btn btn-manage", style: "border-radius: 14px; margin-top: 10px; font-family: 'Inter'" do %>
+          <%= link_to edit_event_instance_path(instance), class: "btn btn-manage", style: "border-radius: 14px; margin-top: 10px; font-family: 'Inter'" do %>
             Edit informations
             <i class="fa-solid fa-pen me-2"></i>
           <% end %>
@@ -299,15 +299,15 @@
           <div class="modal-header">
             <% user_time_zone_str = current_user&.time_zone.presence || "UTC" %>
             <% time_zone = ActiveSupport::TimeZone[user_time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-            <h1 class="modal-title fs-5" id="bookingModalLabel<%= instance.id %>">
+            <h3 class="modal-title" id="bookingModalLabel<%= instance.id %>">
               Book <%= instance.event.title.capitalize %> class on <%= instance.start_time.in_time_zone(time_zone).strftime("%Y/%m/%d (%a)") %> at <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(instance.event.price) %></strong>?
-            </h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -33px;"></button>
           </div>
           <div class="modal-body">
             <%= simple_form_for [instance, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
               <div class="d-flex justify-content-end">
-                <%= f.submit "Book!", class: "btn btn-custom my-3" %>
+                <%= f.submit "Book!", class: "btn btn-card" %>
               </div>
             <% end %>
           </div>
@@ -325,9 +325,6 @@
             </div>
           </div>
         <% end %>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
       </div>
     </div>
   </div>
@@ -337,12 +334,12 @@
       <div class="modal-content">
         <% if user_signed_in? %>
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="waitinglistModalLabel">Join the <strong><%= instance.event.title.capitalize %></strong> Wait List</h1>
+            <h3 class="modal-title" id="waitinglistModalLabel">Join the <strong><%= instance.event.title.capitalize %></strong> Waitlist</h3>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body text-center">
             <%= simple_form_for [instance.event, Booking.new], url: event_instance_bookings_path(instance), method: :post do |f| %>
-              <%= f.submit "Join Waitlist", class: "btn btn-custom my-3", style: "background-color: #8d76a7" %>
+              <%= f.submit "Join Waitlist", class: "btn btn-card" %>
             <% end %>
           </div>
         <% else %>
@@ -359,9 +356,6 @@
             </div>
           </div>
         <% end %>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
       </div>
     </div>
   </div>
