@@ -42,46 +42,79 @@
       <div class="offcanvas-body">
         <ul class="list-unstyled">
           <% if user_signed_in? %>
-            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
               <i class="fa-solid fa-gear fa-sm text-custom me-2"></i>
               <%= link_to edit_user_registration_path do %>
                 <h4>Account settings</h4>
               <% end %>
             </div>
-            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
               <i class="fa-regular fa-calendar fa-sm text-custom me-2"></i>
               <%= link_to student_dashboard_path do %>
                 <h4>My bookings</h4>
               <% end %>
             </div>
-            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
               <i class="fa-solid fa-heart fa-sm text-custom me-2"></i>
               <%= link_to favorites_path do %>
                 <h4>My favorites</h4>
               <% end %>
             </div>
-            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
               <i class="fa-solid fa-circle-info fa-sm text-custom me-2"></i>
               <%= link_to about_us_path do %>
                 <h4>About us</h4>
               <% end %>
             </div>
-            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 10px;">
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
               <i class="fa-solid fa-envelope fa-sm text-custom me-2"></i>
               <%= link_to contact_path do %>
                 <h4>Contact us</h4>
               <% end %>
             </div>
-            <%= link_to "Log out", destroy_user_session_path, method: :delete, data: { confirm: "Are you sure you want to log out?" } %>
+            <%= link_to "Log out",
+            destroy_user_session_path,
+            data: { turbo_method: :delete },
+            class: "btn-link-no-border",
+            style: "margin-left: 7px; margin-top: 10px;" %>
           <% else %>
-            <li><%= link_to "Find classes", root_path %></li>
-            <li><%= link_to "What is Private Lessons?", what_is_path %></li>
-            <li><%= link_to "Create an account", new_user_registration_path %></li>
-            <li><%= link_to "About us", about_us_path %></li>
-            <li><%= link_to "Contact us", contact_path %></li>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
+              <i class="fa-solid fa-magnifying-glass fa-sm text-custom me-2"></i>
+              <%= link_to root_path do %>
+                <h4>Find Classes</h4>
+              <% end %>
+            </div>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
+              <i class="fa-solid fa-circle-question fa-sm text-custom me-2"></i>
+              <%= link_to what_is_path do %>
+                <h4>What is Private Lessons</h4>
+              <% end %>
+            </div>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
+              <i class="fa-solid fa-circle-user fa-sm text-custom me-2"></i>
+              <%= link_to new_user_registration_path do %>
+                <h4>Create an account</h4>
+              <% end %>
+            </div>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
+              <i class="fa-solid fa-circle-info fa-sm text-custom me-2"></i>
+              <%= link_to about_us_path do %>
+                <h4>About us</h4>
+              <% end %>
+            </div>
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 14px;">
+              <i class="fa-solid fa-envelope fa-sm text-custom me-2"></i>
+              <%= link_to contact_path do %>
+                <h4>Contact us</h4>
+              <% end %>
+            </div>
+            <%= link_to "Log in",
+            new_user_session_path,
+            class: "btn-link-no-border",
+            style: "margin-left: 7px; margin-top: 10px;" %>
           <% end %>
-        </ul>
-      </div>
+        </div>
+      </ul>
     </div>
     <%= render "shared/sidebar", data: { sidebar_target: "sidebar" } %>
     <turbo-frame id="flash">
