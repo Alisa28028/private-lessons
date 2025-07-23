@@ -1,12 +1,16 @@
 <% if user_signed_in? %>
   <div class="container-home-signed-in">
     <div class="overlay-text">
-      <h1 class="home" style="margin-top: 10px">Hello <%= current_user.first_name %>, Are you primarily a...
+      <h1 class="home" style="margin-top: 10px">Hello <%= current_user.first_name %>,
       </h1>
+      <h4 style="color: white;">Choose a dashboard to set as a default.</h4>
+      <h4 style="color: white; margin-top: 46px;">Are you primarily a...</h4>
       <%= form_with url: update_dashboard_preference_path, method: :patch, data: { turbo: false } do |f| %>
-        <div class="mb-3">
-          <%= f.submit "Student", name: "user[dashboard_preference]", value: "student", class: "btn btn-primary" %>
-          <%= f.submit "Teacher", name: "user[dashboard_preference]", value: "teacher", class: "btn btn-secondary" %>
+        <div class="mt-3 b-3">
+          <div class="d-flex flex-row ">
+            <%= f.submit "Student", name: "user[dashboard_preference]", value: "student", class: "btn btn-custom-dashboard" %>
+            <%= f.submit "Teacher", name: "user[dashboard_preference]", value: "teacher", class: "btn btn-custom-dashboard", style: "margin-left: 3px;" %>
+          </div>
         </div>
       <% end %>
     </div>
