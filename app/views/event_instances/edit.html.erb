@@ -1,15 +1,7 @@
-  <%# <div data-controller="datepicker">
-  <!-- Displaying validations for errors -->
-  <% if @event_instance.errors.any? %>
-<%# <div class="alert alert-danger">
-    <h4>There are errors with your submission:</h4>
-    <ul>
-      <% @event_instance.errors.full_messages.each do |msg| %>
-  <%# <li><%= msg</li>  %>
-  <%# <% end %>
-  <%# </ul> %>
-  <%# </div> %>
-  <%# <% end %>
+<div class="d-flex justify-content-center mt-6">
+  <h2>Edit informations</h2>
+</div>
+<div class="col-12 col-md-6 col-lg-6 mx-auto px-4">
   <div class="container d-flex justify-content-center mt-6 mb-6">
     <%= simple_form_for @event_instance, html: { multipart: true, data: { controller: "file-preview edit-form" } } do |f| %>
       <div>
@@ -117,6 +109,6 @@
       <%# <div id="video-previews" data-file-preview-target="videosPreview" style="margin-top: 10px;"></div> %>
       <%# </div> %>
       <!-- Submit Button -->
-      <%= f.submit "Save Changes", class: "btn btn-custom my-3 btn-right" %>
+      <%= f.submit "Save Changes", class: "btn btn-card" %>
     <% end %>
   </div>
