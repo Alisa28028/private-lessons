@@ -1,7 +1,7 @@
 <nav class="pl-nav pl-bottom-nav">
-  <section class="pl-nav-content">
-    <ul class="d-flex justify-content-around w-100"
-    style="<%= 'margin-top: 7px;' unless user_signed_in? %> padding-left: 0rem;">
+  <section class="pl-nav-content d-flex <%= user_signed_in? ? '' : 'justify-content-center' %>">
+    <ul class="d-flex <%= user_signed_in? ? 'justify-content-around' : 'justify-content-center' %> w-100"
+        style="<%= 'margin-top: 7px;' unless user_signed_in? %> padding-left: 0rem;">
       <li class="pl-nav-item text-center pl-icon <%= 'active' if current_page?(root_path) %>">
         <%= link_to "/", class: "d-flex flex-column align-items-center" do %>
           <div class="d-flex flex-column mb-3 ms-4 me-3">
