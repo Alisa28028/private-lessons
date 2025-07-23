@@ -20,5 +20,13 @@ module ApplicationHelper
     sanitize(text, tags: %w[b i em strong u ul ol li br p], attributes: [])
   end
 
+  def white_icon_paths
+    [
+      '/',                      # Homepage
+      '/dashboard/student',     # Student dashboard
+      '/dashboard/teacher'      # Teacher dashboard
+    ]
+  end
+
 
 end

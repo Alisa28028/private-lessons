@@ -66,7 +66,7 @@
   box-sizing: border-box;
   background-color: white;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* subtle top shadow */
-  z-index: 1000; /* ensures it stays on top */
+  z-index: 1050; /* ensures it stays on top */
 
 
   .pl-nav-item {
@@ -92,6 +92,7 @@
   height: 36px;
   filter: saturate(40%)drop-shadow(1px 1px 5px rgba(30, 4, 52, 0.5));
   margin-right: 8px;
+  margin-left: -10px;
   margin-top: 15px;
 }
 

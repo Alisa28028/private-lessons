@@ -4,7 +4,17 @@ class ApplicationController < ActionController::Base
   # Permit additional fields for user sign-up and account updates
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  layout :layout_by_resource
+
   protected
+
+  def layout_by_resource
+    if devise_controller?
+      "application" # You can change this to a custom layout too
+    else
+      "application"
+    end
+  end
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email, :password, :password_confirmation, :phone_number, :time_zone, :instagram, :x, :tiktok, :photo])

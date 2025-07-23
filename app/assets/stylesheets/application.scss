@@ -73,7 +73,7 @@ header {
 .header-overlay {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 5px;
   z-index: 1000; // make sure it's above everything
   background: transparent;
   width: 100%;
@@ -307,4 +307,30 @@ trix-editor.trix-content > h3 {
 
 .form-label {
 font-family: 'Inter';
+}
+
+.white-icon {
+  color: white !important;
+}
+
+.offcanvas.offcanvas-end-burger {
+  width: 70%;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+}
+
+
+.btn-link-no-border {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #292A5A; /* your desired color */
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.btn-link-no-border:hover {
+  color: #1a1a1a; /* optional hover color */
 }

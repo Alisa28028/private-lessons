@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:home]
+  skip_before_action :authenticate_user!, only: [:home, :what_is, :about_us, :contact]
 
   def home
     # return redirect_to new_user_session_path unless current_user
@@ -23,11 +23,15 @@ class PagesController < ApplicationController
       @user = current_user
 
     end
+  end
 
-    # def new
-    #   #
-    # end
+  def what_is
+  end
 
+  def about_us
+  end
+
+  def contact
   end
 
   # def home
