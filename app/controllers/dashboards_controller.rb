@@ -2,6 +2,7 @@ class DashboardsController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_dashboard_preference, except: [:select_preference, :update_preference]
   before_action :set_student_dashboard_data, only: [:student]
+  before_action :set_teacher_dashboard_data, only: [:teacher]
 
 
   def show
@@ -18,6 +19,7 @@ class DashboardsController < ApplicationController
       redirect_to select_dashboard_preference_path
     end
   end
+
 
   def select_dashboard_preference
     # Renders selection form
@@ -74,12 +76,20 @@ class DashboardsController < ApplicationController
               .pluck(:event_instance_id))
       .order(start_time: :asc)
 
-    # Fetch past event instances
+      # Fetch past event instances
+
+      booked_instance_ids = Booking
+      .where(user: current_user)
+      .where.not(status: "cancelled_by_student")
+      .pluck(:event_instance_id)
+
     @past_event_instances = EventInstance
       .left_joins(:event)
-      .where('event_instances.start_time <= ? AND (events.user_id = ? OR event_instances.id IN (?))',
-             Time.now, current_user.id, @bookings.pluck(:event_instance_id))
+      .where('event_instances.start_time <= ?', Time.now)
+      .where(id: booked_instance_ids)
+      .where.not(events: { user_id: current_user.id }) # exclude own classes
       .order(start_time: :desc)
+
 
 
   end
