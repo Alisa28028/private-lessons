@@ -24,7 +24,7 @@
 
 html, body {
   overflow-x: hidden;
-  overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  overflow-y: scroll; /* Ensures vertical scrolling is enabled */
   width: 100%;
   height: auto;
   background-color: #F2F2F2 !important;
