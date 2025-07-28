@@ -1,0 +1,20 @@
+ja:
+  add_event:
+    title: "レッスンを作成"
+    select_type: "レッスンの種類を選択"
+    one_time: "単発レッスン"
+    recurring: "定期レッスン"
+    recurring_type:
+      label: "繰り返しパターンを選択"
+      weekly: "毎週"
+      custom: "カスタム"
+  labels:
+    yes: "あり"
+    no: "なし"
+  event_form:
+    add_approval_mode: "承認制を追加？"
+  toggle:
+    approval_on: "あり"
+    approval_off: "なし"
+    payment_on: "生徒は予約時に全額支払う必要があります。キャンセルの返金はできません。"
+    payment_off: "生徒はすぐに支払う必要はありません。キャンセルポリシーが適用されます。"

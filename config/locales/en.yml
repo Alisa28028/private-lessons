@@ -28,4 +28,17 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+
+  add_event:
+    title: "Create Class"
+    select_type: "Select Event Type"
+    one_time: "One-Time Event"
+    recurring: "Recurring Event"
+    recurring_type:
+      label: "Select Recurrence Pattern"
+      weekly: "Weekly"
+      custom: "Custom"
+  event_form:
+      add_approval_mode: "Add Approval Mode??"
+      approval_on: "YES"
+      approval_off: "NO"

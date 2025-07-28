@@ -7,7 +7,7 @@
       <% if @current_user.bookings.joins(:event_instance).where('DATE(event_instances.start_time) = ?', Date.today).where(waitlisted: false).any? %>
         <h3 class="home">You have 1 booking today.</h3>
       <% else %>
-        <h3 class="home">You don't have any bookings today.</h3>
+        <h3 class="home"><%= t('You do not have any bookings today.') %></h3>
       <% end %>
     </div>
   </div>

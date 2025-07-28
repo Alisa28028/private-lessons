@@ -26,12 +26,18 @@
       </div>
       <!-- Hamburger only for not-logged-in users -->
       <%# <% unless user_signed_in? %>
-      <div class="hamburger">
-        <i class="fa-solid fa-bars fa-xl mt-4"
+      <div class="d-flex flex-row">
+        <div class="language-switcher ms-3" style="margin-top: 11px;">
+          <%= link_to "EN", url_for(locale: "en"), class: "btn btn-outline-primary", style: "font-size: 11px !important; padding: 4px; color: #ffffff !important; border-color: #ffffff !important; border-radius: 9px" %>
+          <%= link_to "日本語", url_for(locale: "ja"), class: "btn btn-outline-primary ms-1 me-3", style: "font-size: 11px !important; padding: 4px; color: #ffffff !important; border-color: #ffffff !important; border-radius: 9px" %>
+        </div>
+        <div class="hamburger">
+          <i class="fa-solid fa-bars fa-xl mt-4"
    style="<%= request.path == '/' || request.fullpath.starts_with?('/dashboard') ? 'color: white;' : 'color: #3E34A1;' %>"
    data-bs-toggle="offcanvas"
    data-bs-target="#sideMenu"
    aria-controls="sideMenu"></i>
+        </div>
       </div>
     </header>
     <div class="offcanvas offcanvas-end-burger" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">

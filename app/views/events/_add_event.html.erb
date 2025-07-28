@@ -1,5 +1,5 @@
 <div class="container w-100 col-12" style="margin-bottom: 5px;">
-  <h2 class="d-flex justify-content-center mb-3 mt-2">Create Class</h3>
+  <h2 class="d-flex justify-content-center mb-3 mt-2"><%= t("add_event.title") %></h3>
   <% if @event.errors.any? %>
     <div class="alert alert-danger">
       <ul>
@@ -13,21 +13,21 @@
     <%= f.hidden_field :time_zone, id: 'user-time-zone', value: current_user.time_zone %>
     <!----Recurrence type buttons-------->
     <div data-controller="event-form" class="col-12">
-      <h4 class="d-flex justify-content-center mb-1">Select event type</h4>
+      <h4 class="d-flex justify-content-center mb-1"><%= t("add_event.select_type") %></h4>
       <div class="recurrence-buttons d-flex justify-content-center mt-1 mb-3">
         <button type="button"
       class="btn btn-card me-1"
       data-action="click->event-form#selectEventType click->event-form#selectRecurrence"
           data-event-type="One-time"
           data-recurrence-type="one-time">
-          One-time
+          <%= t("add_event.one_time") %>
         </button>
         <button
       type="button"
       class="btn btn-card"
       data-action="click->event-form#selectEventType"
           data-event-type="recurring">
-          Recurring
+          <%= t("add_event.recurring") %>
         </button>
       </div>
       <!--one time event form (hidden by default)-->
@@ -167,14 +167,20 @@
     <% end %>
     <!-------Recurring Event options (hidden initially)-------->
     <div data-event-form-target="recurringOptions" class="d-none">
-      <h4 class="d-flex justify-content-center">Recurring event options</h4>
+      <h4 class="d-flex justify-content-center">
+        <%= t("add_event.recurring_type.label") %>
+      </h4>
       <div class="d-flex justify-content-center mt-1 mb-4">
         <button type="button" class="btn btn-card me-1"
         data-action="click->event-form#selectRecurrence"
-          data-recurrence-type="every-week">Every Week</button>
+          data-recurrence-type="every-week">
+          <%= t("add_event.recurring_type.weekly") %>
+        </button>
         <button type="button" class="btn btn-card"
         data-action="click->event-form#selectRecurrence"
-          data-recurrence-type="custom-dates">Custom Dates</button>
+          data-recurrence-type="custom-dates">
+          <%= t("add_event.recurring_type.custom") %>
+        </button>
       </div>
     </div>
     <!------Weekly recurrence form-------->
@@ -185,23 +191,28 @@
         <%# approval toggle %>
         <div data-controller="toggle">
           <div class="d-flex justify-content-start mb-1">
-            <%= f.label :approval_mode, "Add Approval Mode?", class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
+            <%= f.label :approval_mode, t("event_form.add_approval_mode"), class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
             <div>
               <div class="form-check form-switch position-relative">
                 <%= f.check_box :approval_mode,
-          {
-            class: "form-check-input",
-            role: "switch",
-            id: "approvalSwitch",
-            data: {
-              mode: "approval",
-              action: "change->toggle#updateLabel",
-              toggle_target: "checkbox"
-            }
-          },
-          "manual", "auto" %>
-                <% approval_text = f.object.approval_mode == "manual" ? "YES" : "NO" %>
-                <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
+  {
+    class: "form-check-input",
+    role: "switch",
+    id: "approvalSwitch",
+    data: {
+      controller: "toggle",
+      mode: "approval",
+      action: "change->toggle#updateLabel",
+      toggle_target: "checkbox",
+      yes_label: t("labels.yes"),
+      no_label: t("labels.no"),
+      approval_on: t("toggle.approval_on"),
+      approval_off: t("toggle.approval_off")
+    }
+  },
+  "manual", "auto" %>
+                <% approval_text = f.object.approval_mode == "manual" ? t("toggle.approval_on") : t("toggle.approval_off") %>
+                <% approval_class = (f.object.approval_mode == "manual") ? "switch-label--yes" : "switch-label--no" %>
                 <span class="switch-label <%= approval_class %> position-absolute text-white small"
               data-toggle-target="label">
                   <%= approval_text %>
