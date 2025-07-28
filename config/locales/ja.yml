@@ -13,6 +13,16 @@ ja:
     no: "なし"
   event_form:
     add_approval_mode: "承認制を追加？"
+    title: "レッスンタイトル:"
+    description: "概要:"
+    date_range: "日付範囲を選択:"
+    day_of_week: "曜日を選択:"
+    start_time: "開始時間を設定:"
+    duration: "所要時間（分）:"
+    capacity: "定員:"
+    location: "場所:"
+    price: "料金:"
+    photo: "写真をアップロード:"
   toggle:
     approval_on: "あり"
     approval_off: "なし"

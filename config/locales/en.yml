@@ -28,7 +28,6 @@
 #       enabled: "ON"
 
 en:
-
   add_event:
     title: "Create Class"
     select_type: "Select Event Type"
@@ -38,7 +37,23 @@ en:
       label: "Select Recurrence Pattern"
       weekly: "Weekly"
       custom: "Custom"
+  labels:
+    yes: "YES"
+    no: "NO"
   event_form:
-      add_approval_mode: "Add Approval Mode??"
-      approval_on: "YES"
-      approval_off: "NO"
+    add_approval_mode: "Add Approval Mode?"
+    title: "Title:"
+    description: "Description:"
+    date_range: "Select date range:"
+    day_of_week: "Select the day of the week:"
+    start_time: "Select start time:"
+    duration: "Duration (in minutes):"
+    capacity: "Capacity:"
+    location: "Location:"
+    price: "Price:"
+    photo: "Add a photo:"
+  toggle:
+    approval_on: "YES"
+    approval_off: "NO"
+    payment_on: "Students must pay 100% at the time of booking. No cancellation refunds apply."
+    payment_off: "Students will not be asked to pay immediately, and cancellation policies apply."

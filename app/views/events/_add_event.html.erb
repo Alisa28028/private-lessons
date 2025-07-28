@@ -227,9 +227,9 @@
       "Students can book the class directly." %>
           </div>
         </div>
-        <h4 class="form-label">Title:</h4>
+        <h4 class="form-label"><%= t("event_form.title") %></h4>
         <%= f.input :title, label: false, input_html: { placeholder: "Ex: Hiphop Advanced" } %>
-        <h4 class="form-label">Description:</h4>
+        <h4 class="form-label"><%= t("event_form.description") %></h4>
         <%= f.input :description, label: false, input_html: { placeholder: "Describe your event..." } %>
         <%# <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
         <%# field for event instances %>
@@ -238,7 +238,7 @@
           <%# <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
           <%# </div> %>
           <%# <% end %>
-          <label for="date-range" class="h4 form-label mb-1">Select date range:</label>
+          <label for="date-range" class="h4 form-label mb-1"><%= t("event_form.date_range") %></label>
           <div data-controller="datepicker">
             <input id="date-range"
           type="text"
@@ -251,10 +251,10 @@
             <%= f.input :day_of_week,
           collection: Date::DAYNAMES,
           prompt: "Select a Day",
-          label: "Day of the Week:",
+          label: t("event_form.day_of_week"),
           label_html: { class: "h4 form-label mt-3" } %>
             <!-- Visible Time Picker -->
-            <label for="event_time" class="h4 form-label">Select Time:</label>
+            <label for="event_time" class="h4 form-label"><%= t("event_form.start_time") %></label>
             <input
           id="event_time"
           type="text"
@@ -266,19 +266,19 @@
             </div>
             <%= f.input :duration,
             as: :integer,
-            label: "Duration (in minutes)",
+            label: t("event_form.duration"),
             placeholder: "Ex: 120",
             label_html: { class: "h4 form-label mt-3" } %>
             <%# <%= f.input :capacity, label:false, input_html: { %>
             <%# placeholder: "Capacity...", %>
             <%# value: f.object.capacity || f.object.default_capacity } %>
             <%= f.input :capacity,
-            label: "Capacity",
+            label: t("event_form.capacity"),
             placeholder: "Ex: 10",
             label_html: { class: "h4 form-label mt-1" } %>
             <div data-controller="location">
               <!-- Label -->
-              <label for="event_location_name" class="h4 form-label">Location:</label>
+              <label for="event_location_name" class="h4 form-label"> <%= t("event_form.location") %></label>
               <!-- Location Input Field -->
               <%= f.input :location_name, label: false, input_html: {
     id: "event_location_name",
@@ -335,12 +335,16 @@
                 <%= f.number_field :cancellation_policy_duration, class: "form-control" %>
               </div>
             </div>
-            <%= f.label :price, "Price:", class: "h4 form-label mt-3" %>
+            <%= f.label :price, t("event_form.price"), class: "h4 form-label mt-3" %>
             <%= f.input :price,
             label: false,
             placeholder: "Ex: 2000" %>
             <div class="form-group mb-8">
-              <%= f.input :photos, as: :file, input_html: { multiple: true }, label_html: { class: "h4 form-label" } %>
+              <%= f.input :photos,
+              as: :file,
+              input_html: { multiple: true },
+              label: t("event_form.photo"),
+              label_html: { class: "h4 form-label" } %>
             </div>
             <%# <div class="form-group mb-8"> %>
             <%# <%= f.input :videos, as: :file, input_html: { multiple: true }, label_html: { class: "h4 form-label" } %>
