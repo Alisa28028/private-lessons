@@ -118,24 +118,12 @@ class EventsController < ApplicationController
     @event.user = current_user
     @event.capacity = params[:event][:capacity].presence || @event.default_capacity
 
-    # Handle the location - find by name, or create a new one if it doesn't exist
-    # @location = Location.find_by(name: params[:location_name])
-    # @location ||= Location.create(name: params[:location_name])
-    # @event.location = @location
-
-    # Add location_id to event instances (make sure it's added to each event instance)
-    # if params[:event][:event_instances_attributes].present?
-    #   params[:event][:event_instances_attributes].each do |_, event_instance_params|
-    #     event_instance_params[:location_id] = location.id
-    #   end
-    # end
-
     Rails.logger.debug "Event Time Zone: #{@event.time_zone}"
     Rails.logger.debug "Params Time Zone: #{params[:event][:time_zone]}"
 
     if @event.save
       handle_event_instances_creation
-      redirect_to dashboard_path, notice: "Event(s) were successfully created."
+      redirect_to teacher_dashboard_path, notice: "Event(s) were successfully created."
     else
       render :new, status: :unprocessable_entity
     end

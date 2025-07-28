@@ -71,7 +71,7 @@
         <h4 class="form-label">Description:</h4>
         <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Edit your post..." %>
         <%# <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
-        <h4 class="form-label">Duration:</h4>
+        <h4 class="form-label">Duration (in minutes):</h4>
         <%= f.input :duration, as: :integer, label: false, input_html: { placeholder: "Ex: 120" } %>
         <h4 class="form-label">Capacity:</h4>
         <%= f.input :capacity, as: :integer, label:false, input_html: { placeholder: "Ex: 10" } %>
@@ -409,7 +409,7 @@
                     <%= f.hidden_field :start_time, id: 'hidden_custom_event_start_time' %>
                   </div>
                 </div>
-                <h4 class="form-label mt-4">Duration:</h4>
+                <h4 class="form-label mt-4">Duration (in minutes):</h4>
                 <%= f.input :duration, as: :integer, label: false, input_html: { placeholder: "Ex: 120"} %>
                 <h4 class="form-label">Capacity:</h4>
                 <%= f.input :capacity, label:false, input_html: { placeholder: "Ex: 10" } %>
