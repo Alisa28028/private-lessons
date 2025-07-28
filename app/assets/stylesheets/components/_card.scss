@@ -29,14 +29,17 @@
 
 
   .card-post-container {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     // width: 100%;
     gap: 20px; /* Spacing between cards */
   }
 
   .card-post {
+    min-width: 0;
     width: 100%; /* Default to full width */
-    max-width: 400px;
+    max-width: 100%;
+    word-break: break-word;
     flex: 1 1 300px;
     height: auto;
     background: #FFFFFF;
