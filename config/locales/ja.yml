@@ -24,6 +24,8 @@ ja:
     price: "料金:"
     photo: "写真をアップロード:"
   toggle:
+    approval_on_description: "予約を確定するには承認が必要です。"
+    approval_off_description: "受講者が直接レッスンを予約できます。"
     approval_on: "あり"
     approval_off: "なし"
     payment_on: "生徒は予約時に全額支払う必要があります。キャンセルの返金はできません。"

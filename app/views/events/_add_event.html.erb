@@ -200,7 +200,7 @@
     role: "switch",
     id: "approvalSwitch",
     data: {
-      controller: "toggle",
+
       mode: "approval",
       action: "change->toggle#updateLabel",
       toggle_target: "checkbox",
@@ -223,8 +223,8 @@
           <!-- This is the dynamic line below the switch -->
           <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
             <%= f.object.approval_mode == "manual" ?
-      "Students need your approval to book the class." :
-      "Students can book the class directly." %>
+      t("toggle.approval_on_description") :
+      t("toggle.approval_off_description") %>
           </div>
         </div>
         <h4 class="form-label"><%= t("event_form.title") %></h4>

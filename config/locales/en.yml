@@ -53,6 +53,8 @@ en:
     price: "Price:"
     photo: "Add a photo:"
   toggle:
+    approval_on_description: "Students need your approval to book the class."
+    approval_off_description: "Students can book the class directly."
     approval_on: "YES"
     approval_off: "NO"
     payment_on: "Students must pay 100% at the time of booking. No cancellation refunds apply."
