@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get "contact", to: "pages#contact", as: :contact
   get "what_is", to: "pages#what_is", as: :what_is
 
-  get '/dashboard', to: 'dashboards#show'
+  get '/dashboard', to: 'dashboards#show', as: :dashboard
   get '/select_dashboard_preference', to: 'dashboards#select_preference'
   patch '/update_dashboard_preference', to: 'dashboards#update_dashboard_preference'
   get '/student_dashboard', to: 'dashboards#student', as: :student_dashboard

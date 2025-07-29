@@ -33,7 +33,9 @@
         </div>
         <div class="hamburger">
           <i class="fa-solid fa-bars fa-xl mt-4"
-   style="<%= request.path == '/' || request.fullpath.starts_with?('/dashboard') ? 'color: white;' : 'color: #3E34A1;' %>"
+
+style="<%= ['/', '/en', '/ja'].include?(request.path) || request.fullpath.starts_with?('/dashboard') ? 'color: white;' : 'color: #3E34A1;' %>"
+
    data-bs-toggle="offcanvas"
    data-bs-target="#sideMenu"
    aria-controls="sideMenu"></i>

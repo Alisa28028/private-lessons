@@ -28,6 +28,16 @@
 #       enabled: "ON"
 
 en:
+  home:
+    subtitle: "You don't have any bookings today."
+  navbar:
+    home: "Home"
+    search: "Search"
+    dashboard: "Dashboard"
+    profile: "Profile"
+  search:
+    title: "Search classes"
+    no_result: "No results found."
   add_event:
     title: "Create Class"
     select_type: "Select Event Type"

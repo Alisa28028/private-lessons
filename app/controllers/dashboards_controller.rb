@@ -6,6 +6,8 @@ class DashboardsController < ApplicationController
 
 
   def show
+
+
     view = params[:view] || current_user.dashboard_preference
 
     case view
