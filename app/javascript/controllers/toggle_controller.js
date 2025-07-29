@@ -20,12 +20,12 @@ export default class extends Controller {
     // Localized description
     if (this.hasDescriptionTarget) {
       if (mode === "approval") {
-        const approvalOn = this.checkboxTarget.dataset.approvalOn || "Students need your approval to book the class."
-        const approvalOff = this.checkboxTarget.dataset.approvalOff || "Students can book the class directly."
+        const approvalOn = this.checkboxTarget.dataset.approvalOn
+        const approvalOff = this.checkboxTarget.dataset.approvalOff
         this.descriptionTarget.textContent = checked ? approvalOn : approvalOff
       } else if (mode === "payment") {
-        const paymentOn = this.checkboxTarget.dataset.paymentOn || "Students must pay 100% at the time of booking. No cancellation refunds apply."
-        const paymentOff = this.checkboxTarget.dataset.paymentOff || "Students will not be asked to pay immediately, and cancellation policies apply."
+        const paymentOn = this.checkboxTarget.dataset.paymentOn
+        const paymentOff = this.checkboxTarget.dataset.paymentOff
         this.descriptionTarget.textContent = checked ? paymentOn : paymentOff
       }
     }

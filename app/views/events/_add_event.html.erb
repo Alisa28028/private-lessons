@@ -33,9 +33,10 @@
       <!--one time event form (hidden by default)-->
       <div data-event-form-target="oneTimeEventForm" class="d-none">
         <%= f.hidden_field :recurrence_type, value: 'one-time' %>
+        <%# approval toggle %>
         <div data-controller="toggle">
           <div class="d-flex justify-content-start mb-1">
-            <%= f.label :approval_mode, "Approval Mode", class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
+            <%= f.label :approval_mode, t("event_form.add_approval_mode"), class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
             <div>
               <div class="form-check form-switch position-relative">
                 <%= f.check_box :approval_mode,
@@ -62,25 +63,25 @@
           <!-- This is the dynamic line below the switch -->
           <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
             <%= f.object.approval_mode == "manual" ?
-      "Students need your approval to book the class." :
-      "Students can book the class directly." %>
+      t("toggle.approval_on_description") :
+      t("toggle.approval_off_description") %>
           </div>
         </div>
-        <h4 class="form-label">Title:</h4>
+        <h4 class="form-label"><%= t("event_form.title") %></h4>
         <%= f.input :title, label:false, input_html: { placeholder: "Ex: Hiphop Advanced" } %>
-        <h4 class="form-label">Description:</h4>
+        <h4 class="form-label"><%= t("event_form.description") %></h4>
         <%= f.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Edit your post..." %>
         <%# <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
-        <h4 class="form-label">Duration (in minutes):</h4>
+        <h4 class="form-label"> <%= t("event_form.duration") %></h4>
         <%= f.input :duration, as: :integer, label: false, input_html: { placeholder: "Ex: 120" } %>
-        <h4 class="form-label">Capacity:</h4>
+        <h4 class="form-label"><%= t("event_form.capacity") %></h4>
         <%= f.input :capacity, as: :integer, label:false, input_html: { placeholder: "Ex: 10" } %>
         <%# <%= f.input :date, as: :date, label: "Event Date", input_html: { "data-datepicker-target" => "eventDate", "data-controller" => "datepicker" } %>
         <%# <div data-datepicker-target="eventInstances"> %>
         <!-- Location input with the new location controller -->
         <div data-controller="location">
           <!-- Label styled as h4 -->
-          <label for="event_location_name" class="h4 form-label mb-2">Location:</label>
+          <label for="event_location_name" class="h4 form-label mb-2"><%= t("event_form.location") %></label>
           <!-- Location Input Field -->
           <%= f.input :location_name, label: false, input_html: {
     placeholder: "Enter location...",
@@ -97,7 +98,7 @@
         </div>
         <div data-controller="toggle">
           <div class="d-flex justify-content-start mb-1">
-            <%= f.label :payment_obligation_on_booking, "Payment Due Upon Booking?", class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
+            <%= f.label :payment_obligation_on_booking, t("event_form.add_payment_condition"), class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
             <div>
               <div class="form-check form-switch position-relative">
                 <%= f.check_box :payment_obligation_on_booking,
@@ -108,7 +109,10 @@
             data: {
               mode: "payment",
               action: "change->toggle#updateLabel",
-              toggle_target: "checkbox"
+              toggle_target: "checkbox",
+              payment_on: t("toggle.payment_on_description"),
+              payment_off: t("toggle.payment_off_description")
+
             }
           } %>
                 <% payment_label = f.object.payment_obligation_on_booking ? "YES" : "NO" %>
@@ -122,15 +126,15 @@
           </div>
           <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
             <%= f.object.payment_obligation_on_booking ?
-      "Students must pay 100% at the time of booking. No cancellation refunds apply." :
-      "Students will not be asked to pay immediately, and cancellation policies apply." %>
+      t("toggle.payment_on_description") :
+      t("toggle.payment_off_description") %>
           </div>
           <!-- Hidden section: cancellation policy (conditionally shown) -->
           <div data-toggle-target="section" style="<%= f.object.payment_obligation_on_booking ? 'display: none;' : '' %>">
-            <%= f.label :cancellation_policy_duration, "Cancellation Policy (hours):", class: "h4 form-label" %>
+            <%= f.label :cancellation_policy_duration, t("event_form.cancellation_policy"), class: "h4 form-label" %>
             <div>
               <small class="form-text h4 mb-2" style="color: #3E34A1 !important">
-                Set the number of hours before the event students are allowed to cancel.
+                <%= t("event_form.cancellation_policy_description") %>
               </small>
             </div>
             <%= f.number_field :cancellation_policy_duration, class: "form-control mb-4" %>
@@ -140,29 +144,29 @@
           <div class="form-group h4 mb-2" data-controller="datepicker">
             <%= ei.input :date,
             as: :string,
-            label: "Event Date",
+            label: t("event_form.event_date"),
             wrapper_html: { class: "mb-4" },
             input_html: { data: { datepicker_target: "eventDate" } } %>
             <%= ei.input :start_time,
             as: :string,
-            label: "Start Time",
+            label: t("event_form.start_time"),
             input_html: { data: { datepicker_target: "eventTime"} } %>
           </div>
         <% end %>
         <%= f.input :price,
-        label: "Price:",
+        label: t("event_form.price"),
   label_html: { class: "h4 form-label mb-2" },
   placeholder: "Leave blank to use event price",
   value: @event_instance&.price || @event.price %>
         <div class="form-group h4 mt-2 mb-8">
           <%= f.input :photos,
-          label: "Add Photo(s):",
+          label: t("event_form.photo"),
           as: :file, input_html: { multiple: true } %>
         </div>
         <%# <div class="form-group h4 mb-8"> %>
         <%# <%= f.input :videos, as: :file, input_html: { multiple: true } %>
         <%# </div> %>
-        <%= f.submit "Create Class", class: "btn btn-card" %>
+        <%= f.submit t("event_form.create_class"), class: "btn btn-card" %>
       </div>
     <% end %>
     <!-------Recurring Event options (hidden initially)-------->
@@ -200,21 +204,18 @@
     role: "switch",
     id: "approvalSwitch",
     data: {
-
       mode: "approval",
       action: "change->toggle#updateLabel",
       toggle_target: "checkbox",
-      yes_label: t("labels.yes"),
-      no_label: t("labels.no"),
-      approval_on: t("toggle.approval_on"),
-      approval_off: t("toggle.approval_off")
+      approval_on: t("toggle.approval_on_description"),
+      approval_off: t("toggle.approval_off_description")
     }
   },
   "manual", "auto" %>
-                <% approval_text = f.object.approval_mode == "manual" ? t("toggle.approval_on") : t("toggle.approval_off") %>
-                <% approval_class = (f.object.approval_mode == "manual") ? "switch-label--yes" : "switch-label--no" %>
+                <% approval_text = f.object.approval_mode == "manual" ? "YES" : "NO" %>
+                <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
                 <span class="switch-label <%= approval_class %> position-absolute text-white small"
-              data-toggle-target="label">
+            data-toggle-target="label">
                   <%= approval_text %>
                 </span>
               </div>
@@ -231,62 +232,206 @@
         <%= f.input :title, label: false, input_html: { placeholder: "Ex: Hiphop Advanced" } %>
         <h4 class="form-label"><%= t("event_form.description") %></h4>
         <%= f.input :description, label: false, input_html: { placeholder: "Describe your event..." } %>
-        <%# <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
-        <%# field for event instances %>
-        <%# <%= f.fields_for :event_instances do |ei| %>
-          <%# <div class="event-instance-fields"> %>
-          <%# <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
-          <%# </div> %>
-          <%# <% end %>
-          <label for="date-range" class="h4 form-label mb-1"><%= t("event_form.date_range") %></label>
-          <div data-controller="datepicker">
-            <input id="date-range"
+        <label for="date-range" class="h4 form-label mb-1"><%= t("event_form.date_range") %></label>
+        <div data-controller="datepicker">
+          <input id="date-range"
           type="text"
           placeholder="Click to select"
           data-datepicker-target="weeklyDatePicker">
-            <!-- Hidden Fields for Start and End Date -->
-            <%= f.hidden_field :start_date, id: 'event_start_date' %>
-            <%= f.hidden_field :end_date, id: 'event_end_date' %>
-            <!-- Day of the Week Dropdown -->
-            <%= f.input :day_of_week,
+          <!-- Hidden Fields for Start and End Date -->
+          <%= f.hidden_field :start_date, id: 'event_start_date' %>
+          <%= f.hidden_field :end_date, id: 'event_end_date' %>
+          <!-- Day of the Week Dropdown -->
+          <%= f.input :day_of_week,
           collection: Date::DAYNAMES,
           prompt: "Select a Day",
           label: t("event_form.day_of_week"),
           label_html: { class: "h4 form-label mt-3" } %>
-            <!-- Visible Time Picker -->
-            <label for="event_time" class="h4 form-label"><%= t("event_form.start_time") %></label>
-            <input
+          <!-- Visible Time Picker -->
+          <label for="event_time" class="h4 form-label"><%= t("event_form.start_time") %></label>
+          <input
           id="event_time"
           type="text"
           placeholder="Select time"
           data-datepicker-target="eventTime"
            class="form-control flatpickr-input">
-              <!-- Hidden Field for Start Time -->
-              <%= f.hidden_field :start_time, id: 'hidden_weekly_event_start_time' %>
-            </div>
-            <%= f.input :duration,
+            <!-- Hidden Field for Start Time -->
+            <%= f.hidden_field :start_time, id: 'hidden_weekly_event_start_time' %>
+          </div>
+          <%= f.input :duration,
             as: :integer,
             label: t("event_form.duration"),
             placeholder: "Ex: 120",
             label_html: { class: "h4 form-label mt-3" } %>
-            <%# <%= f.input :capacity, label:false, input_html: { %>
-            <%# placeholder: "Capacity...", %>
-            <%# value: f.object.capacity || f.object.default_capacity } %>
-            <%= f.input :capacity,
+          <%# <%= f.input :capacity, label:false, input_html: { %>
+          <%# placeholder: "Capacity...", %>
+          <%# value: f.object.capacity || f.object.default_capacity } %>
+          <%= f.input :capacity,
             label: t("event_form.capacity"),
             placeholder: "Ex: 10",
             label_html: { class: "h4 form-label mt-1" } %>
-            <div data-controller="location">
-              <!-- Label -->
-              <label for="event_location_name" class="h4 form-label"> <%= t("event_form.location") %></label>
-              <!-- Location Input Field -->
-              <%= f.input :location_name, label: false, input_html: {
+          <div data-controller="location">
+            <!-- Label -->
+            <label for="event_location_name" class="h4 form-label"> <%= t("event_form.location") %></label>
+            <!-- Location Input Field -->
+            <%= f.input :location_name, label: false, input_html: {
     id: "event_location_name",
     placeholder: "Enter location...",
     "data-location-target": "input",
     "data-action":
       "focus->location#showUserLocations input->location#updateLocationList blur->location#handleBlur"
   } %>
+            <!-- Hidden input for location ID -->
+            <%= f.hidden_field :location_id, id: "event_location_id" %>
+            <!-- List of filtered locations -->
+            <ul data-location-target="locationList"
+      data-locations='<%= @location_data.to_json.html_safe if @location_data.present? %>'
+      class="d-none"></ul>
+          </div>
+          <div data-controller="toggle">
+            <div class="d-flex justify-content-start mb-1">
+              <%= f.label :payment_obligation_on_booking, t("event_form.add_payment_condition"), class: "form-label h4" , style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
+              <div>
+                <div class="form-check form-switch position-relative">
+                  <%= f.check_box :payment_obligation_on_booking,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "paymentSwitch",
+            data: {
+              mode: "payment",
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox",
+              payment_on: t("toggle.payment_on_description"),
+              payment_off: t("toggle.payment_off_description")
+
+            }
+          } %>
+                  <% payment_label = f.object.payment_obligation_on_booking ? "YES" : "NO" %>
+                  <% payment_class = f.object.payment_obligation_on_booking ? "switch-label--yes" : "switch-label--no" %>
+                  <span class="switch-label <%= payment_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                    <%= payment_label %>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
+              <%= f.object.payment_obligation_on_booking ?
+      t("toggle.payment_on_description") :
+      t("toggle.payment_off_description") %>
+            </div>
+            <!-- Hidden section: cancellation policy (conditionally shown) -->
+            <div data-toggle-target="section" style="<%= f.object.payment_obligation_on_booking ? 'display: none;' : '' %>">
+              <%= f.label :cancellation_policy_duration, t("event_form.cancellation_policy"), class: "h4 form-label" %>
+              <div>
+                <small class="form-text h4 mb-2" style="color: #3E34A1 !important">
+                  <%= t("event_form.cancellation_policy_description") %>
+                </small>
+              </div>
+              <%= f.number_field :cancellation_policy_duration, class: "form-control" %>
+            </div>
+          </div>
+          <%= f.label :price, t("event_form.price"), class: "h4 form-label mt-3" %>
+          <%= f.input :price,
+            label: false,
+            placeholder: "Ex: 2000" %>
+          <div class="form-group mb-8">
+            <%= f.input :photos,
+              as: :file,
+              input_html: { multiple: true },
+              label: t("event_form.photo"),
+              label_html: { class: "h4 form-label" } %>
+          </div>
+          <%# <div class="form-group mb-8"> %>
+          <%# <%= f.input :videos, as: :file, input_html: { multiple: true }, label_html: { class: "h4 form-label" } %>
+          <%# </div> %>
+          <%= f.submit t("event_form.create_class"), class: "btn btn-card" %>
+        <% end %>
+      </div>
+      <!-----Custom dates input (hidden by default)--------->
+      <%= simple_form_for @event, html: { multipart: true } do |f| %>
+        <%= f.hidden_field :time_zone, id: 'user-time-zone', value: current_user.time_zone %>
+        <div data-event-form-target="customRecurrence" class="d-none">
+          <%= f.hidden_field :recurrence_type, value: 'custom-dates' %>
+          <%# approval toggle %>
+          <div data-controller="toggle">
+            <div class="d-flex justify-content-start mb-1">
+              <%= f.label :approval_mode, "Approval Mode", class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
+              <div>
+                <div class="form-check form-switch position-relative">
+                  <%= f.check_box :approval_mode,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "approvalSwitch",
+            data: {
+              mode: "approval",
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox",
+              approval_on: t("toggle.approval_on_description"),
+              approval_off: t("toggle.approval_off_description")
+            }
+          },
+          "manual", "auto" %>
+                  <% approval_text = f.object.approval_mode == "manual" ? "YES" : "NO" %>
+                  <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
+                  <span class="switch-label <%= approval_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                    <%= approval_text %>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!-- This is the dynamic line below the switch -->
+            <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
+              <%= f.object.approval_mode == "manual" ?
+      t("toggle.approval_on_description") :
+      t("toggle.approval_off_description") %>
+            </div>
+          </div>
+          <h4 class="form-label"><%= t("event_form.title") %></h4>
+          <%= f.input :title, label:false, input_html: { placeholder: "Ex: Hiphop Advanced" } %>
+          <h4 class="form-label"><%= t("event_form.description") %></h4>
+          <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
+          <label for="date-multiple" class="h4 form-label mb-2"><%= t("event_form.multiple_date") %></label>
+          <div data-controller="datepicker">
+            <input id="date-multiple"
+          type="text"
+          placeholder="Select multiple date"
+          data-datepicker-target="customDatePicker">
+            <!-- Hidden field to store selected dates -->
+            <%= f.hidden_field :custom_dates, id: 'custom_dates_field' %>
+            <!-- Visible Time Picker -->
+            <%# <div class="mb-1">
+                  <label for="apply_same_time_to_all">Same time for all custom dates?</label>
+                  <input type="checkbox" id="apply_same_time_to_all" name="apply_same_time_to_all">
+                </div> %>
+            <div class="mt-4 d-flex flex-column">
+              <label for="event_time" class="h4 form-label mb-2"><%= t("event_form.start_time") %></label>
+              <input
+              id="event_time"
+              type="text"
+              placeholder="Select time"
+              data-datepicker-target="eventTime">
+                <%# data-action="change->datepicker#updateTimeHiddenField"> %>
+                <!-- Hidden Field for Start Time -->
+                <%= f.hidden_field :start_time, id: 'hidden_custom_event_start_time' %>
+              </div>
+            </div>
+            <h4 class="form-label mt-4"><%= t("event_form.duration") %></h4>
+            <%= f.input :duration, as: :integer, label: false, input_html: { placeholder: "Ex: 120"} %>
+            <h4 class="form-label"><%= t("event_form.capacity") %></h4>
+            <%= f.input :capacity, label:false, input_html: { placeholder: "Ex: 10" } %>
+            <div data-controller="location">
+              <label for="event_location_name" class="h4 form-label mb-2"><%= t("event_form.location") %></label>
+              <!-- Location Input Field -->
+              <%= f.input :location_name, label: false, input_html: {
+              placeholder: "Enter location...",
+              "data-location-target": "input",
+              "data-action":
+              "focus->location#showUserLocations  input->location#updateLocationList blur->location#handleBlur"
+          } %>
               <!-- Hidden input for location ID -->
               <%= f.hidden_field :location_id, id: "event_location_id" %>
               <!-- List of filtered locations -->
@@ -294,9 +439,10 @@
       data-locations='<%= @location_data.to_json.html_safe if @location_data.present? %>'
       class="d-none"></ul>
             </div>
+            <!-- Checkbox to toggle custom capacities -->
             <div data-controller="toggle">
               <div class="d-flex justify-content-start mb-1">
-                <%= f.label :payment_obligation_on_booking, "Payment Due Upon Booking?", class: "form-label h4" , style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
+                <%= f.label :payment_obligation_on_booking, t("event_form.add_payment_condition"), class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
                 <div>
                   <div class="form-check form-switch position-relative">
                     <%= f.check_box :payment_obligation_on_booking,
@@ -307,7 +453,9 @@
             data: {
               mode: "payment",
               action: "change->toggle#updateLabel",
-              toggle_target: "checkbox"
+              toggle_target: "checkbox",
+              payment_on: t("toggle.payment_on_description"),
+              payment_off: t("toggle.payment_off_description")
             }
           } %>
                     <% payment_label = f.object.payment_obligation_on_booking ? "YES" : "NO" %>
@@ -321,15 +469,15 @@
               </div>
               <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
                 <%= f.object.payment_obligation_on_booking ?
-      "Students must pay 100% at the time of booking. No cancellation refunds apply." :
-      "Students will not be asked to pay immediately, and cancellation policies apply." %>
+      t("toggle.payment_on_description") :
+      t("toggle.payment_off_description") %>
               </div>
               <!-- Hidden section: cancellation policy (conditionally shown) -->
               <div data-toggle-target="section" style="<%= f.object.payment_obligation_on_booking ? 'display: none;' : '' %>">
-                <%= f.label :cancellation_policy_duration, "Cancellation Policy (hours):", class: "h4 form-label" %>
+                <%= f.label :cancellation_policy_duration, t("event_form.cancellation_policy"), class: "h4 form-label" %>
                 <div>
                   <small class="form-text h4 mb-2" style="color: #3E34A1 !important">
-                    Set the number of hours before the event students are allowed to cancel.
+                    <%= t("event_form.cancellation_policy_description") %>
                   </small>
                 </div>
                 <%= f.number_field :cancellation_policy_duration, class: "form-control" %>
@@ -337,8 +485,8 @@
             </div>
             <%= f.label :price, t("event_form.price"), class: "h4 form-label mt-3" %>
             <%= f.input :price,
-            label: false,
-            placeholder: "Ex: 2000" %>
+                            label: false,
+                            placeholder: "Ex: 2000" %>
             <div class="form-group mb-8">
               <%= f.input :photos,
               as: :file,
@@ -347,161 +495,14 @@
               label_html: { class: "h4 form-label" } %>
             </div>
             <%# <div class="form-group mb-8"> %>
-            <%# <%= f.input :videos, as: :file, input_html: { multiple: true }, label_html: { class: "h4 form-label" } %>
+            <%# <%= f.input :videos, as: :file, input_html: { multiple: true } %>
             <%# </div> %>
-            <%= f.submit "Create Class", class: "btn btn-card" %>
-          <% end %>
+            <%= f.submit t("event_form.create_class"), class: "btn btn-card" %>
+          </div>
+          <%= f.hidden_field :recurrence_type, id: "recurrence_type", data: { event_form_target: "recurrenceType" } %>
         </div>
-        <!-----Custom dates input (hidden by default)--------->
-        <%= simple_form_for @event, html: { multipart: true } do |f| %>
-          <%= f.hidden_field :time_zone, id: 'user-time-zone', value: current_user.time_zone %>
-          <div data-event-form-target="customRecurrence" class="d-none">
-            <%= f.hidden_field :recurrence_type, value: 'custom-dates' %>
-            <%# approval toggle %>
-            <div data-controller="toggle">
-              <div class="d-flex justify-content-start mb-1">
-                <%= f.label :approval_mode, "Approval Mode", class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
-                <div>
-                  <div class="form-check form-switch position-relative">
-                    <%= f.check_box :approval_mode,
-          {
-            class: "form-check-input",
-            role: "switch",
-            id: "approvalSwitch",
-            data: {
-              mode: "approval",
-              action: "change->toggle#updateLabel",
-              toggle_target: "checkbox"
-            }
-          },
-          "manual", "auto" %>
-                    <% approval_text = f.object.approval_mode == "manual" ? "YES" : "NO" %>
-                    <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
-                    <span class="switch-label <%= approval_class %> position-absolute text-white small"
-              data-toggle-target="label">
-                      <%= approval_text %>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <!-- This is the dynamic line below the switch -->
-              <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
-                <%= f.object.approval_mode == "manual" ?
-      "Students need your approval to book the class." :
-      "Students can book the class directly." %>
-              </div>
-            </div>
-            <h4 class="form-label">Title:</h4>
-            <%= f.input :title, label:false, input_html: { placeholder: "Ex: Hiphop Advanced" } %>
-            <h4 class="form-label">Description:</h4>
-            <%= f.input :description, label:false, input_html: { placeholder: "Describe your event..." } %>
-            <%# <%= f.input :cancellation_policy_duration, as: :integer, label: false, input_html: { placeholder: "Default Cancellation Policy (hours before start)" } %>
-            <%# <%= f.fields_for :event_instances do |ei| %>
-              <%# <%= ei.input :cancellation_policy_duration, as: :integer, label: "Cancellation Policy (in hours)", input_html: { placeholder: "Number of hours before the event to cancel", min: 0 } %>
-              <%# <% end %>
-              <label for="date-multiple" class="h4 form-label mb-2">Select multiple dates:</label>
-              <div data-controller="datepicker">
-                <input id="date-multiple"
-          type="text"
-          placeholder="Select multiple date"
-          data-datepicker-target="customDatePicker">
-                <!-- Hidden field to store selected dates -->
-                <%= f.hidden_field :custom_dates, id: 'custom_dates_field' %>
-                <!-- Visible Time Picker -->
-                <%# <div class="mb-1">
-                  <label for="apply_same_time_to_all">Same time for all custom dates?</label>
-                  <input type="checkbox" id="apply_same_time_to_all" name="apply_same_time_to_all">
-                </div> %>
-                <div class="mt-4 d-flex flex-column">
-                  <label for="event_time" class="h4 form-label mb-2">Select Time:</label>
-                  <input
-              id="event_time"
-              type="text"
-              placeholder="Select time"
-              data-datepicker-target="eventTime">
-                    <%# data-action="change->datepicker#updateTimeHiddenField"> %>
-                    <!-- Hidden Field for Start Time -->
-                    <%= f.hidden_field :start_time, id: 'hidden_custom_event_start_time' %>
-                  </div>
-                </div>
-                <h4 class="form-label mt-4">Duration (in minutes):</h4>
-                <%= f.input :duration, as: :integer, label: false, input_html: { placeholder: "Ex: 120"} %>
-                <h4 class="form-label">Capacity:</h4>
-                <%= f.input :capacity, label:false, input_html: { placeholder: "Ex: 10" } %>
-                <div data-controller="location">
-                  <label for="event_location_name" class="h4 form-label mb-2">Location:</label>
-                  <!-- Location Input Field -->
-                  <%= f.input :location_name, label: false, input_html: {
-              placeholder: "Enter location...",
-              "data-location-target": "input",
-              "data-action":
-              "focus->location#showUserLocations  input->location#updateLocationList blur->location#handleBlur"
-          } %>
-                  <!-- Hidden input for location ID -->
-                  <%= f.hidden_field :location_id, id: "event_location_id" %>
-                  <!-- List of filtered locations -->
-                  <ul data-location-target="locationList"
-      data-locations='<%= @location_data.to_json.html_safe if @location_data.present? %>'
-      class="d-none"></ul>
-                </div>
-                <!-- Checkbox to toggle custom capacities -->
-                <div data-controller="toggle">
-                  <div class="d-flex justify-content-start mb-1">
-                    <%= f.label :payment_obligation_on_booking, "Payment Due Upon Booking?", class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
-                    <div>
-                      <div class="form-check form-switch position-relative">
-                        <%= f.check_box :payment_obligation_on_booking,
-          {
-            class: "form-check-input",
-            role: "switch",
-            id: "paymentSwitch",
-            data: {
-              mode: "payment",
-              action: "change->toggle#updateLabel",
-              toggle_target: "checkbox"
-            }
-          } %>
-                        <% payment_label = f.object.payment_obligation_on_booking ? "YES" : "NO" %>
-                        <% payment_class = f.object.payment_obligation_on_booking ? "switch-label--yes" : "switch-label--no" %>
-                        <span class="switch-label <%= payment_class %> position-absolute text-white small"
-              data-toggle-target="label">
-                          <%= payment_label %>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
-                    <%= f.object.payment_obligation_on_booking ?
-      "Students must pay 100% at the time of booking. No cancellation refunds apply." :
-      "Students will not be asked to pay immediately, and cancellation policies apply." %>
-                  </div>
-                  <!-- Hidden section: cancellation policy (conditionally shown) -->
-                  <div data-toggle-target="section" style="<%= f.object.payment_obligation_on_booking ? 'display: none;' : '' %>">
-                    <%= f.label :cancellation_policy_duration, "Cancellation Policy (hours):", class: "h4 form-label" %>
-                    <div>
-                      <small class="form-text h4 mb-2" style="color: #3E34A1 !important">
-                        Set the number of hours before the event students are allowed to cancel.
-                      </small>
-                    </div>
-                    <%= f.number_field :cancellation_policy_duration, class: "form-control" %>
-                  </div>
-                </div>
-                <%= f.label :price, "Price:", class: "h4 form-label mt-3" %>
-                <%= f.input :price,
-                            label: false,
-                            placeholder: "Ex: 2000" %>
-                <div class="form-group mb-8">
-                  <%= f.input :photos, as: :file, input_html: { multiple: true }, label_html: { class: "h4 form-label" } %>
-                </div>
-                <%# <div class="form-group mb-8"> %>
-                <%# <%= f.input :videos, as: :file, input_html: { multiple: true } %>
-                <%# </div> %>
-                <%= f.submit "Create Class", class: "btn btn-card" %>
-              </div>
-              <%= f.hidden_field :recurrence_type, id: "recurrence_type", data: { event_form_target: "recurrenceType" } %>
-            </div>
-          <% end %>
-        </div>
-        <!------capacity and price-------->
-        <!----------location dropdown------>
-        <!-- app/views/studios/studiolist.html.erb -->
+      <% end %>
+    </div>
+    <!------capacity and price-------->
+    <!----------location dropdown------>
+    <!-- app/views/studios/studiolist.html.erb -->
