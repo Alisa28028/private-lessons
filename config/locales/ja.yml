@@ -1,4 +1,23 @@
 ja:
+  date:
+    abbr_day_names: [日, 月, 火, 水, 木, 金, 土]
+  time:
+    formats:
+      short_day: "%Y年%-m月%-d日(%a)"
+  booking:
+    modal_title_html: "%{date}の%{time}の%{title}レッスンを<strong>%{price}</strong>で予約しますか？"
+    booking_btn: "予約する"
+  card:
+    book: "予約する"
+    join_waitlist: "キャンセル待ちに登録する"
+    no_location: "未定"
+    no_price: "未定"
+    on_waitlist: "キャンセル待ち"
+    pending_approval: "承認待ち"
+    booked: "予約済み"
+    attended: "参加済み"
+    refused: "承認なしまたはキャンセル済み"
+    edit_info: "編集する"
   home:
     subtitle: "今日の予約はありません。"
   navbar:
@@ -9,6 +28,9 @@ ja:
   search:
     title: "レッスンを検索"
     no_result: "検索結果が見つかりませんでした。"
+  profile:
+    edit_btn: "プロフィールを編集"
+    classes: "レッスン"
   add_event:
     title: "レッスン作成"
     select_type: "レッスンの種類を選択"

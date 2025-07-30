@@ -28,6 +28,23 @@
 #       enabled: "ON"
 
 en:
+  time:
+    formats:
+      short_day: "%Y/%m/%d (%a)"
+  booking:
+    modal_title_html: "Book %{title} class on %{date} at %{time} for <strong>%{price}</strong>?"
+    booking_btn: "Book class"
+  card:
+    book: "Book Class"
+    join_waitlist: "Join Waitlist"
+    no_location: "To be confirmed"
+    no_price: "Price not available"
+    on_waitlist: "On Waitlist!"
+    pending_approval: "Pending Approval"
+    booked: "Booked"
+    attended: "Attended"
+    refused: "Booking Refused or Cancelled"
+    edit_info: "Edit Informations"
   home:
     subtitle: "You don't have any bookings today."
   navbar:
@@ -38,6 +55,9 @@ en:
   search:
     title: "Search classes"
     no_result: "No results found."
+  profile:
+    edit_btn: "Edit profile"
+    classes: "classes"
   add_event:
     title: "Create Class"
     select_type: "Select Event Type"

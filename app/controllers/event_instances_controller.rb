@@ -45,8 +45,6 @@ class EventInstancesController < ApplicationController
       .where('event_instances.start_time > ?', Time.current)
       .where.not(id: @event_instance.id)                   # Exclude current
       .order('start_time ASC')
-
-
   end
 
   def edit
