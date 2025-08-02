@@ -53,8 +53,8 @@
           <%= link_to new_user_session_path, class: "d-flex flex-column align-items-center", title: "Log in or Sign up" do %>
             <div class="d-flex flex-column align-items-center" style="border: 1px solid #AFB3CC; border-radius: 10px; padding-right: 8px; padding-left: 8px;">
               <%# <i class="fa-solid fa-user-plus fa-lg pl-icon" style="font-size: 23px;"></i> %>
-              <div class="pl-icon-text" style="font-size: 12px; margin-top: 3px; margin-bottom: -5px; font-family: 'Inter';">Log in or</div>
-              <div class="pl-icon-text" style="font-size: 12px; margin-bottom: 3px; font-family: 'Inter';">sign up</div>
+              <div class="pl-icon-text" style="font-size: 10px; margin-top: 3px; margin-bottom: -5px; font-family: 'Inter';"> <%= t("navbar.log_in_or") %></div>
+              <div class="pl-icon-text" style="font-size: 10px; margin-bottom: 3px; font-family: 'Inter';"> <%= t("navbar.sign_up") %></div>
             </div>
           <% end %>
         </li>

@@ -14,9 +14,13 @@ class User < ApplicationRecord
                       inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
   validates :tiktok, :x, :instagram, length: { maximum: 255 }, allow_nil: true
   validates :username,
+  presence: true,
   uniqueness: true,
   allow_nil: true,
-  format: { with: /\A[a-zA-Z0-9_]+\z/, message: "only allows letters, numbers, and underscores" }
+  format: {
+    with: /\A[\p{Alnum}_ぁ-んァ-ヶ一-龥ー]+\z/u,
+    message: "only allows letters, numbers, underscores, and Japanese characters"
+  }
 
   has_many :events, dependent: :destroy
   has_many :event_instances, through: :events

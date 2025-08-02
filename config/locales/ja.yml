@@ -4,9 +4,39 @@ ja:
   time:
     formats:
       short_day: "%Y年%-m月%-d日(%a)"
+      short_day_with_time: "%-m月%-d日（%a）%-H:%M"
   booking:
     modal_title_html: "%{date}の%{time}の%{title}レッスンを<strong>%{price}</strong>で予約しますか？"
     booking_btn: "予約する"
+  waitlist:
+    modal_title_html: "%{date}の%{time}の%{title}レッスンのキャンセル待ちに登録しますか？"
+  login:
+    title: "ログインしてください"
+    subtitle: "予約するにはログインが必要です。"
+    subtitle_waitlist: "キャンセル待ちに登録するにはログインが必要です。"
+    cta: "まだアカウントをお持ちでないですか？"
+    create_acc: "新しいアカウントを作成。"
+    log_in: "ログイン"
+  sidemenu:
+    acc_settings: "アカウント設定"
+    bookings: "予約一覧"
+    favorites: "お気に入り"
+    about: "私たちについて"
+    contact: "お問い合わせ"
+    logout: "ログアウト"
+    find: "レッスン検索"
+    what_is: "Private Lessonsとは"
+    create: "アカウントを作成する"
+    login: "ログイン"
+  show_page:
+    copy_url: "リンクをコピー"
+    time: "時間"
+    description: "レッスン概要"
+    instructor: "インストラクター"
+    info: "詳細情報"
+    attendees: "参加者"
+    post: "投稿する"
+    waitlist: "キャンセル待ちリスト"
   card:
     book: "予約する"
     join_waitlist: "キャンセル待ちに登録する"
@@ -18,13 +48,29 @@ ja:
     attended: "参加済み"
     refused: "承認なしまたはキャンセル済み"
     edit_info: "編集する"
+    full: "満員"
+    one_spot_left: "残り%{count}名"
+    few_spots_left: "残り%{count}名"
+  sign_in:
+    cta: "ログインする"
+    cta_subtitle: "またはアカウントを作成する"
   home:
     subtitle: "今日の予約はありません。"
+    welcome: "PLアプリへようこそ!"
+    cta: "レッスン作成・予約を簡単に始めましょう！"
+    cta_btn: "アカウント作成"
+    login: "ログインはこちら"
+  form:
+    labels:
+      email: "メールアドレス"
+      password: "パスワード"
   navbar:
     home: "ホーム"
     search: "検索"
     dashboard: "管理画面"
     profile: "プロフィール"
+    log_in_or: "ログイン又は"
+    sign_up: "サインアップ"
   search:
     title: "レッスンを検索"
     no_result: "検索結果が見つかりませんでした。"
@@ -68,3 +114,89 @@ ja:
     approval_off: "なし"
     payment_on_description: "予約時に全額支払いの義務あり（キャンセル不可）"
     payment_off_description: "インストラクターが設定するキャンセルポリシーが適用されます。"
+  devise:
+    links:
+      login: "ログイン"
+      sign_up: "アカウントを作成"
+      forgot_password: "パスワードをお忘れですか？"
+      resend_confirmation: "確認メールが届いていませんか？"
+      resend_unlock: "アカウントのロック解除メールが届いていませんか？"
+      sign_in_with: "%{provider}でサインイン"
+    confirmations:
+      confirmed: "メールアドレスの確認が完了しました。"
+      send_instructions: "数分以内に確認方法を記載したメールが届きます。"
+      send_paranoid_instructions: "もしメールアドレスが存在すれば、確認方法を記載したメールが届きます。"
+    failure:
+      already_authenticated: "すでにログインしています。"
+      inactive: "アカウントはまだ有効化されていません。"
+      invalid: "%{authentication_keys}またはパスワードが正しくありません。"
+      locked: "アカウントがロックされています。"
+      last_attempt: "次の試行でアカウントがロックされます。"
+      not_found_in_database: "%{authentication_keys}またはパスワードが正しくありません。"
+      timeout: "セッションの有効期限が切れました。再度ログインしてください。"
+      unauthenticated: "ログインまたはアカウント登録が必要です。"
+      unconfirmed: "アカウントを使用するにはメールアドレスの確認が必要です。"
+    mailer:
+      confirmation_instructions:
+        subject: "確認メール"
+      reset_password_instructions:
+        subject: "パスワード再設定の案内"
+      unlock_instructions:
+        subject: "アカウントのロック解除方法"
+      email_changed:
+        subject: "メールアドレスが変更されました"
+      password_change:
+        subject: "パスワードが変更されました"
+    omniauth_callbacks:
+      failure: "%{kind}での認証に失敗しました（理由: \"%{reason}\"）。"
+      success: "%{kind}アカウントでの認証に成功しました。"
+    passwords:
+      no_token: "このページにはパスワード再設定メールのリンクからアクセスする必要があります。"
+      send_instructions: "数分以内にパスワード再設定方法を記載したメールが届きます。"
+      send_paranoid_instructions: "もし登録されていれば、パスワード再設定リンクがメールで送信されます。"
+      updated: "パスワードが正常に変更されました。ログインしています。"
+      updated_not_active: "パスワードが正常に変更されました。"
+    registrations:
+      destroyed: "アカウントを削除しました。またのご利用をお待ちしています。"
+      signed_up: "アカウント登録が完了しました。"
+      signed_up_but_inactive: "登録が完了しましたが、アカウントはまだ有効化されていません。"
+      signed_up_but_locked: "登録が完了しましたが、アカウントがロックされています。"
+      signed_up_but_unconfirmed: "確認メールを送信しました。メール内のリンクをクリックしてアカウントを有効にしてください。"
+      update_needs_confirmation: "アカウント情報を更新しました。新しいメールアドレスの確認が必要です。"
+      updated: "アカウント情報を更新しました。"
+      updated_but_not_signed_in: "パスワードが変更されたため、再度ログインしてください。"
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+      already_signed_out: "ログアウトしました。"
+      remember_me: "ログイン状態を保持する"
+    unlocks:
+      send_instructions: "アカウントのロック解除方法を記載したメールが送信されます。"
+      send_paranoid_instructions: "もしアカウントが存在すれば、ロック解除方法を記載したメールが届きます。"
+      unlocked: "アカウントのロックを解除しました。ログインしてください。"
+  activerecord:
+    attributes:
+      user:
+        time_zone: "タイムゾーン"
+    errors:
+      models:
+        user:
+          attributes:
+            time_zone:
+              inclusion: "有効なタイムゾーンを選択してください"
+  registration:
+    required: "基本情報を入力してください (*必須)"
+    f_name: "名"
+    l_name: "姓"
+    username: "ユーザー名"
+    username_message: "ユーザー名を入力してください"
+    phone: "電話番号"
+    email: "メールアドレス"
+    insta: "Instagramのプロフィールリンク"
+    x_acc: "Xのプロフィールリンク"
+    tiktok: "Tiktokのプロフィールリンク"
+    photo: "プロフィール写真をアップロード"
+    pass: "パスワード"
+    pass_confirm: "パスワードの確認"
+    time_zone: "タイムゾーンを選択"
+    sign_up: "アカウント作成"
