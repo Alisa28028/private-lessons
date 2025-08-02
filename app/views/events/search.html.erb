@@ -1,5 +1,5 @@
 <div class="container col-12" style="margin-bottom: 5px;">
-  <h2 class="d-flex justify-content-center mb-3 mt-6">Search classes</h2>
+  <h2 class="d-flex justify-content-center mb-3 mt-6"> <%= t("search.title") %></h2>
   <div class="container w-100 mt-4 my-5">
     <div class="row">
       <%= simple_form_for :search_by_title_and_description_and_user, url: search_path, method: :get do |f| %>
@@ -19,7 +19,7 @@
             <% if @event_instances.any? %>
               <%= render '/shared/event_card_iteration', events: @events, event_instances: @event_instances %>
             <% else %>
-              <h4>No results found.</h4>
+              <h4> <%= t("search.no_result") %></h4>
             <% end %>
           <% end %>
         </div>

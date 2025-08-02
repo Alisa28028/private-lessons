@@ -1,11 +1,11 @@
 <div class="container-home">
   <div class="overlay-text-home">
     <div style="margin-bottom: 15px;">
-      <h1 class="home" style="margin-top: -82px">Sign in
+      <h1 class="home" style="margin-top: -82px"> <%= t("sign_in.cta") %>
       </h1>
       <%= link_to new_user_registration_path(return_to: request.fullpath) do  %>
         <h3 class="home" style="margin-top: 3px; color: white; text-decoration: underline; text-decoration-thickness: 0.5px; font-weight: 300; font-size: 15px;">
-          Or create an account!</h3>
+          <%= t("sign_in.cta_subtitle") %></h3>
       <% end %>
     </div>
   </div>
@@ -15,22 +15,23 @@
     <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "w-100 mx-4" }) do |f| %>
       <div class="form-inputs w-100" style="margin-top: 33px; font-family: 'Inter';">
         <%= f.input :email,
-                required: false,
-                autofocus: true,
-                input_html: { autocomplete: "email" }
-                %>
+            label: t("form.labels.email"),
+            required: false,
+            autofocus: true,
+            input_html: { autocomplete: "email", placeholder: "me@email.com" } %>
         <%= f.input :password,
+                label: t("form.labels.password"),
                 required: false,
                 input_html: { autocomplete: "current-password" } %>
         <div class="form-check d-flex flex-column mb-2">
-          <div class="d-flex flex-row">
-            <%= f.check_box :remember_me, { class: "form-check-input-remember", style: "accent-color: #292A5A;", id: "remember_me" } %>
-            <%= f.label :remember_me, "Remember me", class: "form-check-label", for: "remember_me" %>
+          <div class="d-flex flex-row align-items-center">
+            <%= f.check_box :remember_me, class: "form-check-input-remember", style: "accent-color: #292A5A;", id: "remember_me" %>
+            <%= label_tag :remember_me, t('devise.sessions.remember_me'), class: "form-check-label ms-2" %>
           </div>
         </div>
       </div>
       <div class="form-actions" style="margin-top: 20px;">
-        <%= f.button :submit, "Log in", class: "btn btn-login" %>
+        <%= f.button :submit, t("login.log_in"), class: "btn btn-login" %>
         <div style="margin-bottom: 26px; font-family: 'Inter'; text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: #969598;">
           <%= render "devise/shared/links" %>
         </div>

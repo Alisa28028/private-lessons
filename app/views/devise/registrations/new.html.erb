@@ -1,40 +1,51 @@
 <div class="container col-12" style="width: 90%; margin-bottom: 5px;">
-  <h2 class="d-flex justify-content-center mb-3 mt-6">Sign up</h2>
+  <h2 class="d-flex justify-content-center mb-5 mt-6">Sign up</h2>
+  <h5 class="d-flex justify-content-start mb-3"> <%= t("registration.required") %></h5>
   <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
     <%= f.error_notification %>
     <div class="form-inputs">
       <%= f.input :first_name,
+                label: t("registration.f_name"),
                 required: true,
                 autofocus: true %>
       <%= f.input :last_name,
+                label: t("registration.l_name"),
                 required: true,
                 autofocus: true %>
-      <%= f.input :username, placeholder: "Choose a unique username" %>
+      <%= f.input :username,
+                label: t("registration.username"),
+                placeholder: t("registration.username_message") %>
       <%= f.input :phone_number,
+                label: t("registration.phone"),
                 autofocus: true,
                 autocomplete: "off" %>
       <%= f.input :email,
+                label: t("registration.email"),
                 required: true,
                 autofocus: true,
                 input_html: { autocomplete: "email" },
                 error: f.object.errors[:email].present? ? { message: f.object.errors[:email].join(', ') } : nil %>
-      <%= f.input :instagram, label: "Instagram link (Optional)" %>
-      <%= f.input :x, label: "X link (Optional)" %>
-      <%= f.input :tiktok, label: "TikTok link (Optional)" %>
-      <%= f.input :photo, as: :file %>
+      <%= f.input :instagram, label: t("registration.insta") %>
+      <%= f.input :x, label: t("registration.x_acc") %>
+      <%= f.input :tiktok, label: t("registration.tiktok") %>
+      <%= f.input :photo,
+                  label: t("registration.photo"),
+                  as: :file %>
       <%= f.input :password,
+                label: t("registration.pass"),
                 required: true,
                 hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
                 input_html: { autocomplete: "new-password" } %>
       <%= f.input :password_confirmation,
+                label: t("registration.pass_confirm"),
                 required: true,
                 input_html: { autocomplete: "new-password" } %>
       <%= f.input :time_zone,
             collection: ActiveSupport::TimeZone.all.map(&:name).sort,
-            prompt: "Select your time zone" %>
+            prompt: t("registration.time_zone") %>
     </div>
     <div class="form-actions" style="margin-top: 30px;">
-      <%= f.button :submit, "Sign up", class: "btn btn-card" %>
+      <%= f.button :submit, t("registration.sign_up"), class: "btn btn-card" %>
     </div>
   <% end %>
   <%# adding this for now %>

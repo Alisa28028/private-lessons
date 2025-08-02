@@ -28,4 +28,141 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  time:
+    formats:
+      short_day: "%Y/%m/%d (%a)"
+      short_day_with_time: "%a, %b %e – %l:%M %p"
+  booking:
+    modal_title_html: "Book %{title} class on %{date} at %{time} for <strong>%{price}</strong>?"
+    booking_btn: "Book class"
+  waitlist:
+    modal_title_html: "Join the waitlist for the %{title} class on %{date}, %{time})."
+  login:
+    title: "Login Required"
+    subtitle: "You must be logged in to book the class."
+    subtitle_waitlist: "You must be logged in to join the waitlist"
+    cta: "Don't have an account yet?"
+    create_acc: "Create a New Account!"
+    log_in: "Log in"
+  sidemenu:
+    acc_settings: "アカウント設定"
+    bookings: "My bookings"
+    favorites: "My favorites"
+    about: "About us"
+    contact: "Contact us"
+    logout: "Log out"
+    find: "Find Classes"
+    what_is: "What is Private Lessons?"
+    create: "Create an account"
+    login: "Log in"
+  show_page:
+    copy_url: "copy url"
+    time: " time"
+    description: "Description"
+    instructor: "Teacher"
+    info: "Informations"
+    attendees: "Attendees"
+    post: "Add post!"
+    waitlist: "Waitlist"
+  card:
+    book: "Book Class"
+    join_waitlist: "Join Waitlist"
+    no_location: "To be confirmed"
+    no_price: "Price not available"
+    on_waitlist: "On Waitlist!"
+    pending_approval: "Pending Approval"
+    booked: "Booked"
+    attended: "Attended"
+    refused: "Booking Refused or Cancelled"
+    edit_info: "Edit Informations"
+    full: "EVENT FULL!"
+    one_spot_left: "%{count} spot left!"
+    few_spots_left: "%{count} spots left"
+  sign_in:
+    cta: "Sign in"
+    cta_subtitle: "Or create an account!"
+  home:
+    subtitle: "You don't have any bookings today."
+    welcome: "Welcome,"
+    cta: "Create an account to start booking classes!"
+    cta_btn: "Create an Account"
+    login: "or click here to log in."
+  form:
+    labels:
+      email: "Email"
+      password: "Password"
+  navbar:
+    home: "Home"
+    search: "Search"
+    dashboard: "Dashboard"
+    profile: "Profile"
+    log_in_or: "Log in or"
+    sign_up: "sign up"
+  search:
+    title: "Search classes"
+    no_result: "No results found."
+  profile:
+    edit_btn: "Edit profile"
+    classes: "classes"
+  add_event:
+    title: "Create Class"
+    select_type: "Select Event Type"
+    one_time: "One-Time Event"
+    recurring: "Recurring Event"
+    recurring_type:
+      label: "Select Recurrence Pattern"
+      weekly: "Weekly"
+      custom: "Custom"
+  labels:
+    yes: "YES"
+    no: "NO"
+  event_form:
+    add_approval_mode: "Add Approval Mode?"
+    add_payment_condition: "Enable 'No cancellation / Full payment obligation'?"
+    title: "Title:"
+    description: "Description:"
+    event_date: "Date"
+    date_range: "Select date range:"
+    multiple_date: "Select multiple dates"
+    day_of_week: "Select the day of the week:"
+    start_time: "Start time:"
+    duration: "Duration (in minutes):"
+    capacity: "Capacity:"
+    location: "Location:"
+    price: "Price:"
+    photo: "Add a photo:"
+    cancellation_policy: "Cancellation Policy (before XX hours):"
+    cancellation_policy_description: "Set the number of hours before the event students are allowed to cancel."
+    create_class: "Create Class"
+  toggle:
+    approval_on_description: "Students need your approval to book the class."
+    approval_off_description: "Students can book the class directly."
+    approval_on: "YES"
+    approval_off: "NO"
+    payment_on_description: "Students must pay 100% at the time of booking. No cancellation refunds apply."
+    payment_off_description: "Students will not be asked to pay immediately, and cancellation policies apply."
+  activerecord:
+    attributes:
+      user:
+        time_zone: "Time zone"
+    errors:
+      models:
+        user:
+          attributes:
+            time_zone:
+              inclusion: "is not a valid time zone"
+  registration:
+    required: "Please fill in the basic information (*required)"
+    f_name: "First name"
+    username: "Username"
+    username_message: "Choose a unique username"
+    phone: "Phone number"
+    email: "Email"
+    insta: "Instagram link"
+    x_acc: "X link"
+    tiktok: "Tiktok link"
+    photo: "Add profile picture"
+    pass: "password"
+    pass_confirm: "Password confirmation"
+    time_zone: "Select your time zone"
+    sign_up: "Sign up"

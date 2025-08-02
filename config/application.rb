@@ -9,6 +9,14 @@ Bundler.require(*Rails.groups)
 module PrivateLessons
   class Application < Rails::Application
     config.action_controller.raise_on_missing_callback_actions = false if Rails.version >= "7.1.0"
+
+    # Set available and default locales
+    config.i18n.available_locales = [:en, :ja]
+    config.i18n.default_locale = :en
+    # Optional: Auto-load all locale files from subdirectories under /locales
+    config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.{rb,yml}")]
+
+
     config.generators do |generate|
       generate.assets false
       generate.helper false

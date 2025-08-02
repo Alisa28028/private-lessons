@@ -4,6 +4,9 @@ import "controllers"
 import "@popperjs/core"
 import "bootstrap"
 
+import "./offcanvas_cleanup"
+import "./offcanvas_fix"
+
 import "trix"
 import "@rails/actiontext"
 

@@ -7,7 +7,7 @@
       <% if @current_user.bookings.joins(:event_instance).where('DATE(event_instances.start_time) = ?', Date.today).where(waitlisted: false).any? %>
         <h3 class="home">You have 1 booking today.</h3>
       <% else %>
-        <h3 class="home">You don't have any bookings today.</h3>
+        <h3 class="home"><%= t("home.subtitle") %></h3>
       <% end %>
     </div>
   </div>
@@ -15,15 +15,15 @@
   <div class="container-home">
     <div class="overlay-text-home">
       <div style="margin-bottom: 15px;">
-        <h1 class="home" style="margin-top: -82px">Welcome,
+        <h1 class="home" style="margin-top: -82px"> <%= t("home.welcome") %>
         </h1>
-        <h3 class="home">Create an account to start booking classes!</h3>
+        <h3 class="home"> <%= t("home.cta") %></h3>
         <div class="d-flex flex-column">
-          <%= link_to "Create an Account", new_user_registration_path, class: "btn btn-home" %>
+          <%= link_to t("home.cta_btn"), new_user_registration_path, class: "btn btn-home" %>
           <div class="d-flex align-items-center" style="margin-bottom: 32px;">
             <%= link_to new_user_session_path(return_to: request.fullpath) do  %>
               <h4 style="margin-left: 22px; margin-top: 3px; color: white; text-decoration: underline; text-decoration-thickness: 1px, font-weight: 300; font-size: 14px;">
-                or click here to log in.
+                <%= t("home.login") %>
               </h4>
             <% end %>
           </div>

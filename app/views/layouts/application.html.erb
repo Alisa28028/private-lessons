@@ -26,12 +26,20 @@
       </div>
       <!-- Hamburger only for not-logged-in users -->
       <%# <% unless user_signed_in? %>
-      <div class="hamburger">
-        <i class="fa-solid fa-bars fa-xl mt-4"
-   style="<%= request.path == '/' || request.fullpath.starts_with?('/dashboard') ? 'color: white;' : 'color: #3E34A1;' %>"
+      <div class="d-flex flex-row">
+        <div class="language-switcher ms-3" style="margin-top: 11px;">
+          <%= link_to "EN", url_for(locale: "en"), class: "btn btn-outline-primary", style: "font-size: 11px !important; padding: 4px; color: #ffffff !important; border-color: #ffffff !important; border-radius: 9px" %>
+          <%= link_to "日本語", url_for(locale: "ja"), class: "btn btn-outline-primary ms-1 me-3", style: "font-size: 11px !important; padding: 4px; color: #ffffff !important; border-color: #ffffff !important; border-radius: 9px" %>
+        </div>
+        <div class="hamburger">
+          <i class="fa-solid fa-bars fa-xl mt-4"
+
+style="<%= ['/', '/en', '/ja'].include?(request.path) || request.fullpath.starts_with?('/dashboard') ? 'color: white;' : 'color: #3E34A1;' %>"
+
    data-bs-toggle="offcanvas"
    data-bs-target="#sideMenu"
    aria-controls="sideMenu"></i>
+        </div>
       </div>
     </header>
     <div class="offcanvas offcanvas-end-burger" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
@@ -45,34 +53,34 @@
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-gear fa-sm text-custom me-2 mt-1"></i>
               <%= link_to edit_user_registration_path do %>
-                <h4>Account settings</h4>
+                <h4><%= t("sidemenu.acc_settings") %></h4>
               <% end %>
             </div>
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-regular fa-calendar fa-sm text-custom me-2 mt-1"></i>
               <%= link_to student_dashboard_path do %>
-                <h4>My bookings</h4>
+                <h4><%= t("sidemenu.bookings") %></h4>
               <% end %>
             </div>
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-heart fa-sm text-custom me-2 mt-1"></i>
               <%= link_to favorites_path do %>
-                <h4>My favorites</h4>
+                <h4><%= t("sidemenu.favorites") %></h4>
               <% end %>
             </div>
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-circle-info fa-sm text-custom me-2 mt-1"></i>
               <%= link_to about_us_path do %>
-                <h4>About us</h4>
+                <h4><%= t("sidemenu.about") %></h4>
               <% end %>
             </div>
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-envelope fa-sm text-custom me-2 mt-1"></i>
               <%= link_to contact_path do %>
-                <h4>Contact us</h4>
+                <h4><%= t("sidemenu.contact") %></h4>
               <% end %>
             </div>
-            <%= link_to "Log out",
+            <%= link_to t("sidemenu.logout"),
             destroy_user_session_path,
             data: { turbo_method: :delete },
             class: "btn-link-no-border",
@@ -81,34 +89,34 @@
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-magnifying-glass fa-sm text-custom me-2 mt-1"></i>
               <%= link_to root_path do %>
-                <h4>Find Classes</h4>
+                <h4><%= t("sidemenu.find") %></h4>
               <% end %>
             </div>
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-circle-question fa-sm text-custom me-2 mt-1"></i>
               <%= link_to what_is_path do %>
-                <h4>What is Private Lessons?</h4>
+                <h4><%= t("sidemenu.what_is") %></h4>
               <% end %>
             </div>
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-circle-user fa-sm text-custom me-2 mt-1"></i>
               <%= link_to new_user_registration_path do %>
-                <h4>Create an account</h4>
+                <h4><%= t("sidemenu.create") %></h4>
               <% end %>
             </div>
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-circle-info fa-sm text-custom me-2 mt-1"></i>
               <%= link_to about_us_path do %>
-                <h4>About us</h4>
+                <h4><%= t("sidemenu.about") %></h4>
               <% end %>
             </div>
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-bottom: 18px;">
               <i class="fa-solid fa-envelope fa-sm text-custom me-2 mt-1"></i>
               <%= link_to contact_path do %>
-                <h4>Contact us</h4>
+                <h4><%= t("sidemenu.contact") %></h4>
               <% end %>
             </div>
-            <%= link_to "Log in",
+            <%= link_to t("sidemenu.login"),
             new_user_session_path,
             class: "btn-link-no-border",
             style: "margin-left: 7px; margin-top: 10px;" %>

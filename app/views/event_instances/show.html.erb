@@ -23,7 +23,7 @@
             <!-- Buttons for the event creator (teacher) -->
             <div class="d-flex flex-end" style="margin-left: 3px;">
               <%= link_to "#", class: "btn btn-outline-primary btn-sm rounded-3", id: "copy-url-button" do %>
-                <i class="fa-solid fa-download"></i> copy url
+                <i class="fa-solid fa-download"></i> <%= t("show_page.copy_url") %>
               <% end %>
               <script>
                 document.getElementById('copy-url-button').addEventListener('click', function() {
@@ -68,13 +68,14 @@
       <% end %>
       <div class="d-flex justify-content-between" style="margin-bottom: 5px;">
         <div class="d-flex align-items-center gap-2">
-          <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+          <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
           <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-          <%# <i class="fa-regular fa-calendar text-custom" style="font-size: 17px;margin-left: 1px;color: black;margin-top: 1px;"></i> %>
-          <h4 class="show" style="font-weight: 300;">
-            <%= @event_instance.start_time.in_time_zone(time_zone).strftime("%B %d, %Y at %H:%M") %>
-            (<%= friendly_time_zone_name(time_zone.name) %>)
-          </h4>
+          <div class="d-flex align-items-center gap-2">
+            <h4 class="show" style="font-weight: 300;">
+              <%= l(@event_instance.start_time.in_time_zone(time_zone), format: :short_day_with_time) %>
+              (<%= time_zone.tzinfo.name %><%= t("show_page.time") %>)
+            </h4>
+          </div>
         </div>
         <% if user_signed_in? %>
           <% if @event_instance.likes.exists?(user: current_user) %>
@@ -132,11 +133,11 @@
                   </div>
                 <% when "cancelled_by_teacher", "rejected_by_teacher" %>
                   <p style="font-size: small; border: 1px solid #dc3545; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
-                    Booking Rejected or Cancelled
+                    <%= t("card.refused") %>
                   </p>
                 <% when "confirmed" %>
                   <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #3E34A1; color: #3E34A1; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 12px; margin-top: 10px">
-                    <%= future_event ? "Booked!" : "Attended" %>
+                    <%= future_event ? t("card.booked") : t("card.attended") %>
                   </p>
                   <% if @event.cancellation_policy_duration.present? %>
                     <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
@@ -170,13 +171,13 @@
                   <div class="col-12 px-0">
                     <button type="button" style="background-color: #3E34A1;"
             class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
-                      Join Waitlist!
+                      <%= t("card.join_waitlist") %>
                     </button>
                   </div>
                 <% else %>
                   <div class="col-12 px-0">
                     <button type="button" class="btn btn-card ml-2 mb-1 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
-                      Book class!
+                      <%= t("card.book") %>
                     </button>
                   </div>
                 <% end %>
@@ -219,7 +220,7 @@
             <% else %>
               <div class="col-12 px-0">
                 <button type="button" class="btn btn-card ml-2 mt-4 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
-                  Book class!
+                  <%= t("card.book") %>
                 </button>
               </div>
             <% end %>
@@ -233,11 +234,11 @@
         <div class="show-image-container">
           <% if @event_instance.start_time > Time.current %>
             <% if @event_instance.spots_left <= 0 %>
-              <div class="show-overlay-text-availability" style="background-color: #B15CDE">EVENT FULL!</div>
+              <div class="show-overlay-text-availability" style="background-color: #B15CDE"><%= t("card.full") %></div>
             <% elsif @event_instance.spots_left == 1 %>
-              <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> spot left!</div>
+              <div class="show-overlay-text-availability" style="background-color: #9747FF"> <%= t("card.one_spot_left", count: @event_instance.spots_left) %></div>
             <% elsif @event_instance.spots_left <= 3 %>
-              <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= @event_instance.spots_left %> spots left</div>
+              <div class="show-overlay-text-availability" style="background-color: #9747FF"><%= t("card.few_spots_left", count: @event_instance.spots_left) %></div>
             <% end %>
           <% end %>
           <% if @event_instance.photos.attached? %>
@@ -257,7 +258,7 @@
       <!-- Description Row -->
       <div class="mt-3">
         <div class="mb-3 me-2">
-          <h3 class="show" style="margin-bottom: 10px">Description</h3>
+          <h3 class="show" style="margin-bottom: 10px"><%= t("show_page.description") %></h3>
           <div class="event-description" style="margin-bottom: 30px">
             <div class="trix-content">
               <%= raw(@event.description.present? ? @event.description.body.to_html : '') %>
@@ -265,7 +266,7 @@
           </div>
         </div>
         <div class="mb-3 me-2">
-          <h3 class="show" style="margin-bottom: 10px">Teacher</h3>
+          <h3 class="show" style="margin-bottom: 10px"><%= t("show_page.instructor") %></h3>
           <div class="d-flex align-items-center mb-1" style="margin-top: 1px;">
             <%= link_to user_path(@event.user), class: "d-flex gap-1" do %>
               <% if @event.user.photo.present? %>
@@ -281,7 +282,7 @@
           <!-- information -->
           <% if @event.event_instances.any? %>
             <% if @event.event_instances.first.cancellation_policy_duration != nil %>
-              <h3 class="show" style="margin-bottom: 10px">Informations </h3>
+              <h3 class="show" style="margin-bottom: 10px"><%= t("show_page.info") %> </h3>
               <% if @event_instance.price_cents.present? && @event_instance.price_cents > 0 %>
                 <div class="d-flex flex-row align-items-center mb-2">
                   <i class="fa-regular fa-money-bill-1 fa-md text-custom" style="margin-right: 9px; margin-top: 2px;"></i>
@@ -353,7 +354,7 @@
                 b.status == "cancelled_by_student" || b.status == "rejected_by_teacher" } %>
                   <% if user_signed_in? %>
                     <% if valid_bookings.any? %>
-                      <h3 class="show mb-1">Attendees</h3>
+                      <h3 class="show mb-1"><%= t("show_page.attendees") %></h3>
                     </div>
                     <% is_creator = current_user == @event_instance.event.user %>
                     <% valid_bookings.sort_by(&:created_at).each do |booking| %>
@@ -440,7 +441,7 @@
                   .where.not(status: ['cancelled_by_teacher', 'cancelled_by_student', 'rejected_by_teacher'])
                   .order(:joined_at) %>
                   <% if waitlist.any? %>
-                    <h3 class="show mb-2 mt-4">Waitlist</h3>
+                    <h3 class="show mb-2 mt-4"><%= t("show_page.waitlist") %></h3>
                     <% waitlist.each do |booking| %>
                       <div class="panel d-flex justify-content-between align-items-center mb-2">
                         <div class="d-flex align-items-center">
@@ -460,23 +461,21 @@
               </div>
             </div>
           </div>
-          <h3 class="show" style="margin-bottom: 10px">All posts for this class: Temporary picture! </h3>
           <% if @event_instance.posts.reject(&:hidden?).any? %>
+            <h3 class="show" style="margin-bottom: 10px">All posts for this class:</h3>
             <div class="card-post-container">
               <%= render partial: "posts/post_noheader",
            collection: @event_instance.posts.reject(&:hidden?),
            as: :post,
            locals: { from_event_show: true } %>
             </div>
-          <% else %>
-            <p>No posts available for this event instance yet.</p>
           <% end %>
-          <%= image_tag("posts.jpg", style: "width: 100%; margin-top: 10px; margin-bottom: 10px") %>
+          <%# <%= image_tag("posts.jpg", style: "width: 100%; margin-top: 10px; margin-bottom: 10px") %>
           <div class="d-flex justify-content-center">
             <%# <% if user_signed_in? %>
             <%# <% if current_user != @event.user %>
             <%= link_to new_from_event_instance_event_posts_path(@event, event_instance_id: @event_instance.id),  style: "font-family: 'Inter'; font-size: 15px; background-color: #7952FC; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 30px; margin-top: 10px; color: white" do %>
-              <i class="fa-regular fa-square-plus"></i> Add post!
+              <i class="fa-regular fa-square-plus"></i> <%= t("show_page.post") %>
               <%# <% end %>
               <%# <% end %>
             <% end %>
@@ -503,28 +502,37 @@
         <div class="modal-content">
           <% if user_signed_in? %>
             <div class="modal-header">
-              <h3 class="modal-title" id="bookingModalLabel"> Book <%= @event_instance.event.title.capitalize %> class on <%= @event_instance.date.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d (%a)") %> at <%= @event_instance.start_time.in_time_zone("Asia/Tokyo").strftime("%H:%M") %> for <strong><%= humanized_money_with_symbol(@event_instance.event.price) %></strong>?</h3>
+              <% user_time_zone_str = current_user&.time_zone.presence || "UTC" %>
+              <% time_zone = ActiveSupport::TimeZone[user_time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+              <h3 class="modal-title" id="bookingModalLabel<%= @event_instance.id %>">
+                <%= t("booking.modal_title_html",
+    title: @event_instance.event.title.capitalize,
+    date: l(@event_instance.start_time.in_time_zone(time_zone), format: :short_day),
+    time: @event_instance.start_time.in_time_zone(time_zone).strftime("%H:%M"),
+    price: humanized_money_with_symbol(@event_instance.event.price)
+  ).html_safe %>
+              </h3>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -33px;"></button>
             </div>
             <div class="d-flex justify-content-between">
               <div class="modal-body">
                 <%= simple_form_for [@event_instance, Booking.new], url: event_instance_bookings_path(@event_instance), method: :post do |f| %>
                   <div class="d-flex justify-content-end">
-                    <%= f.submit "Book!", class: "btn btn-card" %>
+                    <%= f.submit t("card.book"), class: "btn btn-card" %>
                   </div>
                 <% end %>
               </div>
             <% else %>
               <div class="modal-header">
-                <h1 class="modal-title fs-5">Login Required</h1>
+                <h1 class="modal-title fs-5"><%= t("login.title") %></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body text-center">
-                <h4 style="margin-bottom: 8px; margin-top: 23px;">You must be logged in to book the class.</h4>
+                <h4 style="margin-bottom: 8px; margin-top: 23px;"><%= t("login.subtitle") %></h4>
                 <%= link_to "Log In", new_user_session_path(return_to: request.fullpath), class: "btn btn-card mt-2" %>
                 <div class="d-flex flex-column" style="margin-bottom: 32px;">
-                  <h4 style="margin-top: 23px;">Don't have an account yet?</h4>
-                  <%= link_to "Create a New Account!", new_user_registration_path(return_to: request.fullpath), style: "text-decoration: underline; text-decoration-thickness: 1px, margin-top: 1px; font-weight: 300; color: #292A5A; font-size: 15px; font-family: 'Inter';" %>
+                  <h4 style="margin-top: 23px;"><%= t("login.cta") %></h4>
+                  <%= link_to t("login.create_acc"), new_user_registration_path(return_to: request.fullpath), style: "text-decoration: underline; text-decoration-thickness: 1px, margin-top: 1px; font-weight: 300; color: #292A5A; font-size: 15px; font-family: 'Inter';" %>
                 </div>
               </div>
             <% end %>
@@ -539,28 +547,33 @@
         <div class="modal-content">
           <% if user_signed_in? %>
             <div class="modal-header">
-              <h3 class="modal-title" id="waitinglistModalLabel">Join the <strong><%= @event.title.capitalize %></strong> Waitlist</h3>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -14px;"></button>
+              <h3 class="modal-title" id="waitinglistModalLabel">
+                <%= t("waitlist.modal_title_html",
+    title: @event_instance.event.title.capitalize,
+    date: l(@event_instance.start_time.in_time_zone(time_zone), format: :short_day),
+    time: @event_instance.start_time.in_time_zone(time_zone).strftime("%H:%M")
+  ).html_safe %></h3>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="d-flex justify-content-between">
               <div class="modal-body">
                 <%= simple_form_for [@event_instance, Booking.new], url: event_instance_bookings_path(@event_instance), method: :post do |f| %>
                   <div class="col-12">
-                    <%= f.submit "Join Waitlist", class: "btn btn-card" %>
+                    <%= f.submit t("card.join_waitlist"), class: "btn btn-card" %>
                   </div>
                 <% end %>
               </div>
             <% else %>
               <div class="modal-header">
-                <h1 class="modal-title fs-5">Login Required</h1>
+                <h1 class="modal-title fs-5"><%= t("login.title") %></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body text-center">
-                <h4 style="margin-bottom: 8px; margin-top: 23px;">You must be logged in to book the class.</h4>
+                <h4 style="margin-bottom: 8px; margin-top: 23px;"><%= t("login.subtitle_waitlist") %></h4>
                 <%= link_to "Log In", new_user_session_path(return_to: request.fullpath), class: "btn btn-card mt-2" %>
                 <div class="d-flex flex-column" style="margin-bottom: 32px;">
-                  <h4 style="margin-top: 23px;">Don't have an account yet?</h4>
-                  <%= link_to "Create a New Account!", new_user_registration_path(return_to: request.fullpath), style: "text-decoration: underline; text-decoration-thickness: 1px, margin-top: 1px; font-weight: 300; color: #292A5A; font-size: 15px; font-family: 'Inter';" %>
+                  <h4 style="margin-top: 23px;"><%= t("login.cta") %></h4>
+                  <%= link_to t("login.create_acc"), new_user_registration_path(return_to: request.fullpath), style: "text-decoration: underline; text-decoration-thickness: 1px, margin-top: 1px; font-weight: 300; color: #292A5A; font-size: 15px; font-family: 'Inter';" %>
                 </div>
               </div>
             <% end %>

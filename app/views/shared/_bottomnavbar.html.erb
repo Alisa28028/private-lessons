@@ -3,10 +3,10 @@
     <ul class="d-flex <%= user_signed_in? ? 'justify-content-around' : 'justify-content-center' %> w-100"
         style="<%= 'margin-top: 7px;' unless user_signed_in? %> padding-left: 0rem;">
       <li class="pl-nav-item text-center pl-icon <%= 'active' if current_page?(root_path) %>">
-        <%= link_to "/", class: "d-flex flex-column align-items-center" do %>
+        <%= link_to root_path(locale: I18n.locale), class: "d-flex flex-column align-items-center" do %>
           <div class="d-flex flex-column mb-3 ms-4 me-3">
             <i class="fa-solid fa-house fa-lg pl-icon"></i>
-            <div class="pl-icon-text" style="font-size: 12px;">Home</div>
+            <div class="pl-icon-text" style="font-size: 12px;"><%= t("navbar.home") %></div>
           </div>
         <% end %>
       </li>
@@ -14,7 +14,7 @@
         <%= link_to search_path, class: "d-flex flex-column align-items-center" do %>
           <div class="d-flex flex-column" style="margin-bottom: 3px;">
             <i class="fa-solid fa-magnifying-glass fa-lg pl-icon" style="margin-top: 3px !important;"></i>
-            <div class="pl-icon-text" style="font-size: 12px;">Search</div>
+            <div class="pl-icon-text" style="font-size: 12px;"><%= t("navbar.search") %></div>
           </div>
         <% end %>
       </li>
@@ -22,16 +22,16 @@
         <%= link_to new_event_path, class: "d-flex flex-column align-items-center" do %>
           <div class="d-flex flex-column">
             <i class="fa-solid fa-square-plus fa-lg pl-icon" style="font-size: 23px"></i>
-            <div class="pl-icon-text" style="font-size: 12px;">Create class</div>
+            <div class="pl-icon-text" style="font-size: 12px;"><%= t("add_event.title") %></div>
           </div>
         <% end %>
       </li>
       <% if user_signed_in? %>
-        <li class="pl-nav-item text-center ms-1 <%= 'active' if request.fullpath.starts_with?("/dashboard") %>">
-          <%= link_to dashboard_path(current_user), class: "d-flex flex-column align-items-center" do %>
+        <li class="pl-nav-item text-center ms-1 <%= 'active' if request.fullpath.starts_with?('/dashboard') %>">
+          <%= link_to dashboard_path(locale: I18n.locale), class: "d-flex flex-column align-items-center" do %>
             <div class="d-flex flex-column">
               <i class="fa-solid fa-rectangle-list fa-lg pl-icon" style="font-size: 23px"></i>
-              <div class="pl-icon-text" style="font-size: 12px;">Dashboard</div>
+              <div class="pl-icon-text" style="font-size: 12px;"><%= t("navbar.dashboard") %></div>
             </div>
           <% end %>
         </li>
@@ -44,7 +44,7 @@
               <% else %>
                 <%= image_tag "default-avatar.png", class: "pl-avatar-bottom" %>
               <% end %>
-              <div class="pl-icon-text" style="font-size: 12px;">Profile</div>
+              <div class="pl-icon-text" style="font-size: 12px;"><%= t("navbar.profile") %></div>
             </div>
           <% end %>
         </li>
@@ -53,8 +53,8 @@
           <%= link_to new_user_session_path, class: "d-flex flex-column align-items-center", title: "Log in or Sign up" do %>
             <div class="d-flex flex-column align-items-center" style="border: 1px solid #AFB3CC; border-radius: 10px; padding-right: 8px; padding-left: 8px;">
               <%# <i class="fa-solid fa-user-plus fa-lg pl-icon" style="font-size: 23px;"></i> %>
-              <div class="pl-icon-text" style="font-size: 12px; margin-top: 3px; margin-bottom: -5px; font-family: 'Inter';">Log in or</div>
-              <div class="pl-icon-text" style="font-size: 12px; margin-bottom: 3px; font-family: 'Inter';">sign up</div>
+              <div class="pl-icon-text" style="font-size: 10px; margin-top: 3px; margin-bottom: -5px; font-family: 'Inter';"> <%= t("navbar.log_in_or") %></div>
+              <div class="pl-icon-text" style="font-size: 10px; margin-bottom: 3px; font-family: 'Inter';"> <%= t("navbar.sign_up") %></div>
             </div>
           <% end %>
         </li>
