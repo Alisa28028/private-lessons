@@ -45,7 +45,7 @@ en:
     create_acc: "Create a New Account!"
     log_in: "Log in"
   sidemenu:
-    acc_settings: "アカウント設定"
+    acc_settings: "Account settings"
     bookings: "My bookings"
     favorites: "My favorites"
     about: "About us"
@@ -166,3 +166,12 @@ en:
     pass_confirm: "Password confirmation"
     time_zone: "Select your time zone"
     sign_up: "Sign up"
+  settings:
+    title: "Account settings"
+    hint: "Leave it blank to keep your current password."
+    current: "Current password"
+    current_pass: "Please enter your current password to confirm your changes."
+    update: "Update"
+    back: "Back"
+    delete: "Delete my account"
+    delete_confirmation: "Are you sure you want to delete your account?"

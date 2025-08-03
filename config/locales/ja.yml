@@ -200,3 +200,12 @@ ja:
     pass_confirm: "パスワードの確認"
     time_zone: "タイムゾーンを選択"
     sign_up: "アカウント作成"
+  settings:
+    title: "アカウント設定"
+    hint: "現在のパスワードを変更しない場合は、空欄のままにしてください。"
+    current: "現在のパスワード"
+    current_pass: "変更を確定するには、現在のパスワードを入力してください。"
+    update: "変更を保存"
+    back: "戻る"
+    delete: "アカウントを削除する"
+    delete_confirmation: "アカウントを削除してもよろしいですか？"
