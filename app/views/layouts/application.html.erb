@@ -28,8 +28,8 @@
       <%# <% unless user_signed_in? %>
       <div class="d-flex flex-row">
         <div class="language-switcher ms-3" style="margin-top: 11px;">
-          <%= link_to "EN", url_for(locale: "en"), class: "btn btn-outline-primary", style: "font-size: 11px !important; padding: 4px; color: #ffffff !important; border-color: #ffffff !important; border-radius: 9px" %>
-          <%= link_to "日本語", url_for(locale: "ja"), class: "btn btn-outline-primary ms-1 me-3", style: "font-size: 11px !important; padding: 4px; color: #ffffff !important; border-color: #ffffff !important; border-radius: 9px" %>
+          <%= link_to "EN", url_for(request.params.merge(locale: "en")), class: "btn btn-outline-primary", style: "font-size: 11px !important; padding: 4px; color: #ffffff !important; border-color: #ffffff !important; border-radius: 9px" %>
+          <%= link_to "日本語", url_for(request.params.merge(locale: "ja")), class: "btn btn-outline-primary ms-1 me-3", style: "font-size: 11px !important; padding: 4px; color: #ffffff !important; border-color: #ffffff !important; border-radius: 9px" %>
         </div>
         <div class="hamburger">
           <i class="fa-solid fa-bars fa-xl mt-4"

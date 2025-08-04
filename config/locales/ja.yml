@@ -37,6 +37,23 @@ ja:
     attendees: "参加者"
     post: "投稿する"
     waitlist: "キャンセル待ちリスト"
+    no_cancel: "キャンセル不可"
+    min: "分"
+    one_on_one: "1対1"
+    max: "人まで"
+    cancel_policy: "ご予約後のキャンセルや返金はできません。"
+    cancellation_deadline: "%{time}までキャンセル可能"
+    other_classes: "の他のレッスン"
+    cancel_booking: "予約をキャンセル"
+    cancel_confirmation: "予約をキャンセルしてもよろしいですか？"
+  post:
+    title: "このクラスに投稿する："
+    placeholder: "このレッスンについて自由に書いてください！"
+    create: "投稿する"
+    my_post: "my投稿"
+    users_posts: "%{username}の投稿"
+    student_post: "生徒投稿"
+    no_post: "投稿はありません。"
   card:
     book: "予約する"
     join_waitlist: "キャンセル待ちに登録する"
@@ -77,6 +94,10 @@ ja:
   profile:
     edit_btn: "プロフィールを編集"
     classes: "レッスン"
+    description: "プロフィール紹介"
+    update: "プロフィールを更新"
+    updated_successfully: "プロフィール更新に成功しました。"
+    update_failed: "プロフィール更新に失敗しました。"
   add_event:
     title: "レッスン作成"
     select_type: "レッスンの種類を選択"
@@ -177,6 +198,8 @@ ja:
   activerecord:
     attributes:
       user:
+        last_name: "姓"
+        first_name: "名"
         time_zone: "タイムゾーン"
     errors:
       models:
@@ -193,6 +216,7 @@ ja:
     phone: "電話番号"
     email: "メールアドレス"
     insta: "Instagramのプロフィールリンク"
+    insta_placeholder: "プロフィールリンクを入力"
     x_acc: "Xのプロフィールリンク"
     tiktok: "Tiktokのプロフィールリンク"
     photo: "プロフィール写真をアップロード"
@@ -200,3 +224,33 @@ ja:
     pass_confirm: "パスワードの確認"
     time_zone: "タイムゾーンを選択"
     sign_up: "アカウント作成"
+  settings:
+    title: "アカウント設定"
+    hint: "現在のパスワードを変更しない場合は、空欄のままにしてください。"
+    current: "現在のパスワード"
+    current_pass: "変更を確定するには、現在のパスワードを入力してください。"
+    update: "変更を保存"
+    back: "戻る"
+    delete: "アカウントを削除する"
+    delete_confirmation: "アカウントを削除してもよろしいですか？"
+  event_instance:
+    update_success: "レッスンの更新に成功しました。"
+    update_failure: "レッスンの更新に失敗しました。"
+    edit: "レッスン情報を編集"
+    title: "レッスン名"
+    description: "詳細"
+    current_location: "現在の開催場所"
+    diff_location: "別の場所を選択する"
+    location_saved: "開催場所を保存しました。"
+    change_photo: "写真を変更する："
+    new_loc: "別の場所を入力"
+  classes:
+    upcoming: "今後のレッスン"
+    past: "過去レッスン"
+    no_class: "レッスンはありません。"
+  errors:
+    messages:
+      blank: "を入力してください"
+  favorites:
+    title: "お気に入りレッスン"
+    no_fav: "まだお気に入りのレッスンがありません。"

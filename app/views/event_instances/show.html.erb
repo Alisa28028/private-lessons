@@ -21,8 +21,8 @@
         <div class="d-flex justify-content-between mt-2">
           <div class="event-buttons mb-2 d-flex justify-content-start" style="margin-left: -3px;">
             <!-- Buttons for the event creator (teacher) -->
-            <div class="d-flex flex-end" style="margin-left: 3px;">
-              <%= link_to "#", class: "btn btn-outline-primary btn-sm rounded-3", id: "copy-url-button" do %>
+            <div class="d-flex flex-end" style="z-index: 1; position: relative; margin-left: 3px;">
+              <%= link_to "#", class: "btn btn-outline-primary btn-sm rounded-3", style:"z-index: 1; position: relative;", id: "copy-url-button" do %>
                 <i class="fa-solid fa-download"></i> <%= t("show_page.copy_url") %>
               <% end %>
               <script>
@@ -49,7 +49,7 @@
             </div>
             <div class="d-flex flex-end" style="margin-left: 3px;">
               <!-- ICON TO ADD VIDEO -->
-              <%= link_to '#', class: "btn btn-outline-primary btn-sm rounded-3 me-1", data: { bs_toggle: "modal", bs_target: "#addVideoModal" } do %>
+              <%= link_to '#', class: "btn btn-outline-primary btn-sm rounded-3 me-1", style:"z-index: 1; position: relative;", data: { bs_toggle: "modal", bs_target: "#addVideoModal" } do %>
                 <i class="fa-regular fa-file-video"></i>
               <% end %>
               <%= render 'events/event_video_modal', event_instance: @event_instance, event: @event %>
@@ -107,7 +107,7 @@
             <% future_event = @event_instance.start_time > Time.current %>
             <% too_late_to_cancel = future_event && Time.current > cancellation_cutoff && !user_booking.waitlisted %>
             <% if too_late_to_cancel || @event_instance.event.payment_obligation_on_booking? %>
-              <h4 class="show" style="color: #B15CDE; margin-bottom: 5px;">Cancellation not possible.</h4>
+              <h4 class="show" style="color: #B15CDE; margin-bottom: 5px;"> <%= t("show_page.no_cancel") %></h4>
             <% end %>
           <% end %>
         <% end %>
@@ -125,11 +125,10 @@
                 <% case user_booking.status %>
                 <% when "pending" %>
                   <div class="col-12 px-0">
-                    <%= button_to "Pending approval (click to cancel request)", booking_path(user_booking),
-            method: :delete,
-            # class: "btn btn-card mt-1",
-            style: "font-family: 'Inter'; font-size: 15px; font-weight: 400; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; background-color: transparent; color: #9747FF;
-      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);" %>
+                    <%= button_to "Pending approval (click to cancel request)",
+              booking_path(user_booking),
+              method: :delete,
+              class: "custom-button" %>
                   </div>
                 <% when "cancelled_by_teacher", "rejected_by_teacher" %>
                   <p style="font-size: small; border: 1px solid #dc3545; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
@@ -143,9 +142,9 @@
                     <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
                     <% if @event_instance.start_time.future? && Time.current < cancellation_cutoff && !@event.payment_obligation_on_booking %>
                       <div class="col-12 px-0">
-                        <%= button_to "Cancel Booking!", cancel_booking_path(user_booking),
+                        <%= button_to t("show_page.cancel_booking"), cancel_booking_path(user_booking),
                 method: :post,
-                data: { confirm: "Are you sure you want to cancel your booking?" },
+                data: { confirm: t("show_page.cancel_confirmation") },
                 class: "btn btn-card mt-0" %>
                       </div>
                     <% end %>
@@ -297,22 +296,22 @@
                     <% if @event_instance.duration.present? %>
                       <i class="fa-solid fa-stopwatch fa-md text-custom" style="margin-right: 15px; margin-left: 2px;"></i>
                       <%= @event_instance.duration %>
-                      <h4 class="show">minutes</h4>
+                      <h4 class="show"><%= t("show_page.min") %></h4>
                     <% else %>
                       <i class="fa-solid fa-stopwatch fa-md text-custom" style="margin-right: 10px; margin-left: 2px;"></i>
-                      <h4 class="show"> <%= @event.duration %></h4>
-                      <h4 class="show">&nbsp;min</h4>
+                      <h4 class="show"><%= "#{@event.duration}#{t("show_page.min")}" %>
+                      </h4>
                     <% end %>
                   </div>
                   <div class="d-flex flex-row align-items-center mb-2">
                     <% if @event_instance.present? %>
                       <% if @event_instance.capacity == 1 %>
                         <i class="fa-solid fa-person fa-md text-custom" style="margin-right: 15px; margin-left: 2px;"></i>
-                        <h4 class="show">1 on 1</h4>
+                        <h4 class="show"><%= t("show_page.one_on_one") %></h4>
                       <% else %>
                         <i class="fa-solid fa-person fa-md text-custom"></i>
                         <i class="fa-solid fa-person fa-md text-custom" style="margin-right: 7px;"></i>
-                        <h4 class="show"><%= @event_instance.capacity %> max</h4>
+                        <h4 class="show"><%= @event_instance.capacity %><%= t("show_page.max") %></h4>
                       <% end %>
                     <% end %>
                   </div>
@@ -324,20 +323,22 @@
                         <%# , <%= @event.location.address %>
                         <%# , <%= @event.location.address %>
                       <% else %>
-                        <h4 class="show"  style="margin-bottom: 30px">No location yet</h4>
+                        <h4 class="show"  style="margin-bottom: 30px"><%= t("card.no_location") %></h4>
                       </div>
                     <% end %>
                   </div>
                   <% if @event.payment_obligation_on_booking? %>
                     <div class="d-flex flex-row align-items-start mb-2">
                       <i class="fa-solid fa-ban fa-md text-custom" style="padding-top: 1px; margin-right: 10px;"></i>
-                      <h4 class="show" style="margin-bottom: 30px">No cancellations or refunds once booked.
+                      <h4 class="show" style="margin-bottom: 30px"> <%= t("show_page.cancel_policy") %>
                       </h4>
                     </div>
                   <% else %>
                     <h4 class="show" style="margin-bottom: 30px">
                       <i class="fa-solid fa-ban" style="margin-right: 5px;"></i>
-                      Cancellation possible <%= @event.event_instances.first.cancellation_policy_duration %>h before event starts</h4>
+                      <% cancellation_deadline = @event_instance.start_time - @event_instance.cancellation_policy_duration.hours %>
+                      <%= t("show_page.cancellation_deadline", time: l(cancellation_deadline.in_time_zone(current_user&.time_zone || 'Asia/Tokyo'), format: :short_day_with_time)) %>
+                    </h4>
                   <% end %>
                 <% else %>
                   <h3 class="show" style="margin-bottom: 30px"> Cancellation policy: not provided</h4>
@@ -482,7 +483,7 @@
           </div>
           <% if @other_upcoming_instances.any? %>
             <h3 class="show" style="margin-bottom: 10px">
-              <%= @event.user.first_name.capitalize %>'s other classes:
+              <%= @event.user.first_name.capitalize %><%= t("show_page.other_classes") %>
             </h3>
             <div class="col-12 col-md-6 col-lg-6 mx-auto">
               <div class="card-container mx-auto">

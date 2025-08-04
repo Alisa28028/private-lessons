@@ -1,35 +1,40 @@
-<h2 class="d-flex justify-content-center mt-6 mb-4">Account settings</h2>
+<h2 class="d-flex justify-content-center mt-6 mb-4"><%= t("settings.title") %></h2>
 <div class="d-flex flex-column ms-4 me-4">
   <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
     <%= f.error_notification %>
     <div class="form-inputs">
-      <%= f.input :email, required: true, autofocus: true %>
+      <%= f.input :email,
+      label: t("registration.email"),
+      required: true, autofocus: true %>
       <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
         <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
       <% end %>
       <%= f.input :password,
-                hint: "Leave it blank to keep your current password.",
+                label: t("registration.pass"),
+                hint: t("settings.hint"),
                 required: false,
                 input_html: { autocomplete: "new-password" } %>
       <%= f.input :password_confirmation,
+                label: t("registration.pass_confirm"),
                 required: false,
                 input_html: { autocomplete: "new-password" } %>
       <%= f.input :current_password,
-                hint: "Please enter your current password to confirm your changes.",
+                label: t("settings.current"),
+                hint: t("settings.current_pass"),
                 required: true,
                 input_html: { autocomplete: "current-password" } %>
     </div>
     <div class="form-actions">
-      <%= f.button :submit, "Update", class: "btn btn-card" %>
+      <%= f.button :submit, t("settings.update"), class: "btn btn-card" %>
     </div>
   <% end %>
-  <%= link_to "Back", :back, class: "btn btn-manage" %>
+  <%= link_to t("settings.back"), :back, class: "btn btn-manage" %>
   <div class="d-flex justify-content-end">
-    <%= button_to "Delete my account",
+    <%= button_to t("settings.delete"),
    registration_path(resource_name),
     method: :delete,
-   data: { confirm: "Are you sure you want to delete your account?",
-   turbo_confirm: "Are you sure you want to delete your account?" },
+   data: { confirm: t("settings.delete_confirmation"),
+   turbo_confirm: t("settings.delete_confirmation") },
    class: "btn-link-no-border" %>
   </div>
 </div>

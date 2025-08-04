@@ -31,7 +31,7 @@ en:
   time:
     formats:
       short_day: "%Y/%m/%d (%a)"
-      short_day_with_time: "%a, %b %e – %l:%M %p"
+      short_day_with_time: "%a, %b %e (%l:%M %p)"
   booking:
     modal_title_html: "Book %{title} class on %{date} at %{time} for <strong>%{price}</strong>?"
     booking_btn: "Book class"
@@ -45,7 +45,7 @@ en:
     create_acc: "Create a New Account!"
     log_in: "Log in"
   sidemenu:
-    acc_settings: "アカウント設定"
+    acc_settings: "Account settings"
     bookings: "My bookings"
     favorites: "My favorites"
     about: "About us"
@@ -64,6 +64,23 @@ en:
     attendees: "Attendees"
     post: "Add post!"
     waitlist: "Waitlist"
+    no_cancel: "Cancellation not possible."
+    min: " minutes"
+    one_on_one: "1 on 1"
+    max: " people max"
+    cancel_policy: "No cancellations or refunds once booked."
+    cancellation_deadline: "Can cancel until %{time}"
+    other_classes: "'s other classes"
+    cancel_booking: "Cancel Booking"
+    cancel_confirmation: "Are you sure you want to cancel your booking?"
+  post:
+    title: "Create a post for this class:"
+    placeholder: "Write anything you'd like about this class!"
+    create: "Create Post"
+    my_post: "My posts"
+    users_posts: "%{username}'s Posts"
+    student_post: "Students posts"
+    no_post: "No posts yet."
   card:
     book: "Book Class"
     join_waitlist: "Join Waitlist"
@@ -104,6 +121,10 @@ en:
   profile:
     edit_btn: "Edit profile"
     classes: "classes"
+    description: "Description"
+    update: "Update profile"
+    updated_successfully: "Profile updated successfully."
+    update_failed: "Failed to update the profile."
   add_event:
     title: "Create Class"
     select_type: "Select Event Type"
@@ -154,11 +175,13 @@ en:
   registration:
     required: "Please fill in the basic information (*required)"
     f_name: "First name"
+    l_name: "Last name"
     username: "Username"
     username_message: "Choose a unique username"
     phone: "Phone number"
     email: "Email"
     insta: "Instagram link"
+    insta_placeholder: ""
     x_acc: "X link"
     tiktok: "Tiktok link"
     photo: "Add profile picture"
@@ -166,3 +189,30 @@ en:
     pass_confirm: "Password confirmation"
     time_zone: "Select your time zone"
     sign_up: "Sign up"
+  settings:
+    title: "Account settings"
+    hint: "Leave it blank to keep your current password."
+    current: "Current password"
+    current_pass: "Please enter your current password to confirm your changes."
+    update: "Update"
+    back: "Back"
+    delete: "Delete my account"
+    delete_confirmation: "Are you sure you want to delete your account?"
+  event_instance:
+    update_success: "Class details successfully updated."
+    update_failure: "Failed to update the class."
+    edit: "Edit informations"
+    title: "Class title"
+    description: "Description"
+    current_location: "Current location"
+    diff_location: "Choose a different Location:"
+    location_saved: "Location saved."
+    change_photo: "Change the lesson's picture"
+    new_loc: "Create a new location"
+  classes:
+    upcoming: "Upcoming classes"
+    past: "Past classes"
+    no_class: "No classes found"
+  favorites:
+    title: "My Favorites"
+    no_fav: "You haven't liked any classes yet."

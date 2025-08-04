@@ -85,6 +85,23 @@
 
 }
 
+.btn-switch-dashboard:active {
+  background-color: #1f1c4d !important; /* darker shade */
+  color: #ddd !important; /* optional */
+}
+
+.btn-switch-dashboard,
+.btn-switch-dashboard:focus,
+.btn-switch-dashboard:active {
+  background-color: #292A5A;
+  color: white;
+  border: none;
+  outline: none;
+  text-decoration: none;
+}
+
+
+
 .custom-toggle {
   width: 46px;
   height: 24px;

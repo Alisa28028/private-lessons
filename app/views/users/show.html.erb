@@ -55,13 +55,19 @@
             <i class="fa-regular fa-calendar"></i> <%= t("profile.classes") %>
           <% end %>
         <% end %>
-        <%= link_to "#", data: { action: "click->teacher#loadPosts"}, class: "icon-link icon-tab", id: "posts-tab-link" do %>
-          <i class="fa-solid fa-user"></i>
-          <%= current_user == @user ? "My Posts" : "#{@user.name}'s Posts" %>
+        <div class="ms-3">
+          <%= link_to "#", data: { action: "click->teacher#loadPosts"}, class: "icon-link icon-tab", id: "posts-tab-link" do %>
+            <i class="fa-solid fa-user"></i>
+            <%= if current_user == @user
+      t("post.my_post")
+    else
+      t("post.users_posts", username: @user.username)
+    end %>
+          </div>
         <% end %>
         <% if @has_events %>
           <%= link_to "#", data: { action: "click->teacher#loadStudentPosts" }, class: "icon-link icon-tab", id: "student-posts-tab-link" do %>
-            <i class="fa-solid fa-user-group"></i> Student Posts
+            <i class="fa-solid fa-user-group"></i> <%= t("post.student_post") %>
           <% end %>
         <% end %>
       </div>

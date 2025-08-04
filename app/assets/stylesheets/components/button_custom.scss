@@ -75,6 +75,19 @@
 
 }
 
+.btn-manage:hover {
+  background-color: #dad7de !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn-manage:active {
+  background-color: #dad7de !important;
+  color: white !important;
+  border: none !important;
+}
+
+
 .btn-selected {
   background-color: #292A5A !important;
   color: white !important;
@@ -109,6 +122,19 @@
   font-size: 15px;
   // margin-left: 3px;
 }
+
+.btn-custom-gray:hover {
+  background-color: #dad7de !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn-custom-gray:active {
+  background-color: #dad7de !important;
+  color: white !important;
+  border: none !important;
+}
+
 
 .btn-custom-dashboard {
   // margin-left: auto; /* Flexbox way */
