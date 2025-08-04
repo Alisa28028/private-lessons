@@ -71,6 +71,8 @@ en:
     cancel_policy: "No cancellations or refunds once booked."
     cancellation_deadline: "Can cancel until %{time}"
     other_classes: "'s other classes"
+    cancel_booking: "Cancel Booking"
+    cancel_confirmation: "Are you sure you want to cancel your booking?"
   post:
     title: "Create a post for this class:"
     placeholder: "Write anything you'd like about this class!"
@@ -202,6 +204,11 @@ en:
     edit: "Edit informations"
     title: "Class title"
     description: "Description"
+    current_location: "Current location"
+    diff_location: "Choose a different Location:"
+    location_saved: "Location saved."
+    change_photo: "Change the lesson's picture"
+    new_loc: "Create a new location"
   classes:
     upcoming: "Upcoming classes"
     past: "Past classes"

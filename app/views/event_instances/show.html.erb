@@ -142,9 +142,9 @@
                     <% cancellation_cutoff = @event_instance.start_time - @event.cancellation_policy_duration.hours %>
                     <% if @event_instance.start_time.future? && Time.current < cancellation_cutoff && !@event.payment_obligation_on_booking %>
                       <div class="col-12 px-0">
-                        <%= button_to "Cancel Booking!", cancel_booking_path(user_booking),
+                        <%= button_to t("show_page.cancel_booking"), cancel_booking_path(user_booking),
                 method: :post,
-                data: { confirm: "Are you sure you want to cancel your booking?" },
+                data: { confirm: t("show_page.cancel_confirmation") },
                 class: "btn btn-card mt-0" %>
                       </div>
                     <% end %>

@@ -44,6 +44,8 @@ ja:
     cancel_policy: "ご予約後のキャンセルや返金はできません。"
     cancellation_deadline: "%{time}までキャンセル可能"
     other_classes: "の他のレッスン"
+    cancel_booking: "予約をキャンセル"
+    cancel_confirmation: "予約をキャンセルしてもよろしいですか？"
   post:
     title: "このクラスに投稿する："
     placeholder: "このレッスンについて自由に書いてください！"
@@ -237,6 +239,11 @@ ja:
     edit: "レッスン情報を編集"
     title: "レッスン名"
     description: "詳細"
+    current_location: "現在の開催場所"
+    diff_location: "別の場所を選択する"
+    location_saved: "開催場所を保存しました。"
+    change_photo: "写真を変更する："
+    new_loc: "別の場所を入力"
   classes:
     upcoming: "今後のレッスン"
     past: "過去レッスン"

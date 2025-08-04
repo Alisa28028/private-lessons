@@ -16,13 +16,13 @@
       <!-- Common fields for the event instance -->
       <div data-controller="location">
         <!-- Current Location (Display as text) -->
-        <div>
-          <strong>Current Location:</strong>
-          <span><%= @event_instance.location&.name || "No location assigned" %></span>
+        <div class="mb-3">
+          <h4><%= t("event_instance.current_location") %></h4>
+          <h4><%= @event_instance.location&.name || "No location assigned" %></h4>
         </div>
         <!-- Existing Locations to Choose From -->
-        <div>
-          <strong>Choose a different Location:</strong>
+        <div class="mb-3">
+          <h4 class="mb-3"><%= t("event_instance.diff_location") %></h4>
           <!-- Input field for choosing a location with a target for Stimulus -->
           <%= f.input :location_id, as: :select, collection: Location.all.collect { |l| [l.name, l.id] }, label: false, input_html: { "data-location-target": "input" } %>
         </div>
@@ -35,9 +35,11 @@
         <!-- Button to Show New Location Input -->
         <div>
           <div data-location-target="locationSavedMessage" style="display: none;">
-            <p>Location Saved!</p>
+            <p><%= t("event_instance.location_saved") %></p>
           </div>
-          <button type="button" data-action="click->location#showNewLocationForm">Create New Location</button>
+          <a href="#" data-action="click->location#showNewLocationForm" style="text-decoration: underline; color: black; cursor: pointer;">
+            <%= t("event_instance.new_loc") %>
+          </a>
         </div>
         <!-- New Location Input Form (Initially hidden) -->
         <div data-location-target="newLocationForm" style="display: none;">
@@ -49,45 +51,56 @@
         <%# <%= f.hidden_field :location_id, id: "event_location_id" %>
       </div>
       <div data-controller="toggle">
-        <%= f.input :approval_mode, as: :hidden %>
-        <div class="d-flex justify-content-start align-items-center mb-2">
-          <%= f.label :approval_mode, "Approval Mode", class: "form-label me-2", style: "margin-top: 3px;" %>
-          <div class="form-check form-switch position-relative">
-            <%= f.check_box :approval_mode,
-      {
-        class: "form-check-input",
-        role: "switch",
-        id: "approvalSwitch",
-        data: {
-          action: "change->toggle#updateLabel",
-          toggle_target: "checkbox"
-        }
-      },
-      "manual", "auto" %>
-            <% approval_text = @event_instance.approval_mode == "manual" ? "YES" : "NO" %>
-            <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
-            <span class="switch-label <%= approval_class %> position-absolute text-white small" data-toggle-target="label">
-              <%= approval_text %>
-            </span>
+        <div class="d-flex justify-content-start mb-1 mt-3">
+          <%= f.label :approval_mode, t("event_form.add_approval_mode"), class: "form-label h4", style: "margin-top: 6px; margin-right: 3px; margin-bottom: 0px;" %>
+          <div>
+            <div class="form-check form-switch position-relative">
+              <%= f.check_box :approval_mode,
+          {
+            class: "form-check-input",
+            role: "switch",
+            id: "approvalSwitch",
+            data: {
+              mode: "approval",
+              action: "change->toggle#updateLabel",
+              toggle_target: "checkbox",
+              approval_on: t("toggle.approval_on_description"),
+              approval_off: t("toggle.approval_off_description")
+            }
+          },
+          "manual", "auto" %>
+              <% approval_text = f.object.approval_mode == "manual" ? "YES" : "NO" %>
+              <% approval_class = approval_text == "YES" ? "switch-label--yes" : "switch-label--no" %>
+              <span class="switch-label <%= approval_class %> position-absolute text-white small"
+              data-toggle-target="label">
+                <%= approval_text %>
+              </span>
+            </div>
           </div>
         </div>
-        <!-- Booking behavior message -->
-        <p data-toggle-target="description" class="text-muted small">
-          <%= @event_instance.approval_mode == "manual" ? "Students need your approval to book the class" : "Students can book the class directly" %>
-        </p>
+        <!-- This is the dynamic line below the switch -->
+        <div class="h4 mb-4" style="color: #3E34A1 !important;" data-toggle-target="description">
+          <%= f.object.approval_mode == "manual" ?
+      t("toggle.approval_on_description") :
+      t("toggle.approval_off_description") %>
+        </div>
       </div>
       <div class="form-group">
-        <%= f.input :capacity %>
+        <%= f.input :capacity,
+        label: t("event_form.capacity") %>
       </div>
       <div class="form-group">
-        <%= f.input :price %>
+        <%= f.input :price,
+        label: t("event_form.price") %>
       </div>
       <div class="form-group">
-        <%= f.input :cancellation_policy_duration %>
+        <%= f.input :cancellation_policy_duration,
+        label: t("event_form.cancellation_policy") %>
       </div>
       <!-- File upload fields -->
       <div class="form-group">
-        <%= f.label :photos, "Photo" %>
+        <%= f.label :photos,
+        label: t("event_instance.change_photo") %>
         <!-- Display current photo or default image if none is attached -->
         <div id="current-photo">
           <% if @event_instance.photos.attached? %>
@@ -109,6 +122,6 @@
       <%# <div id="video-previews" data-file-preview-target="videosPreview" style="margin-top: 10px;"></div> %>
       <%# </div> %>
       <!-- Submit Button -->
-      <%= f.submit "Save Changes", class: "btn btn-card" %>
+      <%= f.submit t("settings.update"), class: "btn btn-card" %>
     <% end %>
   </div>
