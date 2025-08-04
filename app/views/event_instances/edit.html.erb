@@ -1,5 +1,5 @@
-<div class="d-flex justify-content-center mt-6">
-  <h2>Edit informations</h2>
+<div class="d-flex justify-content-center mt-7">
+  <h2> <%= t("event_instance.edit") %></h2>
 </div>
 <div class="col-12 col-md-6 col-lg-6 mx-auto px-4">
   <div class="container d-flex justify-content-center mt-6 mb-6">
@@ -7,8 +7,8 @@
       <div>
         <!-- Nested form for the associated event -->
         <%= f.fields_for :event do |event_fields| %>
-          <%= event_fields.input :title, label: "Event Title", input_html: { placeholder: "Event title (this will apply to all instances)" } %>
-          <%= event_fields.rich_text_area :description, label: false, data: { controller: "trix" }, placeholder: "Edit the description..." %>
+          <%= event_fields.input :title, label: t("event_instance.title") %>
+          <%= event_fields.rich_text_area :description, label: t("event_instance.description"), data: { controller: "trix" }, placeholder: "Edit the description..." %>
           <!-- Hidden field for location, if needed later -->
           <%# <%= event_fields.input :location_id, as: :hidden %>
         <% end %>

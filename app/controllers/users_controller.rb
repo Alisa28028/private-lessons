@@ -159,13 +159,16 @@ end
     render partial: 'users/student_posts', locals: { student_posts: @student_posts }, formats: [:html]
   end
 
-
-
   def update
     @user = current_user
-    @user.update(user_params)
-    redirect_to user_path(@user)
+    if @user.update(user_params)
+      redirect_to user_path(@user), notice: t('profile.updated_successfully')
+    else
+      flash.now[:alert] = t('profile.update_failed')
+      render :edit, status: :unprocessable_entity
+    end
   end
+
 
   private
 

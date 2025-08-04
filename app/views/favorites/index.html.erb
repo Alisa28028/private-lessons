@@ -1,5 +1,5 @@
-<div class="d-flex justify-content-center mt-6 mb-4">
-  <h2>My Favorites</h2>
+<div class="d-flex justify-content-center mt-7 mb-4">
+  <h2><%= t("favorites.title") %></h2>
 </div>
 <% if @favorites.any? %>
   <div class="row gx-2 gy-4">
@@ -11,6 +11,6 @@
   </div>
 <% else %>
   <div class="d-flex justify-content-center mb-4">
-    <h4> You haven't liked any classes yet.</h4>
+    <h4> <%= t("favorites.no_fav") %></h4>
   </div>
 <% end %>

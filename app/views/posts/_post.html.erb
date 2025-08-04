@@ -89,7 +89,12 @@
           </ul>
         </div>
       </div>
-      <%= raw(post.description.present? ? post.description.body.to_html : '') %>
+      <div class="post-description">
+        <%= raw(post.description.present? ? post.description.body.to_html : '') %>
+        <% post.description.embeds.each do |embed| %>
+          <%= image_tag embed %>
+        <% end %>
+      </div>
       <small>Posted on <%= post.created_at.strftime("%b %d, %Y") %></small>
     </div>
   </div>
