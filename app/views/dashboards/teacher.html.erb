@@ -22,120 +22,456 @@
     <div class="d-flex flex-row gap-2">
       <div class="container-dashboard-stats">
         <div class="d-flex justify-content-center px-3">
-          <h3 class="text-center mt-2 mb-3 dashboard-h3">
-            total<br>
-            bookings
-          </h3>
+          <button
+  type="button"
+  class="unstyled-button"
+  data-bs-toggle="offcanvas"
+  data-bs-target="#bookingPanel"
+  aria-controls="bookingPanel"
+>
+            <h3 class="text-center mt-2 mb-3 dashboard-h3">
+              total<br>
+              bookings
+            </h3>
+            <h1 class="d-flex justify-content-center dashboard-numbers"><%= @event_instances.sum { |instance| instance.bookings.where(status: "confirmed").count } %></h1>
+          </button>
         </div>
-        <h1 class="d-flex justify-content-center dashboard-numbers"><%= @event_instances.sum { |instance| instance.bookings.where(status: "confirmed").count } %></h1>
       </div>
       <div class="container-dashboard-stats">
         <div class="d-flex justify-content-center px-3">
-          <h3 class="text-center mt-2 mb-3 dashboard-h3">
-            pending<br>
-            approval
-          </h3>
+          <button
+  type="button"
+  class="unstyled-button"
+  data-bs-toggle="offcanvas"
+  data-bs-target="#bookingPanel"
+  aria-controls="bookingPanel"
+>
+            <h3 class="text-center mt-2 mb-3 dashboard-h3">
+              pending<br>
+              approval
+            </h3>
+            <h1 class="d-flex justify-content-center dashboard-numbers"><%= @event_instances.sum { |instance| instance.bookings.where(status: "pending", waitlisted: false).count } %></h1>
+          </button>
         </div>
-        <h1 class="d-flex justify-content-center dashboard-numbers"><%= @event_instances.sum { |instance| instance.bookings.where(status: "pending", waitlisted: false).count } %></h1>
       </div>
       <div class="container-dashboard-stats">
         <div class="d-flex justify-content-center px-3">
-          <h3 class="text-center mt-2 mb-3 dashboard-h3">
-            unpaid<br>
-            bookings
-          </h3>
+          <button
+  type="button"
+  class="unstyled-button"
+  data-bs-toggle="offcanvas"
+  data-bs-target="#attendeePanel"
+  aria-controls="attendeePanel"
+>
+            <h3 class="text-center mt-2 mb-3 dashboard-h3">
+              unpaid<br>
+              bookings
+            </h3>
+            <h1 class="d-flex justify-content-center dashboard-numbers"><%= @unpaid_booking_count %></h1>
+          </button>
         </div>
-        <h1 class="d-flex justify-content-center dashboard-numbers"><%= @unpaid_booking_count %></h1>
-        <ul>
-          <% @unpaid_bookings.each do |booking| %>
-            <%# <li>Booking ID: <%= booking.id %></li>
-        <% end %>
-      </ul>
+      </div>
+    </div>
+    <div class="d-flex flex-row gap-2">
+      <div class="container-dashboard-earnings">
+        <h3 class="d-flex justify-content-center mb-3 mt-3 dashboard-h3">total earnings this month</h3>
+        <h1 class="d-flex justify-content-center dashboard-numbers">
+          <%= number_to_currency(@current_month_paid_sum, unit: "¥", precision: 0) %>
+        </h1>
+      </div>
     </div>
   </div>
-  <div class="d-flex flex-row gap-2">
-    <div class="container-dashboard-earnings">
-      <h3 class="d-flex justify-content-center mb-3 mt-3 dashboard-h3">total earnings this month</h3>
-      <h1 class="d-flex justify-content-center dashboard-numbers">
-        <%= number_to_currency(@current_month_paid_sum, unit: "¥", precision: 0) %>
-      </h1>
-    </div>
-  </div>
-</div>
-<div class="d-flex flex-column mx-2 mt-3">
-  <button type="button"
+  <div class="d-flex flex-column mx-2 mt-3">
+    <button type="button"
         class="d-flex flex-row align-items-center justify-content-between w-100 border-0 bg-transparent py-2 px-3"
         data-bs-toggle="offcanvas"
         data-bs-target="#attendeePanel"
         aria-controls="attendeePanel"
         style="text-align: left;">
-    <span style="font-family: 'Inter'; font-size: 15px; color: #292A5A; font-weight: 500;">
-      Manage Payments
-    </span>
-    <i class="fa-solid fa-chevron-right fa-sm"></i>
-  </button>
-  <button type="button"
+      <span style="font-family: 'Inter'; font-size: 15px; color: #292A5A; font-weight: 500;">
+        Manage Payments
+      </span>
+      <i class="fa-solid fa-chevron-right fa-sm"></i>
+    </button>
+    <button type="button"
         class="d-flex flex-row align-items-center justify-content-between w-100 border-0 bg-transparent py-2 px-3 mb-3"
         data-bs-toggle="offcanvas"
         data-bs-target="#bookingPanel"
         aria-controls="bookingPanel"
         style="text-align: left;">
-    <span style="font-family: 'Inter'; font-size: 15px; color: #292A5A; font-weight: 500;">
-      Manage Bookings
-    </span>
-    <i class="fa-solid fa-chevron-right fa-sm"></i>
-  </button>
-  <%# </div>
+      <span style="font-family: 'Inter'; font-size: 15px; color: #292A5A; font-weight: 500;">
+        Manage Bookings
+      </span>
+      <i class="fa-solid fa-chevron-right fa-sm"></i>
+    </button>
+    <%# </div>
   </div> %>
-  <!-- Offcanvas Panel for payments -->
-  <!-- Offcanvas Panel for payments -->
-  <%# <turbo-frame id="payments_panel_frame" src="<%= payments_dashboard_path %>
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="attendeePanel" aria-labelledby="attendeePanelLabel">
-    <div class="d-flex flex-column">
-      <div class="offcanvas-header" style="margin-bottom: -18px;">
-        <h2 class="offcanvas-title" id="attendeePanelLabel">Payment Management</h2>
-        <button
+    <!-- Offcanvas Panel for payments -->
+    <!-- Offcanvas Panel for payments -->
+    <%# <turbo-frame id="payments_panel_frame" src="<%= payments_dashboard_path %>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="attendeePanel" aria-labelledby="attendeePanelLabel">
+      <div class="d-flex flex-column">
+        <div class="offcanvas-header" style="margin-bottom: -18px;">
+          <h2 class="offcanvas-title" id="attendeePanelLabel">Payment Management</h2>
+          <button
   type="button"
   class="btn-close"
   data-bs-dismiss="offcanvas"
   aria-label="Close"
   onclick="location.reload();">
-        </button>
+          </button>
+        </div>
+        <div class="ms-3">
+          <%= link_to teacher_dashboard_path, class: "text-dark text-decoration-none", style: "font-family: Inter, sans-serif;" do  %>
+            <i class="fa-regular fa-circle-left"></i> Dashboard
+          <% end %>
+        </div>
       </div>
-      <div class="ms-3">
-        <%= link_to teacher_dashboard_path, class: "text-dark text-decoration-none", style: "font-family: Inter, sans-serif;" do  %>
-          <i class="fa-regular fa-circle-left"></i> Dashboard
-        <% end %>
+      <!-- Header with buttons -->
+      <div class="d-flex flex-column mb-3 mx-3">
+        <a href="#past-events" class="btn btn-card active ml-2 mr-0 me-2 mb-0 mt-1" style= "font-family: Inter, sans-serif;" data-no-close="true">Past Events</a>
+        <a href="#future-events" class="btn btn-card ml-2 mr-0 me-2" style= "font-family: Inter, sans-serif;" data-no-close="true">Upcoming Events</a>
       </div>
-    </div>
-    <!-- Header with buttons -->
-    <div class="d-flex flex-column mb-3 mx-3">
-      <a href="#past-events" class="btn btn-card active ml-2 mr-0 me-2 mb-0 mt-1" style= "font-family: Inter, sans-serif;" data-no-close="true">Past Events</a>
-      <a href="#future-events" class="btn btn-card ml-2 mr-0 me-2" style= "font-family: Inter, sans-serif;" data-no-close="true">Upcoming Events</a>
-    </div>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const buttons = document.querySelectorAll('.btn-card');
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const buttons = document.querySelectorAll('.btn-card');
 
-        buttons.forEach(button => {
-          button.addEventListener('click', function (e) {
-            buttons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
+          buttons.forEach(button => {
+            button.addEventListener('click', function (e) {
+              buttons.forEach(btn => btn.classList.remove('active'));
+              this.classList.add('active');
 
-            // Optional: smooth scroll to section
-            const targetId = this.getAttribute('href');
-            const target = document.querySelector(targetId);
-            if (target) {
-              e.preventDefault(); // avoid default jump
-              target.scrollIntoView({ behavior: 'smooth' });
-            }
+              // Optional: smooth scroll to section
+              const targetId = this.getAttribute('href');
+              const target = document.querySelector(targetId);
+              if (target) {
+                e.preventDefault(); // avoid default jump
+                target.scrollIntoView({ behavior: 'smooth' });
+              }
+            });
           });
         });
-      });
-    </script>
-    <div class="offcanvas-body">
-      <h3 id="past-events" class="mb-4">Past Events</h3>
-      <div>
+      </script>
+      <div class="offcanvas-body">
+        <h3 id="past-events" class="mb-4">Past Events</h3>
+        <div>
+          <% @past_event_instances_created.each do |instance| %>
+            <% if instance.bookings.any? %>
+              <%= link_to event_instance_path(instance) do %>
+                <div class="panel mb-3">
+                  <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
+                  <h4 class= "panel d-flex align-items-center"><%= instance.event.title.upcase %>
+                    <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
+                  </h4>
+                <% end %>
+                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+                <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
+                  <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
+                  <%# <span style="font-size: 12px;" class="text-custom"> %>
+                  <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                </h6>
+                <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
+                  <turbo-frame id="payment_<%= booking.id %>">
+                    <!-- Turbo frame with buttons and state here -->
+                    <div class="d-flex justify-content-between align-items-end">
+                      <div class="d-flex align-items-end" style="margin-top: -6px;">
+                        <i id="caret_<%= booking.id %>" class="fa-solid fa-caret-right caret-icon" style="margin-right: 2px; margin-bottom: 2px;"></i>
+                        <h6 class="panel">
+                          <a
+  class="text-decoration-none"
+  style="color: black;"
+  data-bs-toggle="collapse"
+  data-bs-target="#dropdown_<%= booking.id %>"
+  aria-expanded="false"
+  aria-controls="dropdown_<%= booking.id %>"
+  data-booking-id="<%= booking.id %>"
+>
+                            <%= booking.user.first_name %>
+                          </h6>
+                          <% if booking.state == 'paid' %>
+                            <h6 class="panel"> - <%= booking.state %>
+                              ✅</h6>
+                          <% else %>
+                            <h6 class="panel">- <%= booking.state %>
+                            </h6>
+                          <% end %>
+                        </a>
+                      </div>
+                      <% if booking.state == 'unpaid' %>
+                        <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
+                          <div class="d-flex align-items-center">
+                            <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+            style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 105px; color: white; margin-right: 3px"
+                            %>
+                            <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+                    style: "background-color: #543A70; height: 19px; line-height: 10px; border-radius: 4px; width: 128px; color: white;"
+
+        %>
+                          </div>
+                        <% else %>
+                          <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+        style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;"
+%>
+                        <% end %>
+                      <% else %>
+                        <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" },
+                          class: "btn btn-sm",
+                          style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
+                          Mark as Unpaid
+                        <% end %>
+                      <% end %>
+                    </div>
+                    <!-- Dropdown Content -->
+                    <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
+                      <div class="p-2" style="border-radius: 5px;">
+                        <!-- You can put any additional booking details here -->
+                        <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
+                          <% if booking.user.photo.present? %>
+                            <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+                          <% else %>
+                            <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
+                          <% end %>
+                          <h6 class="panel" style="margin-left: 2px;">
+                            view profile</h6>
+                        <% end %>
+                        <div class="d-flex">
+                          <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
+                          <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
+                        </div>
+                        <div class="d-flex">
+                          <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
+                          <h6 style="margin-left: 8px;">
+                            <%= booking.user.phone_number %></h6>
+                        </div>
+                        <div class="panel" style="margin-left: 3px;">
+                          <h6>Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                        </div>
+                      </div>
+                    </div>
+                  </turbo-frame>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <div>
+          <h3 id="future-events" class="mt-5 mb-4">Upcoming Events</h3>
+          <% @upcoming_event_instances_created.each do |instance| %>
+            <% if instance.bookings.any? %>
+              <%= link_to event_instance_path(instance) do %>
+                <div class="panel mb-3">
+                  <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
+                  <h4 class= "panel d-flex align-items-center"><%= instance.event.title.upcase %>
+                    <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
+                  </h4>
+                <% end %>
+                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+                <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
+                  <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
+                  <%# <span style="font-size: 12px;" class="text-custom"> %>
+                  <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                </h6>
+                <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
+                  <%# <% if booking.status == 'confirmed' %>
+                  <turbo-frame id="payment_<%= booking.id %>">
+                    <!-- Turbo frame with buttons and state here -->
+                    <div class="d-flex justify-content-between align-items-end">
+                      <div class="d-flex align-items-end" style="margin-top: -6px;">
+                        <i class="fa-solid fa-caret-right" style="margin-right: 2px; margin-bottom: 1px;"></i>
+                        <h6 class="panel">
+                          <a
+  class="text-decoration-none"
+  style="color: black;"
+  data-bs-toggle="collapse"
+  data-bs-target="#dropdown_<%= booking.id %>"
+  role="button"
+  aria-expanded="false"
+  aria-controls="dropdown_<%= booking.id %>"
+  data-booking-id="<%= booking.id %>"
+>
+                            <%= booking.user.first_name %>
+                          </a>
+                        </h6>
+                        <% if booking.state == 'paid' %>
+                          <h6 class="panel"> - <%= booking.state %> ✅</h6>
+                        <% else %>
+                          <h6 class="panel">- <%= booking.state %>
+                          </h6>
+                        <% end %>
+                      </div>
+                      <% if booking.state == 'unpaid' %>
+                        <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
+                          <div class="d-flex align-items-center">
+                            <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+            style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 105px; color: white; margin-right: 3px"
+                            %>
+                            <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+                    style: "background-color: #543A70; height: 19px; line-height: 10px; border-radius: 4px; width: 128px; color: white;"
+
+        %>
+                          </div>
+                        <% else %>
+                          <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+        style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;"
+%>
+                        <% end %>
+                      <% else %>
+                        <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
+                          Mark as Unpaid
+                        <% end %>
+                      <% end %>
+                    </div>
+                    <!-- Dropdown Content -->
+                    <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
+                      <div class="p-2" style="border-radius: 5px;">
+                        <!-- You can put any additional booking details here -->
+                        <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
+                          <% if booking.user.photo.present? %>
+                            <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+                          <% else %>
+                            <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
+                          <% end %>
+                          <h6 class="panel" style="margin-left: 2px;">
+                            view profile</h6>
+                        <% end %>
+                        <div class="d-flex">
+                          <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
+                          <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
+                        </div>
+                        <div class="d-flex">
+                          <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
+                          <h6 style="margin-left: 8px;">
+                            <%= booking.user.phone_number %></h6>
+                        </div>
+                        <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                      </div>
+                    </div>
+                  </turbo-frame>
+                  <%# <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <%# adding another button and panel for bookings management %>
+    <!-- Offcanvas Panel for bookings -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="bookingPanel" aria-labelledby="bookingPanelLabel">
+      <div class="d-flex flex-column">
+        <div class="offcanvas-header" style="margin-bottom: -18px;">
+          <h2 class="offcanvas-title" id="bookingPanelLabel">Bookings Management</h2>
+          <button
+  type="button"
+  class="btn-close"
+  data-bs-dismiss="offcanvas"
+  aria-label="Close"
+  onclick="location.reload();">
+          </button>
+        </div>
+        <div class="ms-3">
+          <%= link_to teacher_dashboard_path, class: "text-dark text-decoration-none", style: "font-family: Inter, sans-serif;" do  %>
+            <i class="fa-regular fa-circle-left"></i> Dashboard
+          <% end %>
+        </div>
+      </div>
+      <!-- Header with buttons -->
+      <div class="d-flex flex-column mb-3 mx-3">
+        <a href="#past-events" class="btn btn-card active ml-2 mr-0 me-2 mb-0 mt-1" style= "font-family: Inter, sans-serif;" data-no-close="true">Past Events</a>
+        <a href="#future-events" class="btn btn-card ml-2 mr-0 me-2" style= "font-family: Inter, sans-serif;" data-no-close="true">Upcoming Events</a>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const buttons = document.querySelectorAll('.btn-card');
+
+          buttons.forEach(button => {
+            button.addEventListener('click', function (e) {
+              buttons.forEach(btn => btn.classList.remove('active'));
+              this.classList.add('active');
+
+              // Optional: smooth scroll to section
+              const targetId = this.getAttribute('href');
+              const target = document.querySelector(targetId);
+              if (target) {
+                e.preventDefault(); // avoid default jump
+                target.scrollIntoView({ behavior: 'smooth' });
+              }
+            });
+          });
+        });
+      </script>
+      <div class="offcanvas-body">
+        <h3 id="future-events" class="mt-5 mb-4">Upcoming Events</h3>
+        <div>
+          <% @upcoming_event_instances_created.each do |instance| %>
+            <% if instance.bookings.any? %>
+              <%= link_to event_instance_path(instance) do %>
+                <div class="panel mb-3">
+                  <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
+                  <h4 class= "panel d-flex align-items-center"><%= instance.event.title.upcase %>
+                    <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
+                  </h4>
+                <% end %>
+                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+                <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
+                  <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
+                  <%# <span style="font-size: 12px;" class="text-custom"> %>
+                  <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                </h6>
+                <% bookings_to_show = instance.bookings %>
+                <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
+                  <div class="p-2" style="border-radius: 5px;">
+                    <!-- You can put any additional booking details here -->
+                    <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
+                      <% if booking.user.photo.present? %>
+                        <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+                      <% else %>
+                        <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
+                      <% end %>
+                      <h6 class="panel" style="margin-left: 2px;">
+                        view profile</h6>
+                    <% end %>
+                    <div class="d-flex">
+                      <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
+                      <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
+                    </div>
+                    <div class="d-flex">
+                      <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
+                      <h6 style="margin-left: 8px;">
+                        <%= booking.user.phone_number %></h6>
+                    </div>
+                    <div class="panel" style="margin-left: 3px;">
+                      <h6>Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <h3 id="past-events" class="mb-4">Past Events</h3>
+        <%# <div> %>
         <% @past_event_instances_created.each do |instance| %>
           <% if instance.bookings.any? %>
             <%= link_to event_instance_path(instance) do %>
@@ -152,118 +488,24 @@
                 <%# <span style="font-size: 12px;" class="text-custom"> %>
                 <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
               </h6>
-              <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
+              <% bookings_to_show = instance.bookings %>
+              <% bookings_to_show.each do |booking| %>
                 <turbo-frame id="payment_<%= booking.id %>">
                   <!-- Turbo frame with buttons and state here -->
                   <div class="d-flex justify-content-between align-items-end">
                     <div class="d-flex align-items-end" style="margin-top: -6px;">
-                      <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 1px;"></i>
+                      <i class="fa-solid fa-caret-right" style="margin-right: 2px; margin-bottom: 1px;"></i>
                       <h6 class="panel">
-                        <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-                          <%= booking.user.first_name %>
-                        </a>
-                      </h6>
-                      <% if booking.state == 'paid' %>
-                        <h6 class="panel"> - <%= booking.state %>
-                          ✅</h6>
-                      <% else %>
-                        <h6 class="panel">- <%= booking.state %>
-                        </h6>
-                      <% end %>
-                    </div>
-                    <% if booking.state == 'unpaid' %>
-                      <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
-                        <div class="d-flex align-items-center">
-                          <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
-        method: :patch,
-        data: { turbo_frame: "payment_#{booking.id}" },
-        class: "btn btn-sm",
-            style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 105px; color: white; margin-right: 3px"
-                            %>
-                          <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
-        method: :patch,
-        data: { turbo_frame: "payment_#{booking.id}" },
-        class: "btn btn-sm",
-                    style: "background-color: #543A70; height: 19px; line-height: 10px; border-radius: 4px; width: 128px; color: white;"
-
-        %>
-                        </div>
-                      <% else %>
-                        <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
-        method: :patch,
-        data: { turbo_frame: "payment_#{booking.id}" },
-        class: "btn btn-sm",
-        style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;"
-%>
-                      <% end %>
-                    <% else %>
-                      <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" },
-                          class: "btn btn-sm",
-                          style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-                        Mark as Unpaid
-                      <% end %>
-                    <% end %>
-                  </div>
-                  <!-- Dropdown Content -->
-                  <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
-                    <div class="p-2" style="border-radius: 5px;">
-                      <!-- You can put any additional booking details here -->
-                      <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
-                        <% if booking.user.photo.present? %>
-                          <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
-                        <% else %>
-                          <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
-                        <% end %>
-                        <h6 class="panel" style="margin-left: 2px;">
-                          view profile</h6>
-                      <% end %>
-                      <div class="d-flex">
-                        <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
-                        <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
-                      </div>
-                      <div class="d-flex">
-                        <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
-                        <h6 style="margin-left: 8px;">
-                          <%= booking.user.phone_number %></h6>
-                      </div>
-                      <div class="panel" style="margin-left: 3px;">
-                        <h6>Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
-                      </div>
-                    </div>
-                  </div>
-                </turbo-frame>
-              <% end %>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-      <div>
-        <h3 id="future-events" class="mt-5 mb-4">Upcoming Events</h3>
-        <% @upcoming_event_instances_created.each do |instance| %>
-          <% if instance.bookings.any? %>
-            <%= link_to event_instance_path(instance) do %>
-              <div class="panel mb-3">
-                <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
-                <h4 class= "panel d-flex align-items-center"><%= instance.event.title.upcase %>
-                  <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
-                </h4>
-              <% end %>
-              <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-              <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-              <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
-                <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
-                <%# <span style="font-size: 12px;" class="text-custom"> %>
-                <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-              </h6>
-              <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
-                <%# <% if booking.status == 'confirmed' %>
-                <turbo-frame id="payment_<%= booking.id %>">
-                  <!-- Turbo frame with buttons and state here -->
-                  <div class="d-flex justify-content-between align-items-end">
-                    <div class="d-flex align-items-end" style="margin-top: -6px;">
-                      <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 1px;"></i>
-                      <h6 class="panel">
-                        <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
+                        <a
+  class="text-decoration-none"
+  style="color: black;"
+  data-bs-toggle="collapse"
+  data-bs-target="#dropdown_<%= booking.id %>"
+  role="button"
+  aria-expanded="false"
+  aria-controls="dropdown_<%= booking.id %>"
+  data-booking-id="<%= booking.id %>"
+>
                           <%= booking.user.first_name %>
                         </a>
                       </h6>
@@ -331,145 +573,58 @@
                     </div>
                   </div>
                 </turbo-frame>
-                <%# <% end %>
               <% end %>
             </div>
           <% end %>
         <% end %>
+        <%# </div> %>
       </div>
     </div>
-  </div>
-  <%# adding another button and panel for bookings management %>
-  <!-- Offcanvas Panel for bookings -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="bookingPanel" aria-labelledby="bookingPanelLabel">
-    <div class="d-flex flex-column">
-      <div class="offcanvas-header" style="margin-bottom: -18px;">
-        <h2 class="offcanvas-title" id="bookingPanelLabel">Bookings Management</h2>
-        <button
-  type="button"
-  class="btn-close"
-  data-bs-dismiss="offcanvas"
-  aria-label="Close"
-  onclick="location.reload();">
-        </button>
-      </div>
-      <div class="ms-3">
-        <%= link_to teacher_dashboard_path, class: "text-dark text-decoration-none", style: "font-family: Inter, sans-serif;" do  %>
-          <i class="fa-regular fa-circle-left"></i> Dashboard
+    <%# Iterating through teaching events %>
+    <div class="container p-0">
+    </div>
+    <div class="container mb-5">
+      <div class="row mx-0 mt-3">
+        <% if @upcoming_event_instances_created.any? %>
+          <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">My Upcoming Classes</h4>
+          <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
+            <div class="card-container mx-auto">
+              <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances_created %>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>
-    <!-- Header with buttons -->
-    <div class="d-flex flex-column mb-3 mx-3">
-      <a href="#past-events" class="btn btn-card active ml-2 mr-0 me-2 mb-0 mt-1" style= "font-family: Inter, sans-serif;" data-no-close="true">Past Events</a>
-      <a href="#future-events" class="btn btn-card ml-2 mr-0 me-2" style= "font-family: Inter, sans-serif;" data-no-close="true">Upcoming Events</a>
+    <div class="container">
+      <div class="row mx-0 mt-3">
+        <% if @past_event_instances_created.any? %>
+          <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">My Past Classes</h4>
+          <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
+            <div class="card-container mx-auto">
+              <%= render "shared/event_card_iteration", event_instances: @past_event_instances_created %>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </div>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const buttons = document.querySelectorAll('.btn-card');
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
+        const targetSelector = toggle.getAttribute('data-bs-target');
+        const bookingId = toggle.getAttribute('data-booking-id');
+        const caret = document.getElementById(`caret_${bookingId}`);
+        const target = document.querySelector(targetSelector);
 
-        buttons.forEach(button => {
-          button.addEventListener('click', function (e) {
-            buttons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
+        if (!caret || !target) return;
 
-            // Optional: smooth scroll to section
-            const targetId = this.getAttribute('href');
-            const target = document.querySelector(targetId);
-            if (target) {
-              e.preventDefault(); // avoid default jump
-              target.scrollIntoView({ behavior: 'smooth' });
-            }
-          });
+        target.addEventListener('show.bs.collapse', function () {
+          caret.classList.add('caret-rotated');
+        });
+
+        target.addEventListener('hide.bs.collapse', function () {
+          caret.classList.remove('caret-rotated');
         });
       });
-    </script>
-    <div class="offcanvas-body">
-      <div>
-        <h3 id="future-events" class="mt-5 mb-4">Upcoming Events</h3>
-        <% @upcoming_event_instances_created.each do |instance| %>
-          <% if instance.bookings.any? %>
-            <%= link_to event_instance_path(instance) do %>
-              <div class="panel mb-3">
-                <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
-                <h4 class= "panel d-flex align-items-center"><%= instance.event.title.upcase %>
-                  <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
-                </h4>
-              <% end %>
-              <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-              <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-              <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
-                <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
-                <%# <span style="font-size: 12px;" class="text-custom"> %>
-                <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-              </h6>
-              <% bookings_to_show = instance.bookings %>
-              <%# block BBB (correct block) %>
-              <%= render partial: "event_instances/event_instance", locals: { instance: instance } %>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-      <h3 id="past-events" class="mb-4">Past Events</h3>
-      <%# <div> %>
-      <% @past_event_instances_created.each do |instance| %>
-        <% if instance.bookings.any? %>
-          <%= link_to event_instance_path(instance) do %>
-            <div class="panel mb-3">
-              <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
-              <h4 class= "panel d-flex align-items-center"><%= instance.event.title.upcase %>
-                <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
-              </h4>
-            <% end %>
-            <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
-            <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-            <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
-              <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
-              <%# <span style="font-size: 12px;" class="text-custom"> %>
-              <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
-            </h6>
-            <% bookings_to_show = instance.bookings %>
-            <%# block AAA %>
-            <%= render partial: "event_instances/event_instance", locals: { instance: instance } %>
-          </div>
-        <% end %>
-      <% end %>
-      <%# </div> %>
-    </div>
-  </div>
-  <%# Iterating through teaching events %>
-  <div class="container p-0">
-  </div>
-  <div class="container mb-5">
-    <div class="row mx-0 mt-3">
-      <% if @upcoming_event_instances_created.any? %>
-        <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">My Upcoming Classes</h4>
-        <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
-          <div class="card-container mx-auto">
-            <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances_created %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-  <div class="container">
-    <div class="row mx-0 mt-3">
-      <% if @past_event_instances_created.any? %>
-        <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">My Past Classes</h4>
-        <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
-          <div class="card-container mx-auto">
-            <%= render "shared/event_card_iteration", event_instances: @past_event_instances_created %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-  <%# <% else %>
-  <%# <h2 class="mb-0 mt-5 d-flex align-items-center fw-bold">You haven't created any events or registered to any classes yet.</h2> %>
-  <%# <a href="new_event_path"> %>
-  <%# <p class="text-white bg-custom button-plus d-flex justify-content-center align-items-center my-2"><strong><%= link_to "+", new_event_path, class: "text-white text-decoration-none" %>
-  <%# </strong> %>
-  <%# </p> %>
-  <%# </a> %>
-  <%# <% end %>
-</div>
+    });
+  </script>

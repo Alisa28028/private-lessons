@@ -1,13 +1,23 @@
 <turbo-frame id="booking_<%= booking.id %>">
   <div class="d-flex justify-content-between align-items-end">
     <div class="d-flex align-items-end" style="margin-top: -6px;">
-      <i class="fa-solid fa-caret-down" style="margin-right: 2px; margin-bottom: 2px;"></i>
+      <i id="caret_<%= booking.id %>" class="fa-solid fa-caret-right" style="margin-right: 2px; margin-bottom: 2px;"></i>
       <h6 class="panel">
-        <a class="text-decoration-none" style="color: black;" data-bs-toggle="collapse" href="#dropdown_<%= booking.id %>" role="button" aria-expanded="false" aria-controls="dropdown_<%= booking.id %>">
-          <div class="d-flex <%= 'mt-1' if booking.status == 'cancelled' %>">
+        <a
+  class="text-decoration-none d-flex align-items-center <%= 'mt-1' if booking.status == 'cancelled' %>"
+  style="color: black;"
+  data-bs-toggle="collapse"
+  data-bs-target="#dropdown_<%= booking.id %>"
+  aria-expanded="false"
+  aria-controls="dropdown_<%= booking.id %>"
+  data-booking-id="<%= booking.id %>"
+>
+          <i id="caret_<%= booking.id %>" class="fa-solid fa-caret-right caret-icon me-1"></i>
+          <div>
             <%= booking.user.first_name %> –
-            <div style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">&nbsp;<%= booking.status %>
-            </div>
+            <span style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">
+              <%= booking.status %>
+            </span>
           </div>
         </a>
       </h6>
@@ -28,7 +38,7 @@
         data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
       </div>
     <% elsif booking.status == 'confirmed' %>
-      <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;" %>
+      <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px; font-family: 'Inter';" %>
     <% end %>
   </div>
   <!-- Dropdown Content -->
@@ -57,3 +67,23 @@
     </div>
   </div>
 </turbo-frame>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
+    const targetSelector = toggle.getAttribute('data-bs-target');
+    const bookingId = toggle.getAttribute('data-booking-id');
+    const caret = document.getElementById(`caret_${bookingId}`);
+    const target = document.querySelector(targetSelector);
+
+    if (!caret || !target) return;
+
+    target.addEventListener('show.bs.collapse', function () {
+      caret.classList.add('caret-rotated');
+    });
+
+    target.addEventListener('hide.bs.collapse', function () {
+      caret.classList.remove('caret-rotated');
+    });
+  });
+  });
+</script>
