@@ -216,3 +216,13 @@ en:
   favorites:
     title: "My Favorites"
     no_fav: "You haven't liked any classes yet."
+  dashboard:
+    student: "Student dashboard"
+    teacher: "Teacher dashboard"
+    total_b: "total bookings"
+    stats: "Quick Stats"
+    pending: "pending approval"
+    unpaid: "unpaid bookings"
+    total_e: "total earning this month"
+    manage_b: "Manage Bookings"
+    manage_p: "Manage Payments"
