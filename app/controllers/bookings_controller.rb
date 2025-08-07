@@ -216,12 +216,11 @@ class BookingsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         if success
-          if params[:dashboard] == "true"
-            @event_instance = @booking.event_instance
-            render :cancel_dashboard
-          else
-            render :cancel  # reload full page
-          end
+          render turbo_stream: turbo_stream.replace(
+            "booking_#{@booking.id}",
+            partial: "bookings/booking",
+            locals: { booking: @booking }
+          )
         else
           head :unprocessable_entity
         end
@@ -229,6 +228,7 @@ class BookingsController < ApplicationController
 
       format.html { redirect_to event_instance_path(@booking.event_instance) }
     end
+
   end
 
 
@@ -304,21 +304,22 @@ class BookingsController < ApplicationController
 
       cancelled_by_requester = params[:cancelled_by].in?(%w[student teacher]) ? params[:cancelled_by] : "student"
 
-      if by == booking.user
-        status = "cancelled_by_student"
-        cancelled_by = "student"
-      elsif by.is_teacher_for?(event_instance.event)
-        if cancelled_by_requester == "student"
-          status = "cancelled_by_teacher"
-          cancelled_by = "student"
-        else
-          status = "cancelled_by_teacher"
-          cancelled_by = "teacher"
-        end
-      else
+      unless by == booking.user || by.is_teacher_for?(event_instance.event)
         flash[:alert] = "You are not authorized to cancel this booking."
         return false
       end
+
+      # Determine who the cancellation is being recorded as
+      cancelled_by_requester = params[:cancelled_by].in?(%w[student teacher]) ? params[:cancelled_by] : "student"
+
+      status =
+        if cancelled_by_requester == "teacher"
+          "cancelled_by_teacher"
+        else
+          "cancelled_by_student"
+        end
+
+      cancelled_by = cancelled_by_requester
 
       update_attrs = {
         status: status,

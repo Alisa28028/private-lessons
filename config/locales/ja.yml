@@ -254,3 +254,7 @@ ja:
   favorites:
     title: "お気に入りレッスン"
     no_fav: "まだお気に入りのレッスンがありません。"
+  dashboard:
+    student: "生徒ダッシュボード"
+    teacher: "講師ダッシュボード"
+    total_b: "総予約数"

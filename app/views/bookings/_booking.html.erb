@@ -12,7 +12,6 @@
   aria-controls="dropdown_<%= booking.id %>"
   data-booking-id="<%= booking.id %>"
 >
-          <i id="caret_<%= booking.id %>" class="fa-solid fa-caret-right caret-icon me-1"></i>
           <div>
             <%= booking.user.first_name %> –
             <span style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">
@@ -33,12 +32,31 @@
             Full
           </button>
         <% end %>
-        <%= button_to "Reject", update_status_booking_path(booking, status: "cancelled"), method: :patch,
+        <%= button_to "Reject", update_status_booking_path(booking, status: "rejected_by_teacher"), method: :patch,
         class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;",
         data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
       </div>
     <% elsif booking.status == 'confirmed' %>
-      <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px; font-family: 'Inter';" %>
+      <div class="relative inline-block text-left" data-controller="cancel-dropdown">
+        <button type="button"
+          class="btn btn-sm"
+          style="background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;"
+          data-action="click->cancel-dropdown#toggle">
+          Cancel
+        </button>
+        <div data-cancel-dropdown-target="menu"
+       style="display: none;"
+       class="absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <%= button_to "As teacher", cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
+        method: :post,
+        class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+        data: { turbo_frame: "booking_#{booking.id}" } %>
+          <%= button_to "As student", cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
+        method: :post,
+        class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+        data: { turbo_frame: "booking_#{booking.id}" } %>
+        </div>
+      </div>
     <% end %>
   </div>
   <!-- Dropdown Content -->
@@ -69,21 +87,21 @@
 </turbo-frame>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
-    const targetSelector = toggle.getAttribute('data-bs-target');
-    const bookingId = toggle.getAttribute('data-booking-id');
-    const caret = document.getElementById(`caret_${bookingId}`);
-    const target = document.querySelector(targetSelector);
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
+      const targetSelector = toggle.getAttribute('data-bs-target');
+      const bookingId = toggle.getAttribute('data-booking-id');
+      const carets = document.querySelectorAll(`.caret-icon[data-booking-id='${bookingId}']`);
+      const target = document.querySelector(targetSelector);
 
-    if (!caret || !target) return;
+      if (!target || carets.length === 0) return;
 
-    target.addEventListener('show.bs.collapse', function () {
-      caret.classList.add('caret-rotated');
+      target.addEventListener('show.bs.collapse', function () {
+        carets.forEach(caret => caret.classList.add('caret-rotated'));
+      });
+
+      target.addEventListener('hide.bs.collapse', function () {
+        carets.forEach(caret => caret.classList.remove('caret-rotated'));
+      });
     });
-
-    target.addEventListener('hide.bs.collapse', function () {
-      caret.classList.remove('caret-rotated');
-    });
-  });
   });
 </script>
