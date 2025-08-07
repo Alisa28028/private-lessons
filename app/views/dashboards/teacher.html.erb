@@ -501,7 +501,9 @@
                           <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i></h6>
                           <h6 style="margin-left: 8px;"><%= booking.user.phone_number %></h6>
                         </div>
-                        <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                        <div class="panel" style="margin-left: 3px;">
+                          <h6>Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                        </div>
                       </div>
                     </div>
                   </turbo-frame>
