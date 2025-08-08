@@ -30,7 +30,7 @@
   data-bs-target="#bookingPanel"
   aria-controls="bookingPanel"
 >
-            <h3 class="text-center mt-2 mb-2 dashboard-h3">
+            <h3 class="text-center <%= I18n.locale == :ja ? 'mt-3' : 'mt-2 mb-2' %> dashboard-h3">
               <%= t("dashboard.total_b") %>
             </h3>
             <h1 class="d-flex justify-content-center dashboard-numbers"><%= @event_instances.sum { |instance| instance.bookings.where(status: "confirmed").count } %></h1>
@@ -46,7 +46,7 @@
   data-bs-target="#bookingPanel"
   aria-controls="bookingPanel"
 >
-            <h3 class="text-center mt-2 mb-2 dashboard-h3">
+            <h3 class="text-center <%= I18n.locale == :ja ? 'mt-3' : 'mt-2 mb-2' %> dashboard-h3">
               <%= t("dashboard.pending") %>
             </h3>
             <h1 class="d-flex justify-content-center dashboard-numbers"><%= @event_instances.sum { |instance| instance.bookings.where(status: "pending", waitlisted: false).count } %></h1>
@@ -62,7 +62,7 @@
   data-bs-target="#attendeePanel"
   aria-controls="attendeePanel"
 >
-            <h3 class="text-center mt-2 mb-2 dashboard-h3">
+            <h3 class="text-center <%= I18n.locale == :ja ? 'mt-3' : 'mt-2 mb-2' %> dashboard-h3">
               <%= t("dashboard.unpaid") %>
             </h3>
             <h1 class="d-flex justify-content-center dashboard-numbers"><%= @unpaid_booking_count %></h1>
@@ -72,7 +72,7 @@
     </div>
     <div class="d-flex flex-row gap-2">
       <div class="container-dashboard-earnings">
-        <h3 class="d-flex justify-content-center mb-3 mt-3 dashboard-h3"><%= t("dashboard.total_e") %></h3>
+        <h3 class="d-flex justify-content-center mt-3 dashboard-h3"><%= t("dashboard.total_e") %></h3>
         <h1 class="d-flex justify-content-center dashboard-numbers">
           <%= number_to_currency(@current_month_paid_sum, unit: "¥", precision: 0) %>
         </h1>
@@ -107,10 +107,10 @@
     <!-- Offcanvas Panel for payments -->
     <!-- Offcanvas Panel for payments -->
     <%# <turbo-frame id="payments_panel_frame" src="<%= payments_dashboard_path %>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="attendeePanel" aria-labelledby="attendeePanelLabel">
+    <div class="offcanvas offcanvas-end mb-5" tabindex="-1" id="attendeePanel" aria-labelledby="attendeePanelLabel">
       <div class="d-flex flex-column">
         <div class="offcanvas-header" style="margin-bottom: -18px;">
-          <h2 class="offcanvas-title" id="attendeePanelLabel">Payment Management</h2>
+          <h2 class="offcanvas-title" id="attendeePanelLabel"> <%= t("dashboard.payment_panel") %></h2>
           <button
   type="button"
   class="btn-close"
@@ -119,9 +119,9 @@
   onclick="location.reload();">
           </button>
         </div>
-        <div class="ms-3">
+        <div class="ms-3 mb-3">
           <%= link_to teacher_dashboard_path, class: "text-dark text-decoration-none", style: "font-family: Inter, sans-serif;" do  %>
-            <i class="fa-regular fa-circle-left"></i> Dashboard
+            <i class="fa-regular fa-circle-left"></i> <%= t("dashboard.back") %>
           <% end %>
         </div>
       </div>
@@ -162,17 +162,15 @@
                     <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
                   </h4>
                 <% end %>
-                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
                 <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
-                  <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
-                  <%# <span style="font-size: 12px;" class="text-custom"> %>
-                  <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                  <%= l(instance.start_time.in_time_zone(time_zone), format: :short_day_with_time) %>
                 </h6>
                 <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
                   <turbo-frame id="payment_<%= booking.id %>">
                     <!-- Turbo frame with buttons and state here -->
-                    <div class="d-flex justify-content-between align-items-end">
+                    <div class="d-flex justify-content-between align-items-baseline" style="margin-bottom: 5px;">
                       <div class="d-flex align-items-end" style="margin-top: -6px;">
                         <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
                         <h6 class="panel">
@@ -188,10 +186,13 @@
                             <%= booking.user.first_name %>
                           </h6>
                           <% if booking.state == 'paid' %>
-                            <h6 class="panel"> - <%= booking.state %>
+                            <h6 class="panel"> - <%= t("dashboard.paid") %>
                               ✅</h6>
-                          <% else %>
-                            <h6 class="panel">- <%= booking.state %>
+                          <% elsif booking.state == 'unpaid' %>
+                            <h6 class="panel">- <%= t("dashboard.unpaid") %>
+                            </h6>
+                          <% elsif booking.state == 'waived' %>
+                            <h6 class="panel">- <%= t("dashboard.waived") %>
                             </h6>
                           <% end %>
                         </a>
@@ -199,33 +200,33 @@
                       <% if booking.state == 'unpaid' %>
                         <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
                           <div class="d-flex align-items-center">
-                            <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+                            <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-            style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 105px; color: white; margin-right: 3px"
+            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white; margin-right: 3px"
                             %>
-                            <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
+                            <%= button_to t("dashboard.waive"), update_payment_state_booking_path(booking, state: "waived"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-                    style: "background-color: #543A70; height: 19px; line-height: 10px; border-radius: 4px; width: 128px; color: white;"
+                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white;"
 
         %>
                           </div>
                         <% else %>
-                          <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+                          <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-        style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;"
+        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 127px; color: white;"
 %>
                         <% end %>
                       <% else %>
                         <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" },
                           class: "btn btn-sm",
-                          style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-                          Mark as Unpaid
+                          style: "background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 83px;" do %>
+                          <%= t("dashboard.mark_unpaid") %>
                         <% end %>
                       <% end %>
                     </div>
@@ -273,20 +274,18 @@
                     <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
                   </h4>
                 <% end %>
-                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
                 <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
-                  <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
-                  <%# <span style="font-size: 12px;" class="text-custom"> %>
-                  <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                  <%= l(instance.start_time.in_time_zone(time_zone), format: :short_day_with_time) %>
                 </h6>
                 <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
                   <%# <% if booking.status == 'confirmed' %>
                   <turbo-frame id="payment_<%= booking.id %>">
                     <!-- Turbo frame with buttons and state here -->
-                    <div class="d-flex justify-content-between align-items-end">
+                    <div class="d-flex justify-content-between align-items-baseline" style="margin-bottom: 5px;">
                       <div class="d-flex align-items-end" style="margin-top: -6px;">
-                        <i class="fa-solid fa-caret-right" style="margin-right: 2px; margin-bottom: 1px;"></i>
+                        <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
                         <h6 class="panel">
                           <a
   class="text-decoration-none"
@@ -299,43 +298,47 @@
   data-booking-id="<%= booking.id %>"
 >
                             <%= booking.user.first_name %>
-                          </a>
-                        </h6>
-                        <% if booking.state == 'paid' %>
-                          <h6 class="panel"> - <%= booking.state %> ✅</h6>
-                        <% else %>
-                          <h6 class="panel">- <%= booking.state %>
                           </h6>
-                        <% end %>
+                          <% if booking.state == 'paid' %>
+                            <h6 class="panel"> - <%= t("dashboard.paid") %>
+                              ✅</h6>
+                          <% elsif booking.state == 'unpaid' %>
+                            <h6 class="panel">- <%= t("dashboard.unpaid") %>
+                            </h6>
+                          <% elsif booking.state == 'waived' %>
+                            <h6 class="panel">- <%= t("dashboard.waived") %>
+                            </h6>
+                          <% end %>
+                        </a>
                       </div>
                       <% if booking.state == 'unpaid' %>
                         <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
                           <div class="d-flex align-items-center">
-                            <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+                            <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-            style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 105px; color: white; margin-right: 3px"
+            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white; margin-right: 3px"
                             %>
-                            <%= button_to "Waive Payment", update_payment_state_booking_path(booking, state: "waived"),
+                            <%= button_to t("dashboard.waive"), update_payment_state_booking_path(booking, state: "waived"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-                    style: "background-color: #543A70; height: 19px; line-height: 10px; border-radius: 4px; width: 128px; color: white;"
+                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white;"
 
         %>
                           </div>
                         <% else %>
-                          <%= button_to "Mark as Paid", update_payment_state_booking_path(booking, state: "paid"),
+                          <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-        style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 127px; color: white;"
+        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 127px; color: white;"
 %>
                         <% end %>
                       <% else %>
                         <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
-                          Mark as Unpaid
+                          <%= t("dashboard.mark_unpaid") %>
                         <% end %>
                       <% end %>
                     </div>
@@ -378,7 +381,7 @@
     <div class="offcanvas offcanvas-end mb-5" tabindex="-1" id="bookingPanel" aria-labelledby="bookingPanelLabel">
       <div class="d-flex flex-column">
         <div class="offcanvas-header" style="margin-bottom: -18px;">
-          <h2 class="offcanvas-title" id="bookingPanelLabel">Bookings Management</h2>
+          <h2 class="offcanvas-title" id="bookingPanelLabel"> <%= t("dashboard.booking_panel") %></h2>
           <button
   type="button"
   class="btn-close"
@@ -387,9 +390,9 @@
   onclick="location.reload();">
           </button>
         </div>
-        <div class="ms-3">
+        <div class="ms-3 mb-3">
           <%= link_to teacher_dashboard_path, class: "text-dark text-decoration-none", style: "font-family: Inter, sans-serif;" do  %>
-            <i class="fa-regular fa-circle-left"></i> Dashboard
+            <i class="fa-regular fa-circle-left"></i> <%= t("dashboard.back") %>
           <% end %>
         </div>
       </div>
@@ -432,12 +435,10 @@
                     </div>
                   </h4>
                 <% end %>
-                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-                <h6 class="panel mb-2">
-                  <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
-                  <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %>~
-                  <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
+                  <%= l(instance.start_time.in_time_zone(time_zone), format: :short_day_with_time) %>
                 </h6>
                 <% instance.bookings.each do |booking| %>
                   <turbo-frame id="booking_<%= booking.id %>">
@@ -544,12 +545,10 @@
                     </div>
                   </h4>
                 <% end %>
-                <% time_zone_str = current_user&.time_zone.presence || "UTC" %>
+                <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-                <h6 class="panel mb-2">
-                  <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
-                  <%= instance.start_time.in_time_zone(time_zone).strftime("%H:%M") %> ~
-                  <%= instance.end_time.in_time_zone(time_zone).strftime("%H:%M") %>
+                <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
+                  <%= l(instance.start_time.in_time_zone(time_zone), format: :short_day_with_time) %>
                 </h6>
                 <% instance.bookings.each do |booking| %>
                   <turbo-frame id="booking_<%= booking.id %>">
