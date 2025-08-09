@@ -1,5 +1,5 @@
 .btn-custom {
-    background-color: #543A70;
+    // background-color: #543A70;
     color: white;
     width: 50%;
     border-radius: 5px;
@@ -164,6 +164,18 @@
   border-color: #292A5A !important;    /* Optional: match border */
 }
 
+.btn-edit {
+  // background-color: #ffffff !important; /* Replace with your desired color */
+  color: #292A5A !important;           /* Optional: change text color */
+  border-color: #292A5A !important;    /* Optional: match border */
+}
+
+.btn-edit:active {
+  background-color: #292A5A !important; /* Replace with your desired color */
+  color: #ffffff !important;           /* Optional: change text color */
+  border-color: #292A5A !important;    /* Optional: match border */
+}
+
 
 
 
@@ -178,8 +190,8 @@
 
 .btn-right:hover {
   background-color: #F6F5FA; /* Set background to white on hover */
-  color: #543A70; /* Change text color to match the border */
-  border: 1px solid #543A70; /* Add border with the same color as the background */
+  // color: #543A70; /* Change text color to match the border */
+  // border: 1px solid #543A70; /* Add border with the same color as the background */
 }
 
 .btn-search {
@@ -187,6 +199,10 @@
   border-radius: 20px;
   background: #3E34A1;
   transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background-color: none;
 }
 
 .btn-search:hover {
