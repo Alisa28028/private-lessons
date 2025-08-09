@@ -31,7 +31,7 @@
   color: white;
   font-family: 'Inter';
   font-size: 15px;
-  height: 32px;
+  height: 30px;
 }
 
 .dashboard-earnings-h3 {
@@ -49,6 +49,14 @@
   margin-left: 0px;
 }
 
+.dashboard-h6 {
+  color: #292A5A;
+  font-family: 'Inter';
+  font-size: 13px;
+  font-weight: 200;
+  margin-left: 8px;
+}
+
 .dashboard-h2 {
   color: white;
   font-family: 'Inter';
@@ -61,7 +69,7 @@
   font-family: 'Inter';
   font-size: 40px;
   font-weight: 500;
-  margin-top: -5px;
+  // margin-top: -5px;
 }
 
 .overlay-text {

@@ -4,7 +4,7 @@
       <i id="caret_<%= booking.id %>" class="fa-solid fa-caret-right" style="margin-right: 2px; margin-bottom: 2px;"></i>
       <h6 class="panel">
         <a
-  class="text-decoration-none d-flex align-items-center <%= 'mt-1' if booking.status == 'cancelled' %>"
+  class="text-decoration-none"
   style="color: black;"
   data-bs-toggle="collapse"
   data-bs-target="#dropdown_<%= booking.id %>"
@@ -14,94 +14,107 @@
 >
           <div>
             <%= booking.user.first_name %> –
-            <span style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">
-              <%= booking.status %>
-            </span>
-          </div>
-        </a>
-      </h6>
-    </div>
-    <% if booking.status == 'pending' %>
-      <div class="d-flex align-items-between">
-        <% if instance.active_bookings_count < instance.effective_capacity.to_i %>
-          <%= button_to "Approve", update_status_booking_path(booking, status: "confirmed"), method: :patch,
+          </h6>
+          <h6 class="panel" style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">
+            <% if booking.status == 'confirmed' %>
+              <%= t("dashboard.confirmed") %>
+            <% elsif booking.status == 'pending' %>
+              <%= t("dashboard.pending") %>
+            <% elsif booking.status == 'rejected_by_teacher' %>
+              <%= t("dashboard.declined") %>
+            <% elsif booking.status == 'cancelled_by_teacher' %>
+              <%= t("dashboard.cancelled_by_t") %>
+            <% elsif booking.status == 'cancelled_by_student' %>
+              <%= t("dashboard.cancelled_by_s") %>
+            <% elsif booking.status == 'completed' %>
+              <%= t("dashboard.completed") %>
+            <% end %>
+          </h6>
+        </div>
+      </a>
+      <% if booking.status == 'pending' %>
+        <div class="d-flex align-items-between">
+          <% if instance.active_bookings_count < instance.effective_capacity.to_i %>
+            <%= button_to t("dashboard.approve"), update_status_booking_path(booking, status: "confirmed"), method: :patch,
           class: "btn btn-sm", style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: white; margin-right: 4px",
           data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
-        <% else %>
-          <button class="btn btn-sm disabled" style="height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: black; margin-right: 4px; margin-top: 4px; padding-top: 4px;" disabled>
-            Full
-          </button>
-        <% end %>
-        <%= button_to "Reject", update_status_booking_path(booking, status: "rejected_by_teacher"), method: :patch,
+          <% else %>
+            <button class="btn btn-sm disabled" style="height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: black; margin-right: 4px; margin-top: 4px; padding-top: 4px;" disabled>
+              <%= t("dashboard.full") %>
+            </button>
+          <% end %>
+          <%= button_to t("dashboard.decline"), update_status_booking_path(booking, status: "rejected_by_teacher"), method: :patch,
         class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;",
         data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
-      </div>
-    <% elsif booking.status == 'confirmed' %>
-      <div class="relative inline-block text-left" data-controller="cancel-dropdown">
-        <button type="button"
+        </div>
+      <% elsif booking.status == 'confirmed' %>
+        <div class="relative inline-block text-left" data-controller="cancel-dropdown">
+          <button type="button"
           class="btn btn-sm"
           style="background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 95px;"
           data-action="click->cancel-dropdown#toggle">
-          Cancel
-        </button>
-        <div data-cancel-dropdown-target="menu"
+            <%= t("dashboard.cancel") %>
+          </button>
+          <div data-cancel-dropdown-target="menu"
        style="display: none;"
        class="absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <%= button_to "As teacher", cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
+            <%= button_to "As teacher", cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
         method: :post,
         class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
         data: { turbo_frame: "booking_#{booking.id}" } %>
-          <%= button_to "As student", cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
+            <%= button_to "As student", cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
         method: :post,
         class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
         data: { turbo_frame: "booking_#{booking.id}" } %>
+          </div>
         </div>
-      </div>
-    <% end %>
-  </div>
-  <!-- Dropdown Content -->
-  <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
-    <div class="p-2" style="border-radius: 5px;">
-      <!-- You can put any additional booking details here -->
-      <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
-        <% if booking.user.photo.present? %>
-          <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
-        <% else %>
-          <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
-        <% end %>
-        <h6 class="panel" style="margin-left: 2px;">
-          <%= t("dashboard.view_p") %></h6>
       <% end %>
-      <div class="d-flex">
-        <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
-        <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
-      </div>
-      <div class="d-flex">
-        <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
-        <h6 style="margin-left: 8px;">
-          <%= booking.user.phone_number %></h6>
-      </div>
-      <h6 class="panel" style="margin-left: 3px;"><%= t("dashboard.created_at") %><%= booking.created_at.strftime("%Y-%m-%d") %></h6>
     </div>
-  </div>
-</turbo-frame>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
-      const targetSelector = toggle.getAttribute('data-bs-target');
-      const bookingId = toggle.getAttribute('data-booking-id');
-      const carets = document.querySelectorAll(`.caret-icon[data-booking-id='${bookingId}']`);
-      const target = document.querySelector(targetSelector);
+    <!-- Dropdown Content -->
+    <div class="collapse mt-2" id="dropdown_<%= booking.id %>" data-controller="collapse">
+      <div class="p-2" style="border-radius: 5px;">
+        <!-- You can put any additional booking details here -->
+        <%= link_to user_path(booking.user), data: { turbo_frame: "_top" }, class: "d-flex align-items-end" do %>
+          <% if booking.user.photo.present? %>
+            <%= cl_image_tag booking.user.photo.key, class: "avatar-showpage", alt: "avatar-bordered" %>
+          <% else %>
+            <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
+          <% end %>
+          <h6 class="panel" style="margin-left: 2px;">
+            <%= t("dashboard.view_p") %></h6>
+        <% end %>
+        <div class="d-flex">
+          <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
+          <h6 class="panel" style="margin-left: 6px;">  <%= booking.user.email %></h6>
+        </div>
+        <div class="d-flex">
+          <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i> </h6>
+          <h6 style="margin-left: 8px;">
+            <%= booking.user.phone_number %></h6>
+        </div>
+        <h6 class="panel" style="margin-left: 3px;"><%= t("dashboard.created_at") %>
+          <%= l(booking.created_at.in_time_zone(time_zone), format: :short_day_with_time) %>
+        </h6>
+      </div>
+    </div>
+  </turbo-frame>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
+        const targetSelector = toggle.getAttribute('data-bs-target');
+        const bookingId = toggle.getAttribute('data-booking-id');
+        const carets = document.querySelectorAll(`.caret-icon[data-booking-id='${bookingId}']`);
+        const target = document.querySelector(targetSelector);
 
-      if (!target || carets.length === 0) return;
+        if (!target || carets.length === 0) return;
 
-      target.addEventListener('show.bs.collapse', function () {
-        carets.forEach(caret => caret.classList.add('caret-rotated'));
-      });
+        target.addEventListener('show.bs.collapse', function () {
+          carets.forEach(caret => caret.classList.add('caret-rotated'));
+        });
 
-      target.addEventListener('hide.bs.collapse', function () {
-        carets.forEach(caret => caret.classList.remove('caret-rotated'));
+        target.addEventListener('hide.bs.collapse', function () {
+          carets.forEach(caret => caret.classList.remove('caret-rotated'));
+        });
       });
     });
-  });
-</script>
+  </script>
