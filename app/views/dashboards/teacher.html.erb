@@ -202,19 +202,19 @@
                       <% if booking.state == 'unpaid' %>
                         <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
                           <div class="d-flex align-items-center">
-                            <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
-        method: :patch,
-        data: { turbo_frame: "payment_#{booking.id}" },
-        class: "btn btn-sm",
-            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white; margin-right: 3px"
-                            %>
                             <%= button_to t("dashboard.waive"), update_payment_state_booking_path(booking, state: "waived"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white;"
+                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white; margin-right: 3px;"
 
         %>
+                            <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white;"
+                            %>
                           </div>
                         <% else %>
                           <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
