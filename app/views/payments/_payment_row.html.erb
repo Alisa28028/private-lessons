@@ -21,26 +21,26 @@
     <% if booking.state == 'unpaid' %>
       <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
         <div class="d-flex align-items-center">
-          <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
-        method: :patch,
-        data: { turbo_frame: "payment_#{booking.id}" },
-        class: "btn btn-sm",
-            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white; margin-right: 3px"
-                            %>
           <%= button_to t("dashboard.waive"), update_payment_state_booking_path(booking, state: "waived"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white;"
+                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white; margin-right: 3px"
 
         %>
+          <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white;"
+                            %>
         </div>
       <% else %>
         <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 127px; color: white;"
+        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white;"
 %>
       <% end %>
     <% else %>
@@ -60,7 +60,7 @@
           <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
         <% end %>
         <h6 class="panel" style="margin-left: 2px;">
-          view profile</h6>
+          <%= t("dashboard.view_p") %></h6>
       <% end %>
       <div class="d-flex">
         <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
@@ -71,7 +71,11 @@
         <h6 style="margin-left: 8px;">
           <%= booking.user.phone_number %></h6>
       </div>
-      <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+      <h6 class="panel" style="margin-left: 3px;"><%= t("dashboard.created_at") %>
+        <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
+        <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
+        <%= l(booking.created_at.in_time_zone(time_zone), format: :short_day_with_time) %>
+      </h6>
     </div>
   </div>
 </turbo-frame>

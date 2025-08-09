@@ -158,8 +158,11 @@
               <%= link_to event_instance_path(instance) do %>
                 <div class="panel mb-3">
                   <hr style="border: none; height: 1px; background-color: #686565ba; margin: 1rem 0;">
-                  <h4 class= "panel d-flex align-items-center"><%= instance.event.title.upcase %>
-                    <div style="margin-bottom: 2px; margin-left: 5px"> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i></div>
+                  <h4 class= "panel d-flex align-items-center">
+                    <%= instance.event.title.upcase %>
+                    <div style="margin-bottom: 2px; margin-left: 5px">
+                      <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i>
+                    </div>
                   </h4>
                 <% end %>
                 <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
@@ -169,8 +172,7 @@
                 </h6>
                 <% instance.bookings.reject { |b| b.waitlisted || b.status == "rejected_by_teacher" || (b.status == "cancelled_by_student" && b.cancelled_by == "student") }.each do |booking| %>
                   <turbo-frame id="payment_<%= booking.id %>">
-                    <!-- Turbo frame with buttons and state here -->
-                    <div class="d-flex justify-content-between align-items-baseline" style="margin-bottom: 5px;">
+                    <div class="d-flex justify-content-between align-items-baseline" style="margin-bottom: 5px; height: 28px;">
                       <div class="d-flex align-items-end" style="margin-top: -6px;">
                         <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
                         <h6 class="panel">
@@ -241,7 +243,8 @@
                             <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
                           <% end %>
                           <h6 class="panel" style="margin-left: 2px;">
-                            view profile</h6>
+                            <%= t("dashboard.view_p") %>
+                          </h6>
                         <% end %>
                         <div class="d-flex">
                           <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
@@ -253,7 +256,9 @@
                             <%= booking.user.phone_number %></h6>
                         </div>
                         <div class="panel" style="margin-left: 3px;">
-                          <h6>Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                          <h6><%= t("dashboard.created_at") %>
+                            <%= l(booking.created_at.in_time_zone(time_zone), format: :short_day_with_time) %>
+                          </h6>
                         </div>
                       </div>
                     </div>
@@ -283,7 +288,7 @@
                   <%# <% if booking.status == 'confirmed' %>
                   <turbo-frame id="payment_<%= booking.id %>">
                     <!-- Turbo frame with buttons and state here -->
-                    <div class="d-flex justify-content-between align-items-baseline" style="margin-bottom: 5px;">
+                    <div class="d-flex justify-content-between align-items-baseline" style="margin-bottom: 5px; height: 28px;">
                       <div class="d-flex align-items-end" style="margin-top: -6px;">
                         <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
                         <h6 class="panel">
@@ -314,30 +319,32 @@
                       <% if booking.state == 'unpaid' %>
                         <% if booking.status == "cancelled_by_teacher" && booking.cancelled_by == "teacher" %>
                           <div class="d-flex align-items-center">
-                            <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
-        method: :patch,
-        data: { turbo_frame: "payment_#{booking.id}" },
-        class: "btn btn-sm",
-            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white; margin-right: 3px"
-                            %>
                             <%= button_to t("dashboard.waive"), update_payment_state_booking_path(booking, state: "waived"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white;"
+                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white; margin-right: 3px"
 
         %>
+                            <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
+        method: :patch,
+        data: { turbo_frame: "payment_#{booking.id}" },
+        class: "btn btn-sm",
+            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white;"
+                            %>
                           </div>
                         <% else %>
                           <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 127px; color: white;"
+        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white;"
 %>
                         <% end %>
                       <% else %>
-                        <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" }, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 127px;" do %>
+                        <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" },
+                        class: "btn btn-sm",
+                        style: "background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 83px;" do %>
                           <%= t("dashboard.mark_unpaid") %>
                         <% end %>
                       <% end %>
@@ -353,7 +360,7 @@
                             <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
                           <% end %>
                           <h6 class="panel" style="margin-left: 2px;">
-                            view profile</h6>
+                            <%= t("dashboard.view_p") %> </h6>
                         <% end %>
                         <div class="d-flex">
                           <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
@@ -364,7 +371,9 @@
                           <h6 style="margin-left: 8px;">
                             <%= booking.user.phone_number %></h6>
                         </div>
-                        <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                        <h6 class="panel" style="margin-left: 3px;"><%= t("dashboard.created_at") %>
+                          <%= l(booking.created_at.in_time_zone(time_zone), format: :short_day_with_time) %>
+                        </h6>
                       </div>
                     </div>
                   </turbo-frame>
@@ -437,15 +446,17 @@
                 <% end %>
                 <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-                <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
+                <h6 class="panel mb-3"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
                   <%= l(instance.start_time.in_time_zone(time_zone), format: :short_day_with_time) %>
                 </h6>
                 <% instance.bookings.each do |booking| %>
                   <turbo-frame id="booking_<%= booking.id %>">
-                    <div class="d-flex justify-content-between align-items-start">
+                    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 5px; height: 28px;">
                       <div class="d-flex align-items-end" style="margin-top: -6px;">
-                        <a
-                  class="text-decoration-none d-flex align-items-center <%= 'mt-1' if booking.status.in?(%w[cancelled_by_teacher cancelled_by_student]) %>"
+                        <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
+                        <h6 class="panel">
+                          <a
+                  class="text-decoration-none"
                   style="color: black;"
                   data-bs-toggle="collapse"
                   data-bs-target="#dropdown_<%= booking.id %>"
@@ -453,35 +464,33 @@
                   aria-controls="dropdown_<%= booking.id %>"
                   data-booking-id="<%= booking.id %>"
                 >
-                          <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
-                          <div>
-                            <%= booking.user.first_name %> –
-                            <span style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">
-                              <%= booking.status %>
-                            </span>
-                          </div>
-                        </a>
-                      </div>
+                            <%= booking.user.first_name %> -
+                          </h6>
+                          <h6 class="panel" style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">
+                            <%= booking.status %>
+                          </h6>
+                        </div>
+                      </a>
                       <% if booking.status == 'pending' %>
                         <div class="d-flex align-items-between">
                           <% if instance.active_bookings_count < instance.effective_capacity.to_i %>
                             <%= button_to "Approve", update_status_booking_path(booking, status: "confirmed"), method: :patch,
-                      class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px",
+                      class: "btn btn-sm", style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: white; margin-right: 4px",
                       data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
                           <% else %>
-                            <button class="btn btn-sm disabled" style="height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: black; margin-right: 4px;" disabled>
+                            <button class="btn btn-sm disabled" style="height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: black; margin-right: 4px;" disabled>
                               Full
                             </button>
                           <% end %>
                           <%= button_to "Reject", update_status_booking_path(booking, status: "rejected_by_teacher"), method: :patch,
-        class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;",
+        class: "btn btn-sm", style: "background-color: #eb4e5a; height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: white;",
         data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
                         </div>
                       <% elsif booking.status == 'confirmed' %>
                         <div class="relative inline-block text-left" data-controller="cancel-dropdown">
                           <button type="button"
           class="btn btn-sm"
-          style="background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px;"
+          style="background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 95px;"
           data-action="click->cancel-dropdown#toggle">
                             Cancel
                           </button>
@@ -511,7 +520,7 @@
                           <% else %>
                             <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
                           <% end %>
-                          <h6 class="panel" style="margin-left: 2px;">view profile</h6>
+                          <h6 class="panel" style="margin-left: 2px;"><%= t("dashboard.view_p") %></h6>
                         <% end %>
                         <div class="d-flex">
                           <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
@@ -522,7 +531,7 @@
                           <h6 style="margin-left: 8px;"><%= booking.user.phone_number %></h6>
                         </div>
                         <div class="panel" style="margin-left: 3px;">
-                          <h6>Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                          <h6><%= t("dashboard.created_at") %> <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
                         </div>
                       </div>
                     </div>
@@ -547,15 +556,17 @@
                 <% end %>
                 <% time_zone_str = current_user&.time_zone.presence || "Asia/Tokyo" %>
                 <% time_zone = ActiveSupport::TimeZone[time_zone_str] || ActiveSupport::TimeZone["UTC"] %>
-                <h6 class="panel mb-2"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
+                <h6 class="panel mb-3"> <%= instance.start_time.strftime("%Y/%m/%d (%a)") %>
                   <%= l(instance.start_time.in_time_zone(time_zone), format: :short_day_with_time) %>
                 </h6>
                 <% instance.bookings.each do |booking| %>
                   <turbo-frame id="booking_<%= booking.id %>">
                     <div class="d-flex justify-content-between align-items-start">
                       <div class="d-flex align-items-end" style="margin-top: -6px;">
-                        <a
-                  class="text-decoration-none d-flex align-items-center <%= 'mt-1' if booking.status == 'cancelled' %>"
+                        <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
+                        <h6 class="panel">
+                          <a
+                  class="text-decoration-none"
                   style="color: black;"
                   data-bs-toggle="collapse"
                   data-bs-target="#dropdown_<%= booking.id %>"
@@ -563,32 +574,30 @@
                   aria-controls="dropdown_<%= booking.id %>"
                   data-booking-id="<%= booking.id %>"
                 >
-                          <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
-                          <div>
                             <%= booking.user.first_name %> –
-                            <span style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">
-                              <%= booking.status %>
-                            </span>
-                          </div>
-                        </a>
-                      </div>
+                          </h6>
+                          <h6 class="panel" style="<%= 'color: #5e9e6b; font-weight: 600;' if booking.status == 'confirmed' %>">
+                            <%= booking.status %>
+                          </h6>
+                        </div>
+                      </a>
                       <% if booking.status == 'pending' %>
                         <div class="d-flex align-items-between">
                           <% if instance.active_bookings_count < instance.effective_capacity.to_i %>
                             <%= button_to "Approve", update_status_booking_path(booking, status: "confirmed"), method: :patch,
-                      class: "btn btn-sm", style: "background-color: #9bdaa7; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white; margin-right: 4px",
+                      class: "btn btn-sm", style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: white; margin-right: 4px",
                       data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
                           <% else %>
-                            <button class="btn btn-sm disabled" style="height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: black; margin-right: 4px;" disabled>
+                            <button class="btn btn-sm disabled" style="height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: black; margin-right: 4px;" disabled>
                               Full
                             </button>
                           <% end %>
                           <%= button_to "Reject", update_status_booking_path(booking, status: "cancelled"), method: :patch,
-                    class: "btn btn-sm", style: "background-color: #eb4e5a; height: 19px; line-height: 10px; border-radius: 4px; width: 95px; color: white;",
+                    class: "btn btn-sm", style: "background-color: #eb4e5a; height: 28px; line-height: 10px; border-radius: 14px; width: 95px; color: white;",
                     data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
                         </div>
                       <% elsif booking.status == 'confirmed' %>
-                        <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 20px; line-height: 11px; color: white; border-radius: 4px; width: 95px; font-family: 'Inter';" %>
+                        <%= button_to "Cancel", cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 95px; font-family: 'Inter';" %>
                       <% end %>
                     </div>
                     <!-- Dropdown with user info -->
@@ -600,7 +609,7 @@
                           <% else %>
                             <%= image_tag "default-avatar.png", class: "avatar-showpage" %>
                           <% end %>
-                          <h6 class="panel" style="margin-left: 2px;">view profile</h6>
+                          <h6 class="panel" style="margin-left: 2px;"><%= t("dashboard.view_p") %></h6>
                         <% end %>
                         <div class="d-flex">
                           <h6 class="panel" style="margin-left: 3px;"><i class="fa-solid fa-envelope"></i></h6>
@@ -610,62 +619,63 @@
                           <h6 class="panel" style="margin-left: 4px;"><i class="fa-solid fa-mobile-screen-button"></i></h6>
                           <h6 style="margin-left: 8px;"><%= booking.user.phone_number %></h6>
                         </div>
-                        <h6 class="panel" style="margin-left: 3px;">Booking created: <%= booking.created_at.strftime("%Y-%m-%d") %></h6>
+                        <h6 class="panel" style="margin-left: 3px;"><%= t("dashboard.created_at") %><%= booking.created_at.strftime("%Y-%m-%d") %></h6>
                       </div>
                     </div>
-                  </turbo-frame>
-                <% end %>
-              </div>
-            <% end %>
+                  </div>
+                </turbo-frame>
+              <% end %>
+            </div>
           <% end %>
-        </div>
-      </div>
-    </div>
-    <%# Iterating through teaching events %>
-    <div class="container p-0">
-    </div>
-    <div class="container mb-5">
-      <div class="row mx-0 mt-3">
-        <% if @upcoming_event_instances_created.any? %>
-          <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A"><%= t("classes.upcoming") %></h4>
-          <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
-            <div class="card-container mx-auto">
-              <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances_created %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row mx-0 mt-3">
-        <% if @past_event_instances_created.any? %>
-          <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A"><%= t("classes.past") %></h4>
-          <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
-            <div class="card-container mx-auto">
-              <%= render "shared/event_card_iteration", event_instances: @past_event_instances_created %>
-            </div>
-          </div>
         <% end %>
       </div>
     </div>
   </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
-        const targetSelector = toggle.getAttribute('data-bs-target');
-        const bookingId = toggle.getAttribute('data-booking-id');
-        const carets = document.querySelectorAll(`.caret-icon[data-booking-id='${bookingId}']`);
-        const target = document.querySelector(targetSelector);
+  <%# Iterating through teaching events %>
+  <div class="container p-0">
+  </div>
+  <div class="container mb-5">
+    <div class="row mx-0 mt-3">
+      <% if @upcoming_event_instances_created.any? %>
+        <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A"><%= t("classes.upcoming") %></h4>
+        <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
+          <div class="card-container mx-auto">
+            <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances_created %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row mx-0 mt-3">
+      <% if @past_event_instances_created.any? %>
+        <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A"><%= t("classes.past") %></h4>
+        <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
+          <div class="card-container mx-auto">
+            <%= render "shared/event_card_iteration", event_instances: @past_event_instances_created %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
+      const targetSelector = toggle.getAttribute('data-bs-target');
+      const bookingId = toggle.getAttribute('data-booking-id');
+      const carets = document.querySelectorAll(`.caret-icon[data-booking-id='${bookingId}']`);
+      const target = document.querySelector(targetSelector);
 
-        if (!target || carets.length === 0) return;
+      if (!target || carets.length === 0) return;
 
-        target.addEventListener('show.bs.collapse', function () {
-          carets.forEach(caret => caret.classList.add('caret-rotated'));
-        });
+      target.addEventListener('show.bs.collapse', function () {
+        carets.forEach(caret => caret.classList.add('caret-rotated'));
+      });
 
-        target.addEventListener('hide.bs.collapse', function () {
-          carets.forEach(caret => caret.classList.remove('caret-rotated'));
-        });
+      target.addEventListener('hide.bs.collapse', function () {
+        carets.forEach(caret => caret.classList.remove('caret-rotated'));
       });
     });
-  </script>
+  });
+</script>

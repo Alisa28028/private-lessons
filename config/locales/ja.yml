@@ -273,3 +273,6 @@ ja:
     mark_unpaid: "未払い"
     waive: "免除する"
     waived: "免除済み"
+    view_p: "プロフィールを見る"
+    created_at: "予約作成日時："
+    confirmed: "確定"

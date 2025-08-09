@@ -235,3 +235,6 @@ en:
     mark_unpaid: "mark as unpaid"
     waive: "waive"
     waived: "waived"
+    view_p: "view profile"
+    created_at: "Booking created:"
+    confirmed: "confirmed"
