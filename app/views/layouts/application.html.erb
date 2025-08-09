@@ -27,42 +27,47 @@
       <!-- Hamburger only for not-logged-in users -->
       <%# <% unless user_signed_in? %>
       <div class="d-flex flex-row">
+        <% light_pages = [
+    '/',
+    /^\/(ja|en)$/,
+    /^\/(ja|en)\/dashboard/,
+    /^\/(ja|en)\/student_dashboard$/  # Add this line for student_dashboard
+  ] %>
         <% dark_pages = [
-  /^\/(ja|en)\/users\/\d+$/,
-  /^\/(ja|en)\/search$/,
-  /^\/(ja|en)\/events\/new$/,
-  /^\/(ja|en)\/event_instances\/\d+$/
-] %>
-        <% button_style = if dark_pages.any? { |pattern| request.path.match?(pattern) }
-  "font-size: 11px !important; padding: 4px; color: #292A5A !important; border-color: #292A5A !important; border-radius: 9px"
-else
-  "font-size: 11px !important; padding: 4px; color: white !important; border-color: white !important; border-radius: 9px"
-end %>
+    /^\/(ja|en)\/users\/\d+$/,
+    /^\/(ja|en)\/search$/,
+    /^\/(ja|en)\/events\/new$/,
+    /^\/(ja|en)\/event_instances\/\d+$/
+  ] %>
+        <% is_light_page = light_pages.any? do |pattern|
+       pattern.is_a?(Regexp) ? request.path.match?(pattern) : request.path == pattern
+     end %>
+        <% is_dark_page = dark_pages.any? { |pattern| request.path.match?(pattern) } %>
+        <% button_style = if is_dark_page
+       "font-size: 11px !important; padding: 4px; color: #292A5A !important; border-color: #292A5A !important; border-radius: 9px"
+     elsif is_light_page
+       "font-size: 11px !important; padding: 4px; color: white !important; border-color: white !important; border-radius: 9px"
+     else
+       # fallback color for other pages
+       "font-size: 11px !important; padding: 4px; color: #292A5A !important; border-color: #292A5A !important; border-radius: 9px"
+     end %>
         <div class="language-switcher me-3" style="margin-top: 11px;">
           <% if I18n.locale == :ja %>
             <%= link_to "EN", url_for(request.params.merge(locale: "en")),
-        class: "btn btn-outline-primary",
-        style: button_style %>
+          class: "btn btn-outline-primary",
+          style: button_style %>
           <% else %>
             <%= link_to "日本語", url_for(request.params.merge(locale: "ja")),
-        class: "btn btn-outline-primary ms-1",
-        style: button_style %>
+          class: "btn btn-outline-primary ms-1",
+          style: button_style %>
           <% end %>
         </div>
         <div class="hamburger">
           <i class="fa-solid fa-bars fa-xl mt-4"
-     style="<%=
-       dark_pages = [
-         %r{^/(en|ja)/users/\d+$},
-         %r{^/(en|ja)/search$},
-         %r{^/(en|ja)/events/new$},
-         %r{^/(en|ja)/event_instances/\d+$}
-       ]
-       dark_pages.any? { |p| request.path =~ p } ? 'color: #3E34A1;' : 'color: white;'
-     %>"
-     data-bs-toggle="offcanvas"
-     data-bs-target="#sideMenu"
-     aria-controls="sideMenu"></i>
+       style="<%= is_light_page ? 'color: white;' : 'color: #3E34A1;' %>"
+       data-bs-toggle="offcanvas"
+       data-bs-target="#sideMenu"
+       aria-controls="sideMenu"></i>
         </div>
       </div>
     </header>
