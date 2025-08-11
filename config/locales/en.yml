@@ -73,6 +73,9 @@ en:
     other_classes: "'s other classes"
     cancel_booking: "Cancel Booking"
     cancel_confirmation: "Are you sure you want to cancel your booking?"
+    leave_waitlist_confirmation: "Are you sure you want to leave the waitlist?"
+    leave_waitlist: "On waitlist (click to leave waitlist)"
+    cancel_request: "Pending approval (click to cancel request)"
   post:
     title: "Create a post for this class:"
     placeholder: "Write anything you'd like about this class!"
@@ -247,3 +250,11 @@ en:
     cancelled_by_s: "cancelled by student"
     completed: "completed"
     no_upcoming: "No upcoming classes."
+  notifs:
+    booked: "You are booked!"
+    added_waitlist: "You've been added to the waitlist!"
+    removed_waitlist: "You have been removed from the waitlist."
+    removed_request: "Your booking request has been removed."
+    pending_approval_notif: "Your booking is pending the teacher’s approval."
+    already_cancelled: "This booking has already been cancelled."
+    cancelled_success: "Booking cancelled successfully."

@@ -49,11 +49,11 @@ class BookingsController < ApplicationController
     if @booking.save
       BookingMailer.booking_confirmation(current_user, @booking).deliver_now unless @booking.waitlisted?
       flash[:notice] = if @booking.waitlisted?
-        "You've been added to the waitlist!"
+        "#{t('notifs.added_waitlist')}"
       elsif @booking.status == "pending"
-        "Your booking is pending the teacher’s approval."
+        flash[:notice] = "#{t('notifs.pending_approval_notif')}"
       else
-        "You are booked!"
+        flash[:notice] = "#{t('notifs.booked')}"
       end
 
     else
@@ -144,9 +144,9 @@ class BookingsController < ApplicationController
 
   if @booking.destroy
     if is_leaving_waitlist
-      flash[:notice] = "You have been removed from the waitlist."
+      flash[:notice] = t("notifs.removed_waitlist")
     elsif previous_status == "pending"
-      flash[:notice] = "Your booking request has been removed."
+      flash[:notice] = t("notifs.removed_request")
     else
       flash[:notice] = "Booking removed."
     end
@@ -216,21 +216,94 @@ class BookingsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         if success
-          render turbo_stream: turbo_stream.replace(
-            "booking_#{@booking.id}",
-            partial: "bookings/booking",
-            locals: { booking: @booking }
-          )
+          if params[:context] == "show_page"
+            # Replace buttons on the show page (or event_instance frame)
+            render turbo_stream: turbo_stream.replace(
+              "booking_buttons_#{@booking.event_instance.id}",
+              partial: "event_instances/booking_buttons",
+              locals: {
+                event_instance: @booking.event_instance,
+                current_user: current_user
+              }
+            )
+          else
+            # Fallback: replace booking partial on teacher dashboard or other contexts
+            render turbo_stream: turbo_stream.replace(
+              "booking_#{@booking.id}",
+              partial: "bookings/booking",
+              locals: { booking: @booking }
+            )
+          end
         else
-          head :unprocessable_entity
+          render turbo_stream: turbo_stream.update("flash", partial: "shared/flash_messages")
         end
       end
 
-      format.html { redirect_to event_instance_path(@booking.event_instance) }
+      format.html do
+        redirect_to event_instance_path(@booking.event_instance)
+      end
     end
-
   end
 
+  private
+
+  def cancel_booking(booking, by:)
+    event_instance = booking.event_instance
+
+    if booking.status.in?(%w[cancelled_by_student cancelled_by_teacher rejected_by_teacher])
+      flash[:alert] = t("notifs.already_cancelled")
+      return false
+    end
+
+    cancelled_by_requester = params[:cancelled_by].in?(%w[student teacher]) ? params[:cancelled_by] : "student"
+
+    unless by == booking.user || by.is_teacher_for?(event_instance.event)
+      flash[:alert] = "You are not authorized to cancel this booking."
+      return false
+    end
+
+    status =
+      if cancelled_by_requester == "teacher"
+        "cancelled_by_teacher"
+      else
+        "cancelled_by_student"
+      end
+
+    update_attrs = {
+      status: status,
+      cancelled_by: cancelled_by_requester,
+      cancelled_at: Time.current,
+    }
+    update_attrs[:state] = nil if booking.cancelled_before_policy?
+
+    unless booking.update(update_attrs)
+      Rails.logger.error "❌ Failed to cancel booking ##{booking.id}: #{booking.errors.full_messages}"
+      flash[:alert] = "Booking cancellation failed."
+      return false
+    end
+
+    flash[:notice] = t("notifs.cancelled_success")
+    BookingMailer.cancellation_confirmation(by, booking).deliver_now
+
+    if status.start_with?("cancelled") && !booking.waitlisted?
+      next_in_line = event_instance.bookings.where(waitlisted: true).order(:joined_at).first
+      active_statuses = %w[confirmed pending]
+      confirmed_count = event_instance.bookings.where(waitlisted: false, status: active_statuses).count
+      open_spots = (event_instance.effective_capacity - confirmed_count) > 0
+
+      if next_in_line && open_spots
+        new_status = event_instance.approval_mode == "manual" ? "pending" : "confirmed"
+        if next_in_line.update(waitlisted: false, joined_at: nil, status: new_status, state: "unpaid")
+          BookingMailer.booking_confirmation(next_in_line.user, next_in_line, moved_from_waitlist: true).deliver_now
+          flash[:notice] += " A waitlisted user has been moved to the event!"
+        else
+          Rails.logger.error "⚠️ Failed to move waitlisted user: #{next_in_line.errors.full_messages}"
+        end
+      end
+    end
+
+    true
+  end
 
 
 
@@ -298,7 +371,8 @@ class BookingsController < ApplicationController
       event_instance = booking.event_instance
 
       if booking.status.in?(%w[cancelled_by_student cancelled_by_teacher rejected_by_teacher])
-        flash[:alert] = "This booking has already been cancelled."
+        flash[:alert] = t("notifs.already_cancelled")
+
         return false
       end
 
@@ -334,7 +408,7 @@ class BookingsController < ApplicationController
         return false
       end
 
-      flash[:notice] = "Booking cancelled successfully."
+      flash[:notice] = t("notifs.cancelled_success")
       BookingMailer.cancellation_confirmation(by, booking).deliver_now
 
       if status.start_with?("cancelled") && !booking.waitlisted?
