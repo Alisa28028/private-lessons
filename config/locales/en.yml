@@ -247,3 +247,5 @@ en:
     cancelled_by_s: "cancelled by student"
     completed: "completed"
     no_upcoming: "No upcoming classes."
+  notifs:
+    booked: "You are booked!"

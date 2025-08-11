@@ -151,6 +151,7 @@
                     <% else %>
                       <%= button_to "Cancel Booking", cancel_booking_path(user_booking),
             method: :post,
+            remote: true,
             data: { confirm: "Are you sure you want to cancel your booking?" },
             class: "btn btn-card ml-2 mb-1 mr-0" %>
                     <% end %>

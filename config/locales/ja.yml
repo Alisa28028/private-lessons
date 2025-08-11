@@ -285,3 +285,5 @@ ja:
     cancelled_by_s: "生徒キャンセル"
     completed: "完了"
     no_upcoming: "今後のレッスンはありません。"
+  notifs:
+    booked: "予約が完了しました。"

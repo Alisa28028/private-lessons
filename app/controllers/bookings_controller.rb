@@ -53,7 +53,7 @@ class BookingsController < ApplicationController
       elsif @booking.status == "pending"
         "Your booking is pending the teacher’s approval."
       else
-        "You are booked!"
+        flash[:notice] = "#{t('notifs.booked')}"
       end
 
     else
@@ -231,6 +231,34 @@ class BookingsController < ApplicationController
 
   end
 
+  def cancel_by_student
+    @booking = Booking.find_by(id: params[:id])
+    return redirect_back(fallback_location: root_path, alert: "Booking not found.") if @booking.nil?
+
+    # Only allow the booking user to cancel their own booking
+    unless @booking.user == current_user
+      flash[:alert] = "You are not authorized to cancel this booking."
+      return redirect_back(fallback_location: root_path)
+    end
+
+    success = cancel_booking(@booking, by: current_user)
+
+    respond_to do |format|
+      format.turbo_stream do
+        if success
+          render turbo_stream: turbo_stream.replace(
+            "booking_#{@booking.id}",
+            partial: "bookings/booking",
+            locals: { booking: @booking }
+          )
+        else
+          head :unprocessable_entity
+        end
+      end
+
+      format.html { redirect_to event_instance_path(@booking.event_instance) }
+    end
+  end
 
 
 
