@@ -46,6 +46,9 @@ ja:
     other_classes: "の他のレッスン"
     cancel_booking: "予約をキャンセル"
     cancel_confirmation: "予約をキャンセルしてもよろしいですか？"
+    leave_waitlist: "キャンセル待ち登録中（クリックで解除）"
+    leave_waitlist_confirmation: "キャンセル待ちを解除してもよろしいですか？"
+    cancel_request: "承認待ち（クリックで取り消し）"
   post:
     title: "このクラスに投稿する："
     placeholder: "このレッスンについて自由に書いてください！"
@@ -287,3 +290,9 @@ ja:
     no_upcoming: "今後のレッスンはありません。"
   notifs:
     booked: "予約が完了しました。"
+    added_waitlist: "キャンセル待ちに登録しました。"
+    removed_waitlist: "キャンセル待ち登録を解除しました。"
+    removed_request: "予約リクエストは取り消されました。"
+    pending_approval_notif: "ご予約は講師の承認待ちです。"
+    already_cancelled: "この予約はすでにキャンセルされています。"
+    cancelled_success: "予約をキャンセルしました。"
