@@ -213,7 +213,7 @@
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white;"
+            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; padding-right: 10px; padding-left: 10px; color: white;"
                             %>
                           </div>
                         <% else %>
@@ -221,13 +221,13 @@
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 127px; color: white;"
+        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; padding-right: 10px; padding-left: 10px; color: white;"
 %>
                         <% end %>
                       <% else %>
                         <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" },
                           class: "btn btn-sm",
-                          style: "background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 83px;" do %>
+                          style: "background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; padding-right: 10px; padding-left: 10px;" do %>
                           <%= t("dashboard.mark_unpaid") %>
                         <% end %>
                       <% end %>
@@ -323,14 +323,14 @@
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; width: 85px; color: white; margin-right: 3px"
+                    style: "background-color: #543A70; height: 28px; line-height: 10px; border-radius: 14px; padding-right: 10px; padding-left: 10px; color: white; margin-right: 3px"
 
         %>
                             <%= button_to t("dashboard.mark_paid"), update_payment_state_booking_path(booking, state: "paid"),
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white;"
+            style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; padding-right: 10px; padding-left: 10px; color: white;"
                             %>
                           </div>
                         <% else %>
@@ -338,13 +338,13 @@
         method: :patch,
         data: { turbo_frame: "payment_#{booking.id}" },
         class: "btn btn-sm",
-        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; width: 105px; color: white;"
+        style: "background-color: #9bdaa7; height: 28px; line-height: 10px; border-radius: 14px; padding-right: 10px; padding-left: 10px; color: white;"
 %>
                         <% end %>
                       <% else %>
                         <%= button_to update_payment_state_booking_path(booking, state: 'unpaid'), method: :patch, data: { turbo_frame: "booking_#{booking.id}" },
                         class: "btn btn-sm",
-                        style: "background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 83px;" do %>
+                        style: "background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; padding-right: 10px; padding-left: 10px;" do %>
                           <%= t("dashboard.mark_unpaid") %>
                         <% end %>
                       <% end %>
