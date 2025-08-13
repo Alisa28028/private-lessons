@@ -499,25 +499,26 @@
         data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
                         </div>
                       <% elsif booking.status == 'confirmed' %>
-                        <div class="relative inline-block text-left" data-controller="cancel-dropdown">
+                        <div class="relative inline-block text-left" data-controller="cancel-dropdown" style="position: relative;">
                           <button type="button"
-          class="btn btn-sm"
-          style="background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 95px;"
-          data-action="click->cancel-dropdown#toggle">
+    class="btn btn-sm"
+    style="background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 95px; position: relative;"
+    data-action="click->cancel-dropdown#toggle">
                             <%= t("dashboard.cancel") %>
                           </button>
+                          <!-- Dropdown positioned absolutely so it doesn't affect button position -->
                           <div data-cancel-dropdown-target="menu"
-     style="display: block;"
-     class="absolute right-0 z-10 w-44 origin-top-right rounded-md shadow-sm bg-gray-100 focus:outline-none">
-                            <%= button_to "As teacher", cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
+       style="display: none; position: absolute; top: 30px; right: 0; z-index: 1000;"
+       class="w-44 origin-top-right rounded-md shadow-lg bg-white border border-gray-200 focus:outline-none">
+                            <%= button_to t("dashboard.cancel_as_t"), cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
         method: :post,
-        class: "d-flex flex-column",
-        style: "border: none; font-size: 15px ; font-family: 'Inter'; background-color: #40379e54; width: 95px",
+        class: "block w-full text-left px-3 py-2 hover:bg-gray-50 border-0",
+        style: "font-size: 12px; font-family: 'Inter'; background: none;",
         data: { turbo_frame: "booking_#{booking.id}" } %>
-                            <%= button_to "As student", cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
+                            <%= button_to t("dashboard.cancel_as_s"), cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
         method: :post,
-        class: "d-flex flex-column",
-        style: "border: none; font-size: 15px ; font-family: 'Inter'; background-color: #40379e54; width: 95px",
+        class: "block w-full text-left px-3 py-2 hover:bg-gray-50 border-0 border-top",
+        style: "font-size: 12px; font-family: 'Inter'; background: none; border-top: 1px solid #e5e7eb;",
         data: { turbo_frame: "booking_#{booking.id}" } %>
                           </div>
                         </div>
@@ -575,7 +576,7 @@
                 </h6>
                 <% instance.bookings.each do |booking| %>
                   <turbo-frame id="booking_<%= booking.id %>">
-                    <div class="d-flex justify-content-between align-items-start" style="margin-bottom: 5px; height: 28px;">
+                    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 5px; height: 28px;">
                       <div class="d-flex align-items-end" style="margin-top: -6px;">
                         <i class="fa-solid fa-caret-right caret-icon me-1" data-booking-id="<%= booking.id %>"></i>
                         <h6 class="panel">
@@ -611,7 +612,29 @@
                     data: { turbo_method: :patch, turbo_frame: "booking_#{booking.id}" } %>
                         </div>
                       <% elsif booking.status == 'confirmed' %>
-                        <%= button_to t("dashboard.cancel"), cancel_booking_path(booking), method: :post, class: "btn btn-sm", style: "background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 95px; font-family: 'Inter';" %>
+                        <div class="relative inline-block text-left" data-controller="cancel-dropdown" style="position: relative;">
+                          <button type="button"
+    class="btn btn-sm"
+    style="background-color: black; height: 28px; line-height: 11px; color: white; border-radius: 14px; width: 95px; position: relative;"
+    data-action="click->cancel-dropdown#toggle">
+                            <%= t("dashboard.cancel") %>
+                          </button>
+                          <!-- Dropdown positioned absolutely so it doesn't affect button position -->
+                          <div data-cancel-dropdown-target="menu"
+       style="display: none; position: absolute; top: 30px; right: 0; z-index: 1000;"
+       class="w-44 origin-top-right rounded-md shadow-lg bg-white border border-gray-200 focus:outline-none">
+                            <%= button_to t("dashboard.cancel_as_t"), cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
+        method: :post,
+        class: "block w-full text-left px-3 py-2 hover:bg-gray-50 border-0",
+        style: "font-size: 12px; font-family: 'Inter'; background: none;",
+        data: { turbo_frame: "booking_#{booking.id}" } %>
+                            <%= button_to t("dashboard.cancel_as_s"), cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
+        method: :post,
+        class: "block w-full text-left px-3 py-2 hover:bg-gray-50 border-0 border-top",
+        style: "font-size: 12px; font-family: 'Inter'; background: none; border-top: 1px solid #e5e7eb;",
+        data: { turbo_frame: "booking_#{booking.id}" } %>
+                          </div>
+                        </div>
                       <% end %>
                     </div>
                     <!-- Dropdown with user info -->

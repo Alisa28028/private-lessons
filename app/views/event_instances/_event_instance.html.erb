@@ -1,4 +1,4 @@
-<%# this is what replaces the buttons on the showpage %>
+<%# this is what replaces the buttons in the dashboard after teacher cancels booking %>
 <turbo-frame id="event_instance_<%= instance.id %>">
   <% bookings_to_show = instance.bookings %>
   <% bookings_to_show.each do |booking| %>
@@ -51,3 +51,5 @@
           <% end %>
         </div>
       </turbo-frame>
+    <% end %>
+  </turbo-frame>

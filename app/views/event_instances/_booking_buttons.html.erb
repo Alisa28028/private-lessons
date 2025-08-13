@@ -11,11 +11,12 @@
         <%= button_to t("show_page.cancel_request"),
             cancel_booking_path(user_booking),
             method: :post,
+            remote: true,
             params: { context: "show_page" },
             class: "custom-button" %>
       </div>
     <% when "cancelled_by_teacher", "rejected_by_teacher" %>
-      <p style="font-size: small; border: 1px solid #dc3545; padding: 7px; display: inline-block; border-radius: 4px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
+      <p style="font-size: small; border: 1px solid #dc3545; padding: 12px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
         <%= t("card.refused") %>
       </p>
     <% when "confirmed" %>
@@ -39,6 +40,7 @@
           <%= button_to t("show_page.cancel_booking"),
               cancel_booking_path(user_booking),
               method: :post,
+              remote: true,
               params: { context: "show_page" },
               data: { confirm: t("show_page.cancel_confirmation") },
               class: "btn btn-card ml-2 mb-1 mr-0" %>

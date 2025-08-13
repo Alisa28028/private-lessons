@@ -14,9 +14,21 @@ export default class extends Controller {
   }
 
   toggle(event) {
-    event.stopPropagation() // ✅ prevent global click handler from closing it immediately
+    console.log("🔥 Toggle clicked!", this.menuTarget.style.display)
+    event.stopPropagation()
     this.menuTarget.style.display =
       this.menuTarget.style.display === "none" ? "block" : "none"
+
+    if (this.menuTarget.style.display === "block") {
+      const rect = this.menuTarget.getBoundingClientRect()
+      console.log("🔥 Dropdown position:", {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        visible: rect.top >= 0 && rect.left >= 0
+      })
+    }
   }
 
   close(event) {
