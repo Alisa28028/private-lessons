@@ -288,6 +288,8 @@ ja:
     cancelled_by_s: "生徒キャンセル"
     completed: "完了"
     no_upcoming: "今後のレッスンはありません。"
+    cancel_as_t: "講師都合"
+    cancel_as_s: "生徒都合"
   notifs:
     booked: "予約が完了しました。"
     added_waitlist: "キャンセル待ちに登録しました。"

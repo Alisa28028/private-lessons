@@ -250,6 +250,8 @@ en:
     cancelled_by_s: "cancelled by student"
     completed: "completed"
     no_upcoming: "No upcoming classes."
+    cancel_as_t: "as teacher"
+    cancel_as_s: "as student"
   notifs:
     booked: "You are booked!"
     added_waitlist: "You've been added to the waitlist!"
