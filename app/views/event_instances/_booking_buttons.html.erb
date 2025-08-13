@@ -1,75 +1,80 @@
+<div class="px-0">
   <% user_booking = event_instance.bookings
                              .where(user_id: current_user.id)
                              .where.not(status: "cancelled_by_student")
                              .first %>
-<% future_event = event_instance.start_time > Time.current %>
-<% if event_instance.event.user != current_user %>
-  <% if user_booking && !user_booking.waitlisted %>
-    <% case user_booking.status %>
-    <% when "pending" %>
-      <div class="col-12 px-0">
-        <%= button_to t("show_page.cancel_request"),
+  <% future_event = event_instance.start_time > Time.current %>
+  <% if event_instance.event.user != current_user %>
+    <% if user_booking && !user_booking.waitlisted %>
+      <% case user_booking.status %>
+      <% when "pending" %>
+        <div class="col-12 px-0">
+          <%= button_to t("show_page.cancel_request"),
             cancel_booking_path(user_booking),
             method: :post,
             remote: true,
             params: { context: "show_page" },
-            class: "custom-button" %>
-      </div>
-    <% when "cancelled_by_teacher", "rejected_by_teacher" %>
-      <p style="font-size: small; border: 1px solid #dc3545; padding: 12px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
-        <%= t("card.refused") %>
-      </p>
-    <% when "confirmed" %>
-      <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #3E34A1; color: #3E34A1; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 12px; margin-top: 10px">
-        <%= future_event ? t("card.booked") : t("card.attended") %>
-      </p>
-      <% if event_instance.event.cancellation_policy_duration.present? %>
-        <% cancellation_cutoff = event_instance.start_time - event_instance.event.cancellation_policy_duration.hours %>
-        <% if event_instance.start_time.future? && Time.current < cancellation_cutoff && !event_instance.event.payment_obligation_on_booking %>
-          <div class="col-12 px-0">
-            <%= button_to t("show_page.cancel_booking"),
+            class: "custom-button",
+            style: "padding-left: 0; padding-right: 0;" %>
+        </div>
+      <% when "cancelled_by_teacher", "rejected_by_teacher" %>
+        <p style="font-size: small; border: 1px solid #dc3545; padding: 12px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
+          <%= t("card.refused") %>
+        </p>
+      <% when "confirmed" %>
+        <p style="font-family: 'Inter'; font-size: 15px; border: 1px solid #3E34A1; color: #3E34A1; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 12px; margin-top: 10px">
+          <%= future_event ? t("card.booked") : t("card.attended") %>
+        </p>
+        <% if event_instance.event.cancellation_policy_duration.present? %>
+          <% cancellation_cutoff = event_instance.start_time - event_instance.event.cancellation_policy_duration.hours %>
+          <% if event_instance.start_time.future? && Time.current < cancellation_cutoff && !event_instance.event.payment_obligation_on_booking %>
+            <div class="col-12 px-0">
+              <%= button_to t("show_page.cancel_booking"),
                 cancel_booking_path(user_booking),
                 method: :post,
                 params: { context: "show_page" },
                 data: { confirm: t("show_page.cancel_confirmation") },
-                class: "btn btn-card mt-0" %>
-          </div>
-        <% end %>
-      <% else %>
-        <div class="col-12 px-0">
-          <%= button_to t("show_page.cancel_booking"),
+                class: "btn btn-card mt-0",
+                style: "padding-left: 0; padding-right: 0;" %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="col-12 px-0">
+            <%= button_to t("show_page.cancel_booking"),
               cancel_booking_path(user_booking),
               method: :post,
               remote: true,
               params: { context: "show_page" },
               data: { confirm: t("show_page.cancel_confirmation") },
-              class: "btn btn-card ml-2 mb-1 mr-0" %>
-        </div>
+              class: "btn btn-card ml-2 mb-1 mr-0",
+              style: "padding-left: 0; padding-right: 0;" %>
+          </div>
+        <% end %>
       <% end %>
-    <% end %>
-  <% elsif user_booking && user_booking.waitlisted && future_event %>
-    <div class="col-12 px-0">
-      <%= button_to t("show_page.leave_waitlist"),
+    <% elsif user_booking && user_booking.waitlisted && future_event %>
+      <div class="col-12 px-0">
+        <%= button_to t("show_page.leave_waitlist"),
           booking_path(user_booking),
           method: :delete,
           params: { leave_waitlist: true, context: "show_page" },
           data: { confirm: t("show_page.leave_waitlist_confirmation") },
           style: "font-family: 'Inter'; font-size: 15px; border: 1px solid #9747FF; padding: 13px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 2px; margin-top: 10px; color: #9747FF; box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);" %>
-    </div>
-  <% elsif future_event %>
-    <% if event_instance.effective_capacity - event_instance.bookings.where(status: "confirmed").count <= 0 %>
-      <div class="col-12 px-0">
-        <button type="button" style="background-color: #3E34A1;"
+      </div>
+    <% elsif future_event %>
+      <% if event_instance.effective_capacity - event_instance.bookings.where(status: "confirmed").count <= 0 %>
+        <div class="col-12 px-0">
+          <button type="button" style="background-color: #3E34A1;"
                 class="btn btn-card w-100" data-bs-toggle="modal" data-bs-target="#waitinglistModal">
-          <%= t("card.join_waitlist") %>
-        </button>
-      </div>
-    <% else %>
-      <div class="col-12 px-0">
-        <button type="button" class="btn btn-card ml-2 mb-1 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
-          <%= t("card.book") %>
-        </button>
-      </div>
+            <%= t("card.join_waitlist") %>
+          </button>
+        </div>
+      <% else %>
+        <div class="col-12 px-0">
+          <button type="button" class="btn btn-card ml-2 mb-1 mr-0" data-bs-toggle="modal" data-bs-target="#bookingModal">
+            <%= t("card.book") %>
+          </button>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
-<% end %>
+</div>

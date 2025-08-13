@@ -113,7 +113,7 @@
           <% end %>
         </div>
         <div class="mt-0">
-          <div class="row mx-1">
+          <div class="row mx-3">
             <div id="booking_buttons_<%= @event_instance.id %>">
               <div id="turbo-reload-placeholder">
                 <% if @event.user != current_user %>
@@ -129,7 +129,8 @@
                         <%= button_to t("show_page.cancel_request"),
               booking_path(user_booking),
               method: :delete,
-              class: "custom-button" %>
+              class: "custom-button",
+              style: "padding-left: 0; padding-right: 0;" %>
                       </div>
                     <% when "cancelled_by_teacher", "rejected_by_teacher" %>
                       <p style="font-size: small; border: 1px solid #dc3545; padding: 12px; display: inline-block; border-radius: 14px; width: 100%; text-align: center; margin-bottom: 5px; margin-top: 2px; color: #dc3545;">
@@ -157,7 +158,8 @@
             remote: true,
             params: { context: "show_page" },
             data: { confirm: t("show_page.cancel_confirmation") },
-            class: "btn btn-card ml-2 mb-1 mr-0" %>
+            class: "btn btn-card ml-2 mb-1 mr-0",
+            style: "padding-left: 0; padding-right: 0;" %>
                       <% end %>
                     <% end %>
                   <% elsif user_booking && user_booking.waitlisted && future_event %>
