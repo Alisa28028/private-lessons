@@ -4,6 +4,11 @@ import "controllers"
 import "@popperjs/core"
 import "bootstrap"
 
+import Ahoy from "ahoy.js"
+
+Ahoy.configure()
+Ahoy.trackAll()
+
 // import "./offcanvas_cleanup"
 // import "./offcanvas_fix"
 

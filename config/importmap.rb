@@ -14,3 +14,4 @@ pin "fullcalendar", to: "https://cdn.skypack.dev/@fullcalendar/core"
 pin "fullcalendar-daygrid", to: "https://cdn.skypack.dev/@fullcalendar/daygrid"
 pin "trix"
 pin "@rails/actiontext", to: "actiontext.esm.js"
+pin "ahoy.js" # @0.4.4
