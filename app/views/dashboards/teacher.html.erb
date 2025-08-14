@@ -513,12 +513,12 @@
                             <%= button_to t("dashboard.cancel_as_t"), cancel_booking_path(booking, cancelled_by: "teacher", dashboard: true),
         method: :post,
         class: "block w-full text-left px-3 py-2 hover:bg-gray-50 border-0",
-        style: "font-size: 12px; font-family: 'Inter'; background: none;",
+        style: "color: black !important; font-size: 12px; font-family: 'Inter'; background: none;",
         data: { turbo_frame: "booking_#{booking.id}" } %>
                             <%= button_to t("dashboard.cancel_as_s"), cancel_booking_path(booking, cancelled_by: "student", dashboard: true),
         method: :post,
         class: "block w-full text-left px-3 py-2 hover:bg-gray-50 border-0 border-top",
-        style: "font-size: 12px; font-family: 'Inter'; background: none; border-top: 1px solid #e5e7eb;",
+        style: "color: black !important; font-size: 12px; font-family: 'Inter'; background: none; border-top: 1px solid #e5e7eb;",
         data: { turbo_frame: "booking_#{booking.id}" } %>
                           </div>
                         </div>
