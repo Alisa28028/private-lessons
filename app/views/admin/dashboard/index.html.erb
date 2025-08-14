@@ -1,0 +1,20 @@
+<h1>Admin Dashboard</h1>
+<h2>Analytics</h2>
+<p>Total Visits: <%= @total_visits %></p>
+<p>Total Events: <%= @total_events %></p>
+<% if @visits_by_location.present? %>
+  <h3>Visits by Country</h3>
+  <ul>
+    <% @visits_by_location.each do |country, count| %>
+      <li><%= country || "Unknown" %>: <%= count %></li>
+    <% end %>
+  </ul>
+<% end %>
+<h2>Users</h2>
+<p>Total Users: <%= @total_users %></p>
+<h3>Recent Users</h3>
+<ul>
+  <% @recent_users.each do |user| %>
+    <li><%= user.email %> — <%= user.created_at.strftime("%Y-%m-%d") %></li>
+  <% end %>
+</ul>

@@ -22,6 +22,10 @@ Rails.application.routes.draw do
   get '/student_dashboard', to: 'dashboards#student', as: :student_dashboard
   get '/teacher_dashboard', to: 'dashboards#teacher', as: :teacher_dashboard
 
+  namespace :admin do
+    get '/dashboard', to: 'dashboard#index', as: :dashboard
+  end
+
   get "locations/search", to: "locations#search"
 
   resources :favorites, only: [:index]
