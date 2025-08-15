@@ -8,8 +8,8 @@
 
 .card {
   width: 100%;        /* full width of parent */
-  max-width: 400px;
-  min-width: 400px;
+  max-width: 366px !important;
+  min-width: 366px;
   flex: none;         /* don't let flex properties add spacing */
   margin: 0;
   height: auto;
