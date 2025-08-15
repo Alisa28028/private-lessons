@@ -214,6 +214,7 @@
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
   transition: left 0.3s ease; /* Smooth transition for sliding in */
+  z-index: 1000;
 }
 
 .pl-sidebar.show {
@@ -295,6 +296,16 @@
   }
 
 }
+
+.pl-sidebar .logo .pl-logo {
+  position: sticky !important; /* force it */
+  top: 31px !important;        /* distance from top of sidebar */
+  left: 27px;
+  z-index: 200 !important;     /* above other sidebar content */
+  margin-top: 0 !important;    /* reset any top margin from main .pl-logo */
+}
+
+
 
 @media (min-width: 1000px) and (max-width: 1619px) {
   /* Hide the top and bottom navbars */
