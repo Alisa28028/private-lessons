@@ -1,26 +1,25 @@
 .card-container {
   display: flex;
-  flex-wrap: wrap; /* Allow cards to wrap */
-  justify-content: center;
-  gap: 20px; /* Spacing between cards */
+  flex-direction: column; /* stack cards vertically */
+  justify-content: flex-start; /* don't center vertically */
+  gap: 20px; /* spacing between cards */
+  align-items: center; /* center cards horizontally if needed */
 }
 
 .card {
-    width: 100%; /* Default to full width */
-    max-width: 400px;
-    flex: 1 1 300px;
-    height: auto;
-    background: #FFFFFF;
-    border-radius: 14px;
-    position: relative;
-    padding-left: 19px;
-    padding-right: 19px;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
-    // box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+  width: 100%;        /* full width of parent */
+  max-width: 400px;
+  min-width: 400px;
+  flex: none;         /* don't let flex properties add spacing */
+  margin: 0;
+  height: auto;
+  background: #FFFFFF;
+  border-radius: 14px;
+  position: relative;
+  padding: 12px 19px; /* shorthand for padding-top/bottom & left/right */
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
 
-  }
 
   // .card-product-info-grid {
   //   display: grid;

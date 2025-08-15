@@ -2,9 +2,9 @@
   <h2><%= t("favorites.title") %></h2>
 </div>
 <% if @favorites.any? %>
-  <div class="row gx-2 gy-4">
+  <div class="column gx-2 gy-4">
     <% @favorites.each do |event_instance| %>
-      <div class="col-12 col-md-6 col-lg-6 mx-auto px-4">
+      <div class="col-12 col-md-6 col-lg-6 mx-auto mb-3 px-4">
         <%= render partial: "shared/event_instances_card", locals: { instance: event_instance } %>
       </div>
     <% end %>
