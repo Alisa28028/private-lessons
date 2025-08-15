@@ -1,22 +1,23 @@
-<div class="container-dashboard-top">
-  <div class="row">
-    <div class="col-12">
-      <%# <% if current_user.events.any? || current_user.bookings.any? %>
-      <div class="d-flex justify-content-between mt-4 mb-2">
-        <%= link_to dashboard_path(view: "student"), class: "btn btn-switch-dashboard" do %>
-          <%= t("dashboard.student") %> <i class="fa-solid fa-circle-right me-2"></i>
-        <% end %>
-        <div class="overlay-text">
-          <h1 class="d-flex justify-content-center dashboard-h2 mt-6"> <%= t("dashboard.teacher") %>
-          </h1>
-          <h2 class="dashboard-h4 mb-0"><%= t("dashboard.stats") %></h2>
-        </div>
-        <div class="column mx-3">
+<div class="main-content">
+  <div class="container-dashboard-top">
+    <div class="row">
+      <div class="col-12">
+        <%# <% if current_user.events.any? || current_user.bookings.any? %>
+        <div class="d-flex justify-content-between mt-4 mb-2">
+          <%= link_to dashboard_path(view: "student"), class: "btn btn-switch-dashboard" do %>
+            <%= t("dashboard.student") %> <i class="fa-solid fa-circle-right me-2"></i>
+          <% end %>
+          <div class="overlay-text">
+            <h1 class="d-flex justify-content-center dashboard-h2 mt-6"> <%= t("dashboard.teacher") %>
+            </h1>
+            <h2 class="dashboard-h4 mb-0"><%= t("dashboard.stats") %></h2>
+          </div>
+          <div class="column mx-3">
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 <div class="d-flex flex-column">
   <div class="d-flex flex-column gap-1 mx-4">
@@ -707,23 +708,24 @@
       </div>
     </div>
   </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
-        const targetSelector = toggle.getAttribute('data-bs-target');
-        const bookingId = toggle.getAttribute('data-booking-id');
-        const carets = document.querySelectorAll(`.caret-icon[data-booking-id='${bookingId}']`);
-        const target = document.querySelector(targetSelector);
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
+      const targetSelector = toggle.getAttribute('data-bs-target');
+      const bookingId = toggle.getAttribute('data-booking-id');
+      const carets = document.querySelectorAll(`.caret-icon[data-booking-id='${bookingId}']`);
+      const target = document.querySelector(targetSelector);
 
-        if (!target || carets.length === 0) return;
+      if (!target || carets.length === 0) return;
 
-        target.addEventListener('show.bs.collapse', function () {
-          carets.forEach(caret => caret.classList.add('caret-rotated'));
-        });
+      target.addEventListener('show.bs.collapse', function () {
+        carets.forEach(caret => caret.classList.add('caret-rotated'));
+      });
 
-        target.addEventListener('hide.bs.collapse', function () {
-          carets.forEach(caret => caret.classList.remove('caret-rotated'));
-        });
+      target.addEventListener('hide.bs.collapse', function () {
+        carets.forEach(caret => caret.classList.remove('caret-rotated'));
       });
     });
-  </script>
+  });
+</script>

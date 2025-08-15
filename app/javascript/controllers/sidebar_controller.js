@@ -1,26 +1,30 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="sidebar"
 export default class extends Controller {
-  static targets = ["sidebar", "content"];
+  static targets = ["sidebar", "content", "hamburger"];
 
   connect() {
-    // Initially, check screen width and decide if sidebar should be visible
-    this.toggleSidebar();
-    window.addEventListener("resize", () => this.toggleSidebar());
+    this.updateSidebarState();
+    window.addEventListener("resize", () => this.updateSidebarState());
   }
 
-  toggleSidebar() {
+  updateSidebarState() {
     const width = window.innerWidth;
 
+    // Show/hide sidebar based on screen width
     if (width >= 1000 && width <= 1619) {
-      // Show sidebar and hide navbars
       this.sidebarTarget.classList.add("show");
       this.contentTarget.classList.add("show-sidebar");
     } else {
-      // Hide sidebar and reset content margin
       this.sidebarTarget.classList.remove("show");
       this.contentTarget.classList.remove("show-sidebar");
+    }
+
+    // Hide hamburger if sidebar is visible
+    if (this.sidebarTarget.classList.contains("show")) {
+      this.hamburgerTarget.style.display = "none";
+    } else {
+      this.hamburgerTarget.style.display = "block";
     }
   }
 }
