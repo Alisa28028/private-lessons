@@ -4,10 +4,22 @@ import "controllers"
 import "@popperjs/core"
 import "bootstrap"
 
-import Ahoy from "ahoy.js"
+// app/javascript/application.js
+import ahoy from "ahoy.js"
 
-Ahoy.configure()
-Ahoy.trackAll()
+ahoy.configure({
+  visitsUrl: "/ahoy/visits",
+  eventsUrl: "/ahoy/events",
+  trackVisits: true,    // automatically track page visits
+  trackActions: true    // automatically track clicks with data-remote or data-event
+})
+
+// Optional: manually track page view to ensure URL is included
+ahoy.track("Viewed page", {
+  url: window.location.pathname + window.location.search,
+  title: document.title
+})
+
 
 // import "./offcanvas_cleanup"
 // import "./offcanvas_fix"
