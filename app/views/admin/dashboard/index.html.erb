@@ -1,66 +1,109 @@
-<h1>Admin Dashboard</h1>
-<h2>Analytics</h2>
-<p>Total Visits: <%= @total_visits || 0 %></p>
-<p>Total Events: <%= @total_events || 0 %></p>
-<h3>Visits by Country</h3>
-<% if @visits_by_country.present? %>
-  <ul>
-    <% @visits_by_country.each do |country, count| %>
-      <li><%= country.presence || "Unknown" %>: <%= count %></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No visits yet</p>
-<% end %>
-<h3>Visits by Region/State</h3>
-<% if @visits_by_region.present? %>
-  <ul>
-    <% @visits_by_region.each do |region, count| %>
-      <li><%= region.presence || "Unknown" %>: <%= count %></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No visits yet</p>
-<% end %>
-<h3>Visits by City</h3>
-<% if @visits_by_city.present? %>
-  <ul>
-    <% @visits_by_city.each do |city, count| %>
-      <li><%= city.presence || "Unknown" %>: <%= count %></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No visits yet</p>
-<% end %>
-<h2>Users</h2>
-<p>Total Users: <%= @total_users || 0 %></p>
-<h3>Recent Users</h3>
-<% if @recent_users.present? %>
-  <ul>
-    <% @recent_users.each do |user| %>
-      <li><%= user.email %> — <%= user.created_at.strftime("%Y-%m-%d") %></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No users yet</p>
-<% end %>
-<h3>Recent Visits</h3>
-<% if @recent_visits.present? %>
-  <ul>
-    <% @recent_visits.each do |visit| %>
-      <li style="margin-bottom: 8px;">
-        IP: <%= visit.ip || "Unknown" %> —
-        Country: <%= visit.country.presence || "Unknown" %>,
-        Region: <%= visit.region.presence || "Unknown" %>,
-        City: <%= visit.city.presence || "Unknown" %><br>
-        <% if visit.user %>
-          User: <%= visit.user.email %> —
+<div class="d-flex justify-content-center mt-7 mb-4">
+  <h2>Admin Dashboard</h2>
+</div>
+<div class="col-12 col-md-6 col-lg-6 px-4">
+  <h2>Analytics</h2>
+  <p>Total Visits: <%= @total_visits || 0 %></p>
+  <p>Total Visits Today: <%= @todays_visits || 0 %></p>
+  <p>Total Events: <%= @total_events || 0 %></p>
+  <h3>Visits by Country</h3>
+  <% if @visits_by_country.present? %>
+    <ul>
+      <% @visits_by_country.each do |country, count| %>
+        <li><%= country.presence || "Unknown" %>: <%= count %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No visits yet</p>
+  <% end %>
+  <h3>Visits by Region/State</h3>
+  <% if @visits_by_region.present? %>
+    <ul>
+      <% @visits_by_region.each do |region, count| %>
+        <li><%= region.presence || "Unknown" %>: <%= count %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No visits yet</p>
+  <% end %>
+  <h3>Visits by City</h3>
+  <% if @visits_by_city.present? %>
+    <ul>
+      <% @visits_by_city.each do |city, count| %>
+        <li><%= city.presence || "Unknown" %>: <%= count %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No visits yet</p>
+  <% end %>
+  <h2>Users</h2>
+  <p>Total Users: <%= @total_users || 0 %></p>
+  <h3>Recent Users</h3>
+  <% if @recent_users.present? %>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="border: 1px solid black; padding: 5px;">Email</th>
+          <th style="border: 1px solid black; padding: 5px;">Name</th>
+          <th style="border: 1px solid black; padding: 5px;">Time Zone</th>
+          <th style="border: 1px solid black; padding: 5px;">Created At</th>
+          <th style="border: 1px solid black; padding: 5px;">Event Instances</th>
+          <th style="border: 1px solid black; padding: 5px;">Bookings</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_users.each do |user| %>
+          <tr>
+            <td style="border: 1px solid black; padding: 5px;"><%= user.email %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= user.first_name %> <%= user.last_name %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= user.time_zone %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= user.created_at.strftime("%Y-%m-%d") %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= user.event_instances.size %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= user.bookings.size %></td>
+          </tr>
         <% end %>
-        User Agent: <%= visit.user_agent || "Unknown" %> —
-        Visited At: <%= visit.started_at&.in_time_zone("Asia/Tokyo")&.strftime("%Y-%m-%d %H:%M:%S") || "Unknown" %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No recent visits yet</p>
-<% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No users yet</p>
+  <% end %>
+  <h3>Recent Visits</h3>
+  <% if @recent_visits.present? %>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <thead>
+        <tr>
+          <th style="border: 1px solid black; padding: 5px;">IP</th>
+          <th style="border: 1px solid black; padding: 5px;">Country</th>
+          <th style="border: 1px solid black; padding: 5px;">Region</th>
+          <th style="border: 1px solid black; padding: 5px;">City</th>
+          <th style="border: 1px solid black; padding: 5px;">User</th>
+          <th style="border: 1px solid black; padding: 5px;">User Agent</th>
+          <th style="border: 1px solid black; padding: 5px;">Visited At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_visits.each do |visit| %>
+          <tr>
+            <td style="border: 1px solid black; padding: 5px;"><%= visit.ip || "Unknown" %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= visit.country.presence || "Unknown" %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= visit.region.presence || "Unknown" %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= visit.city.presence || "Unknown" %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= visit.user&.email || "N/A" %></td>
+            <td style="border: 1px solid black; padding: 5px;"><%= visit.user_agent || "Unknown" %></td>
+            <td style="border: 1px solid black; padding: 5px;">
+              <%= visit.started_at&.in_time_zone("Asia/Tokyo")&.strftime("%Y-%m-%d %H:%M:%S") || "Unknown" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No recent visits yet</p>
+  <% end %>
+  <h3>Top Pages - All Time</h3>
+  <%= render 'shared/top_pages_table', pages: @top_pages_all_time %>
+  <h3>Top Pages - Today</h3>
+  <%= render 'shared/top_pages_table', pages: @top_pages_today %>
+  <h3>Top Pages - This Week</h3>
+  <%= render 'shared/top_pages_table', pages: @top_pages_this_week %>
+</div>

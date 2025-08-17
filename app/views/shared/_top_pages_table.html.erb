@@ -1,0 +1,16 @@
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid black; padding: 5px;">Page URL</th>
+      <th style="border: 1px solid black; padding: 5px;">Views</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% pages.each do |url, views| %>
+      <tr>
+        <td style="border: 1px solid black; padding: 5px;"><%= url %></td>
+        <td style="border: 1px solid black; padding: 5px;"><%= views %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
