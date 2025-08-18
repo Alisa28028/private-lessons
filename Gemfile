@@ -97,4 +97,3 @@ gem 'ruby-vips', '~> 2.1'
 gem 'sendgrid-ruby'
 gem "ahoy_matey"
 gem "geocoder"
-gem 'rack-rewrite'

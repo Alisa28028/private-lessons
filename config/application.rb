@@ -41,10 +41,5 @@ module PrivateLessons
     # config.eager_load_paths << Rails.root.join("extras")
     config.active_job.queue_adapter = :sidekiq
 
-    config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
-      r301 %r{.*}, 'https://privatelesson.app$&', :if => Proc.new { |rack_env|
-        rack_env['SERVER_NAME'] == 'www.privatelesson.app'
-      }
-    end
   end
 end
