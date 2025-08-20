@@ -183,6 +183,10 @@ class DashboardsController < ApplicationController
       .where(event_instance_id: @event_instances.pluck(:id))
       .where(status: ['confirmed', 'cancelled_by_teacher', 'completed'])
 
+      @tz_country_map = generate_tz_country_map
+
+      @teacher = current_user
+      @followers = @teacher.followers
   end
 
   def most_attended(monthly_events)
@@ -209,5 +213,31 @@ class DashboardsController < ApplicationController
     end
     booking_count
   end
+
+  private
+
+  def generate_tz_country_map
+    tz_country_map = {}
+
+    # Iterate over all country codes
+    ISO3166::Country.codes.each do |country_code|
+      country = ISO3166::Country[country_code]
+      next unless country # skip invalid codes
+
+      # Fetch time zones for the country
+      time_zones = ActiveSupport::TimeZone.country_zones(country_code) || []
+
+      time_zones.each do |tz|
+        region, city = tz.name.split('/') # split "Region/City"
+        tz_country_map[tz.name] = {
+          country: country.common_name || country.official_name || country.alpha2,
+          city: city || "Unknown"
+        }
+      end
+    end
+
+    tz_country_map
+  end
+
 
 end

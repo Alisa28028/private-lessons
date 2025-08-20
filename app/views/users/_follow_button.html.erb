@@ -4,14 +4,14 @@
                   method: :delete,
                   class: "btn btn-unfollow",
                   form: { data: { turbo_frame: "follow_button_#{user.id}" } } do %>
-      Unfollow
+      <%= t("show_page.unfollow") %>
     <% end %>
   <% else %>
     <%= button_to user_follow_path(user),
                   method: :post,
                   class: "btn btn-follow",
                   form: { data: { turbo_frame: "follow_button_#{user.id}" } } do %>
-      Follow
+      <%= t("show_page.follow") %>
     <% end %>
   <% end %>
 </turbo-frame>
