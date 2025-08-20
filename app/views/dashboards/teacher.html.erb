@@ -82,7 +82,7 @@
   </div>
   <div class="d-flex flex-column mx-2 mt-3">
     <button type="button"
-        class="d-flex flex-row align-items-center justify-content-between w-100 border-0 bg-transparent py-2 px-3"
+        class="d-flex flex-row align-items-center justify-content-between w-100 border-0 bg-transparent py-2 px-3 mb-1"
         data-bs-toggle="offcanvas"
         data-bs-target="#attendeePanel"
         aria-controls="attendeePanel"
@@ -93,7 +93,7 @@
       <i class="fa-solid fa-chevron-right fa-sm"></i>
     </button>
     <button type="button"
-        class="d-flex flex-row align-items-center justify-content-between w-100 border-0 bg-transparent py-2 px-3 mb-3"
+        class="d-flex flex-row align-items-center justify-content-between w-100 border-0 bg-transparent py-2 px-3 mb-4"
         data-bs-toggle="offcanvas"
         data-bs-target="#bookingPanel"
         aria-controls="bookingPanel"
@@ -672,19 +672,28 @@
     </div>
     <%# followers insight section %>
     <div class="row ms-2 mt-3">
-      <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">Followers Insights</h4>
+      <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A"><%= t("dashboard.followers_insights") %></h4>
       <% @followers.each do |follower| %>
-        <div class="" style="min-width: 150px;">
-          <p class="mb-1"><strong>Username:</strong> <%= follower.username %></p>
-          <p class="mb-3"><strong>Location:</strong>
-            <% city = follower.time_zone || "Unknown" %>
-            <% country = case city
-         when "Tokyo" then "Japan"
-         # add more city->country mappings if needed
-         else "Unknown"
-         end %>
-            <%= "#{country} – #{city}" %>
-          </p>
+        <div class="d-flex align-items-center mb-3" style="min-width: 200px;">
+          <%= link_to user_path(follower), data: { turbo_frame: "_top" }, class: "d-flex align-items-center" do %>
+            <% if follower.photo.present? %>
+              <%= cl_image_tag follower.photo.key, class: "avatar-showpage", alt: "#{follower.username}'s avatar" %>
+            <% else %>
+              <%= image_tag "default-avatar.png", class: "avatar-showpage", alt: "default avatar" %>
+            <% end %>
+            <div class="ms-2">
+              <p class="mb-1 fw-bold" style="font-size: 13px;"><%= follower.username %></p>
+              <p class="mb-0 text-muted" style="margin-top: -6px;font-size: 13px;">
+                <% city = follower.time_zone || "Unknown" %>
+                <% country = case city
+             when "Tokyo" then "Japan"
+             # add more city->country mappings if needed
+             else "Unknown"
+          end %>
+                <%= "#{country} – #{city}" %>
+              </p>
+            </div>
+          <% end %>
         </div>
       <% end %>
     </div>
@@ -692,9 +701,9 @@
     <div class="container p-0">
     </div>
     <div class="container mb-5">
-      <div class="row mx-0 mt-3">
+      <div class="row mx-0 mt-4">
         <% if @upcoming_event_instances_created.any? %>
-          <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A"><%= t("classes.upcoming") %></h4>
+          <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mt-2 mb-4" style="color: #292A5A"><%= t("classes.upcoming") %></h4>
           <div class="col-12 col-md-6 col-lg-6 mx-auto px-1">
             <div class="card-container mx-auto">
               <%= render "shared/event_card_iteration", event_instances: @upcoming_event_instances_created %>

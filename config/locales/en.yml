@@ -254,6 +254,7 @@ en:
     no_upcoming: "No upcoming classes."
     cancel_as_t: "as teacher"
     cancel_as_s: "as student"
+    followers_insights: "Followers insights"
   notifs:
     booked: "You are booked!"
     added_waitlist: "You've been added to the waitlist!"
