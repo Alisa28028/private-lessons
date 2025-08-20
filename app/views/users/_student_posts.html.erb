@@ -1,6 +1,6 @@
 <div class="col-12 col-md-6 col-lg-6 px-4">
   <div class="card-post-container">
-    <% visible_student_posts = student_posts.select { |post| post.event_instance&.event&.user_id == current_user.id && !post.hidden? } %>
+    <% visible_student_posts = student_posts.select { |post| post.event_instance&.event&.user_id == @user.id && !post.hidden? } %>
     <%# <%= "Student posts count!!: #{visible_student_posts.count}" %>
     <% if visible_student_posts.present? %>
       <% visible_student_posts.each do |post| %>
