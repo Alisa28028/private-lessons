@@ -76,6 +76,8 @@ en:
     leave_waitlist_confirmation: "Are you sure you want to leave the waitlist?"
     leave_waitlist: "On waitlist (click to leave waitlist)"
     cancel_request: "Pending approval (click to cancel request)"
+    follow: "Follow"
+    unfollow: "Unfollow"
   post:
     title: "Create a post for this class:"
     placeholder: "Write anything you'd like about this class!"

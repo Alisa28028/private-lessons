@@ -670,6 +670,24 @@
         </div>
       </div>
     </div>
+    <%# followers insight section %>
+    <div class="row ms-2 mt-3">
+      <h4 class="dashboard-h4 d-flex justify-content-start ms-0 mb-4" style="color: #292A5A">Followers Insights</h4>
+      <% @followers.each do |follower| %>
+        <div class="" style="min-width: 150px;">
+          <p class="mb-1"><strong>Username:</strong> <%= follower.username %></p>
+          <p class="mb-3"><strong>Location:</strong>
+            <% city = follower.time_zone || "Unknown" %>
+            <% country = case city
+         when "Tokyo" then "Japan"
+         # add more city->country mappings if needed
+         else "Unknown"
+         end %>
+            <%= "#{country} – #{city}" %>
+          </p>
+        </div>
+      <% end %>
+    </div>
     <%# Iterating through teaching events %>
     <div class="container p-0">
     </div>

@@ -49,6 +49,8 @@ ja:
     leave_waitlist: "キャンセル待ち登録中（クリックで解除）"
     leave_waitlist_confirmation: "キャンセル待ちを解除してもよろしいですか？"
     cancel_request: "承認待ち（クリックで取り消し）"
+    follow: "フォローする"
+    unfollow: "フォローを外す"
   post:
     title: "このクラスに投稿する："
     placeholder: "このレッスンについて自由に書いてください！"
