@@ -1,0 +1,17 @@
+<turbo-frame id="follow_button_<%= user.id %>">
+  <% if current_user.following.include?(user) %>
+    <%= button_to user_follow_path(user),
+                  method: :delete,
+                  class: "btn btn-unfollow",
+                  form: { data: { turbo_frame: "follow_button_#{user.id}" } } do %>
+      Unfollow
+    <% end %>
+  <% else %>
+    <%= button_to user_follow_path(user),
+                  method: :post,
+                  class: "btn btn-follow",
+                  form: { data: { turbo_frame: "follow_button_#{user.id}" } } do %>
+      Follow
+    <% end %>
+  <% end %>
+</turbo-frame>

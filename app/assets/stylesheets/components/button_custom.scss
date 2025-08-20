@@ -136,6 +136,46 @@
 }
 
 
+.btn-follow {
+  // margin-left: auto; /* Flexbox way */
+  float: right; /* Alternatively, you can use float */
+  background-color: #3E34A1 !important;
+  color: white !important;
+  border-radius: 5px;
+  width: 119px;
+  // margin-right: 3px;
+  font-family: 'Inter';
+  font-size: 15px;
+  // margin-left: 3px;
+}
+
+.btn-follow:hover {
+  background-color: #dad7de !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn-follow:active {
+  background-color: #dad7de !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn-unfollow {
+  // margin-left: auto; /* Flexbox way */
+  float: right; /* Alternatively, you can use float */
+  background-color: #3e34a180 !important;
+  color: white !important;
+  border-radius: 5px;
+  width: 119px;
+  // margin-right: 3px;
+  font-family: 'Inter';
+  font-size: 15px;
+  // margin-left: 3px;
+}
+
+
+
 .btn-custom-dashboard {
   // margin-left: auto; /* Flexbox way */
   float: right; /* Alternatively, you can use float */

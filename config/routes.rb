@@ -82,6 +82,8 @@ Rails.application.routes.draw do
   end
     # User routes (show, edit, update)
   resources :users, only: [:show, :edit, :update] do
+    resource :follow, only: [:create, :destroy]
+
     member do
       get :classes
       get :teacher_posts
