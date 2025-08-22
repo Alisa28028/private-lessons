@@ -25,6 +25,8 @@ Rails.application.routes.draw do
 
   get "calculator", to: "calculator#index"
   post "calculator", to: "calculator#create"
+  post "calculator/save_guest_info", to: "calculator#save_guest_info"
+
 
 
 
