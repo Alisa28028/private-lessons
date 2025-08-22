@@ -29,7 +29,11 @@ class Admin::DashboardController < ApplicationController
   @top_pages_all_time = top_pages(Ahoy::Event.all)
   @top_pages_today = top_pages(Ahoy::Event.where("time >= ?", Time.zone.now.beginning_of_day))
   @top_pages_this_week = top_pages(Ahoy::Event.where("time >= ?", Time.zone.now.beginning_of_week))
-  end
+
+  # calculator entries
+  @entries = CalculatorEntry.order(created_at: :desc).includes(:user)
+
+end
 
 
 

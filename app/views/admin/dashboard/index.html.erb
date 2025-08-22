@@ -106,4 +106,40 @@
   <%= render 'shared/top_pages_table', pages: @top_pages_today %>
   <h3>Top Pages - This Week</h3>
   <%= render 'shared/top_pages_table', pages: @top_pages_this_week %>
+  <h1 class="text-2xl font-bold mb-6">Calculator Entries</h1>
+  <table class="min-w-full border-collapse border border-gray-300 text-sm">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="border border-gray-300 px-3 py-2 text-left">Date</th>
+        <th class="border border-gray-300 px-3 py-2 text-left">User</th>
+        <th class="border border-gray-300 px-3 py-2 text-right">Lessons</th>
+        <th class="border border-gray-300 px-3 py-2 text-right">Attendees</th>
+        <th class="border border-gray-300 px-3 py-2 text-right">Price</th>
+        <th class="border border-gray-300 px-3 py-2 text-right">Commission</th>
+        <th class="border border-gray-300 px-3 py-2 text-left">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @entries.each do |entry| %>
+        <tr>
+          <td class="border border-gray-300 px-3 py-2"><%= entry.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td class="border border-gray-300 px-3 py-2"><%= entry.user&.email || "Guest" %></td>
+          <td class="border border-gray-300 px-3 py-2 text-right"><%= entry.lessons %></td>
+          <td class="border border-gray-300 px-3 py-2 text-right"><%= entry.attendees %></td>
+          <td class="border border-gray-300 px-3 py-2 text-right">¥<%= number_with_delimiter(entry.price) %></td>
+          <td class="border border-gray-300 px-3 py-2 text-right">¥<%= number_with_delimiter(entry.commission) %></td>
+          <td class="border border-gray-300 px-3 py-2">
+            <% case entry.status %>
+            <% when "eligible" %>
+              <span class="text-green-600 font-semibold">Eligible</span>
+            <% when "negotiable" %>
+              <span class="text-yellow-600 font-semibold">Negotiable</span>
+            <% else %>
+              <span class="text-red-600 font-semibold">Not Eligible</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>

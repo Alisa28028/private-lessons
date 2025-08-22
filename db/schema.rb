@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_20_072705) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_21_093925) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -109,6 +109,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_20_072705) do
     t.datetime "cancelled_at"
     t.index ["user_id", "event_instance_id"], name: "index_bookings_on_user_and_event_instance_active_only", unique: true, where: "((status)::text <> ALL ((ARRAY['cancelled_by_student'::character varying, 'cancelled_by_teacher'::character varying])::text[]))"
     t.index ["user_id"], name: "index_bookings_on_user_id"
+  end
+
+  create_table "calculator_entries", force: :cascade do |t|
+    t.integer "lessons"
+    t.integer "attendees"
+    t.integer "price"
+    t.integer "commission"
+    t.string "status"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_calculator_entries_on_user_id"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -284,6 +296,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_20_072705) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bookings", "users"
+  add_foreign_key "calculator_entries", "users"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "event_instances", "events"

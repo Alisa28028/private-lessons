@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'calculator/index'
   scope "(:locale)", locale: /en|ja/ do
   get 'favorites/index'
 
@@ -21,6 +22,11 @@ Rails.application.routes.draw do
   patch '/update_dashboard_preference', to: 'dashboards#update_dashboard_preference'
   get '/student_dashboard', to: 'dashboards#student', as: :student_dashboard
   get '/teacher_dashboard', to: 'dashboards#teacher', as: :teacher_dashboard
+
+  get "calculator", to: "calculator#index"
+  post "calculator", to: "calculator#create"
+
+
 
   namespace :admin do
     get '/dashboard', to: 'dashboard#index', as: :dashboard

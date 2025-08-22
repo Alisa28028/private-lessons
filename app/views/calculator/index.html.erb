@@ -1,0 +1,61 @@
+<div class="max-w-md mx-auto p-6 bg-white rounded-2xl shadow">
+  <h2 class="text-xl font-bold mb-4">Eligibility Calculator</h2>
+  <%= simple_form_for :calculator_entry, url: calculator_path, method: :post, html: { id: "calculator-form" } do |f| %>
+    <div class="mb-4">
+      <%= f.input :lessons, as: :integer, label: "Number of lessons per month",
+                  input_html: { min: 0, class: "w-full p-2 border rounded" } %>
+    </div>
+    <div class="mb-4">
+      <%= f.input :attendees, as: :integer, label: "Average attendees per lesson (max 50)",
+                  input_html: { min: 0, max: 50, class: "w-full p-2 border rounded" } %>
+    </div>
+    <div class="mb-4">
+      <%= f.input :price, as: :integer, label: "Price per lesson (¥)",
+                  input_html: { min: 0, class: "w-full p-2 border rounded" } %>
+    </div>
+    <%= f.button :submit, "Calculate", class: "btn btn-follow" %>
+  <% end %>
+  <div id="result" class="mt-4 text-lg font-semibold"></div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("calculator-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const lessons = parseInt(form.querySelector("#calculator_entry_lessons").value) || 0;
+      const attendees = Math.min(parseInt(form.querySelector("#calculator_entry_attendees").value) || 0, 50);
+      const price = parseInt(form.querySelector("#calculator_entry_price").value) || 0;
+
+      const token = document.querySelector('meta[name="csrf-token"]').content;
+
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": token
+        },
+        body: JSON.stringify({ calculator_entry: { lessons, attendees, price } })
+      });
+
+      const data = await response.json();
+
+      let resultText = `Your monthly commission: ¥${data.commission.toLocaleString()}. `;
+
+      const resultDiv = document.getElementById("result");
+
+      if (data.status === "eligible") {
+        resultText += "✅ You are eligible!";
+        resultDiv.className = "mt-4 text-lg font-semibold text-green-600";
+      } else if (data.status === "negotiable") {
+        resultText += "⚖️ Not eligible, but negotiable.";
+        resultDiv.className = "mt-4 text-lg font-semibold text-yellow-600";
+      } else {
+        resultText += "❌ You are not eligible.";
+        resultDiv.className = "mt-4 text-lg font-semibold text-red-600";
+      }
+
+      resultDiv.innerText = resultText;
+    });
+  });
+</script>
