@@ -303,3 +303,13 @@ ja:
     cancelled_success: "予約をキャンセルしました。"
   calculator:
     title: "利用条件シミュレーター"
+    nb_lessons: "PLの数（1か月あたり）"
+    nb_students: "1レッスンあたりの平均参加人数"
+    price: "受講者1人あたりのレッスン料金"
+    calculate: "判定する"
+    name: "名前"
+    email: "メールアドレス"
+    send_info: "メールアドレスを登録する"
+    eligible: "おめでとうございます！対象となります！"
+    negotibale: "条件は満たしていませんが、相談可能です。"
+    not_eligible: "現在は対象外ですが、条件が変わった際にご案内できるよう、メールアドレスをご登録ください。"

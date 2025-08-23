@@ -1,32 +1,35 @@
 <div class="max-w-md mx-auto p-6 bg-white rounded-2xl shadow">
-  <h2 class="text-xl font-bold mb-4"> <%= t("calculator.title") %> </h2>
+  <h2 class="text-xl font-bold mb-4"><%= t("calculator.title") %></h2>
   <div style="margin-bottom: 10px;">
-    <%= simple_form_for :calculator_entry, url: calculator_path, method: :post, html: { id: "calculator-form" } do |f| %>
+    <%= simple_form_for :calculator_entry, url: calculator_path, method: :post, html: { id: "calculator-form", data: { turbo: false } } do |f| %>
       <div class="dashboard mb-4">
-        <h4> <%= f.input :lessons, as: :integer, label: "Number of lessons per month",
+        <h4> <%= f.input :lessons, as: :integer, label: t("calculator.nb_lessons"),
                   input_html: { min: 0, class: "w-full p-2 border rounded" } %></h4>
       </div>
       <div class="dashboard mb-4">
-        <h4> <%= f.input :attendees, as: :integer, label: "Average attendees per lesson (max 50)",
+        <h4> <%= f.input :attendees, as: :integer, label: t("calculator.nb_students"),
                   input_html: { min: 0, max: 50, class: "w-full p-2 border rounded" } %></h4>
       </div>
       <div class="dashboard mb-4">
-        <h4> <%= f.input :price, as: :integer, label: "Price per lesson (¥)",
+        <h4> <%= f.input :price, as: :integer, label: t("calculator.price"),
                   input_html: { min: 0, class: "w-full p-2 border rounded" } %></h4>
       </div>
-      <h4><%= f.button :submit, "Calculate", class: "btn btn-calculate" %></h4>
+      <h4><%= f.button :submit, t("calculator.calculate"), class: "btn btn-calculate" %></h4>
     <% end %>
   </div>
   <div id="result" class="mt-4 text-lg font-semibold"></div>
   <!-- Name & Email section (hidden initially) -->
   <div id="guest-info-section" class="mt-4" style="display: none;">
-    <label class="block mb-2 font-medium">Your Name</label>
-    <input id="guest_name" type="text" class="w-full p-2 border rounded mb-2">
-    <label class="block mb-2 font-medium">Your Email</label>
-    <input id="guest_email" type="email" class="w-full p-2 border rounded mb-2">
-    <button onclick="saveGuestInfo()"
-          class="btn btn-send-info mt-4">
-      Send me informations!
+    <div class="dashboard d-flex flex-column">
+      <h4><label class="block mb-2 font-medium"><%= t("calculator.name") %></label></h4>
+      <input id="guest_name" type="text" class="w-full p-2 border rounded mb-2">
+    </div>
+    <div class="dashboard d-flex flex-column">
+      <h4><label class="block mb-2 font-medium"><%= t("calculator.email") %></label></h4>
+      <input id="guest_email" type="email" class="w-full p-2 border rounded mb-2">
+    </div>
+    <button onclick="saveGuestInfo()" class="btn btn-send-info mt-4">
+      <%= t("calculator.send_info") %>
     </button>
     <div id="guest-info-result" class="mt-2"></div>
   </div>
@@ -34,6 +37,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("calculator-form");
+  const resultDiv = document.getElementById("result");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -55,27 +59,25 @@
 
     const data = await response.json();
 
-    let resultText = `Your monthly commission: ¥${data.commission.toLocaleString()}. `;
-    const resultDiv = document.getElementById("result");
+    let resultText = "";
 
     if (data.status === "eligible") {
-      resultText += "✅ You are eligible!";
-  resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
+      resultText += "おめでとうございます！対象です🎉メールアドレスを登録して、詳細をご案内します。";
+      resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
     } else if (data.status === "negotiable") {
-      resultText += "⚖️ Not eligible, but negotiable.";
-  resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
+      resultText += "⚖️ 条件は満たしていませんが、相談可能です。";
+      resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
     } else {
-      resultText += "❌ You are not eligible.";
-  resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
+      resultText += "❌ 現在は対象外ですが、条件が変わった際にご案内できるよう、メールアドレスをご登録ください。";
+      resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
     }
 
     resultDiv.innerText = resultText;
 
-   if (data.commission > 15000) {
-  document.getElementById("guest-info-section").style.display = "block";
-  } else {
-  document.getElementById("guest-info-section").style.display = "none";
-  }
+    // Show guest info if commission > 15,000
+
+      document.getElementById("guest-info-section").style.display = "block";
+
   });
   });
 </script>
