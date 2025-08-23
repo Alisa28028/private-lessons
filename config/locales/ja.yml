@@ -301,3 +301,5 @@ ja:
     pending_approval_notif: "ご予約は講師の承認待ちです。"
     already_cancelled: "この予約はすでにキャンセルされています。"
     cancelled_success: "予約をキャンセルしました。"
+  calculator:
+    title: "利用条件シミュレーター"

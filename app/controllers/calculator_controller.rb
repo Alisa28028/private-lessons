@@ -13,7 +13,7 @@ class CalculatorController < ApplicationController
     status =
       if commission >= 40000
         "eligible"
-      elsif commission >= 30000
+      elsif commission >= 20000
         "negotiable"
       else
         "not_eligible"

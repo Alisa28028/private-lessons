@@ -263,3 +263,5 @@ en:
     pending_approval_notif: "Your booking is pending the teacher’s approval."
     already_cancelled: "This booking has already been cancelled."
     cancelled_success: "Booking cancelled successfully."
+  calculator:
+    title: "Eligibility Simulator"
