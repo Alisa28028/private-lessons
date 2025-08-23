@@ -110,8 +110,10 @@
   <table class="min-w-full border-collapse border border-gray-300 text-sm">
     <thead>
       <tr class="bg-gray-100">
+        <th class="border border-gray-300 px-3 py-2 text-left">Logged in?</th>
         <th class="border border-gray-300 px-3 py-2 text-left">Date</th>
-        <th class="border border-gray-300 px-3 py-2 text-left">User's email</th>
+        <th class="border border-gray-300 px-3 py-2 text-left">Logged-in user's email</th>
+        <th class="border border-gray-300 px-3 py-2 text-left">Submitted email</th>
         <th class="border border-gray-300 px-3 py-2 text-left">Name</th>
         <th class="border border-gray-300 px-3 py-2 text-right">Lessons</th>
         <th class="border border-gray-300 px-3 py-2 text-right">Attendees</th>
@@ -123,21 +125,22 @@
     <tbody>
       <% @entries.each do |entry| %>
         <tr>
+          <!-- Logged-in user? -->
+          <td><%= entry.user.present? ? "Yes" : "No" %></td>
+          <!-- Created at -->
           <td class="border border-gray-300 px-3 py-2"><%= entry.created_at.strftime("%Y-%m-%d %H:%M") %></td>
-          <td class="border border-gray-300 px-3 py-2">
-            <% if entry.user.present? %>
-              <%= entry.user.email %>
-            <% else %>
-              <%= entry.email.presence || "Guest" %>
-            <% end %>
-          </td>
-          <td class="border border-gray-300 px-3 py-2">
-            <%= entry.guest_name.presence || "-" %>
-          </td>
+          <!-- Logged-in user email -->
+          <td class="border border-gray-300 px-3 py-2"><%= entry.user&.email || "-" %></td>
+          <!-- Submitted email -->
+          <td class="border border-gray-300 px-3 py-2"><%= entry.email.presence || "-" %></td>
+          <!-- Guest name -->
+          <td class="border border-gray-300 px-3 py-2"><%= entry.guest_name.presence || "-" %></td>
+          <!-- Lessons, attendees, price, commission -->
           <td class="border border-gray-300 px-3 py-2 text-right"><%= entry.lessons %></td>
           <td class="border border-gray-300 px-3 py-2 text-right"><%= entry.attendees %></td>
           <td class="border border-gray-300 px-3 py-2 text-right">¥<%= number_with_delimiter(entry.price) %></td>
           <td class="border border-gray-300 px-3 py-2 text-right">¥<%= number_with_delimiter(entry.commission) %></td>
+          <!-- Status -->
           <td class="border border-gray-300 px-3 py-2">
             <% case entry.status %>
             <% when "eligible" %>

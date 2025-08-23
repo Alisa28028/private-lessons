@@ -35,51 +35,87 @@
   </div>
 </div>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("calculator-form");
-  const resultDiv = document.getElementById("result");
+  function saveGuestInfo() {
+  const name = document.getElementById("guest_name").value;
+  const email = document.getElementById("guest_email").value;
+  const result = document.getElementById("guest-info-result");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if (!name && !email) {
+    result.innerText = "名前かメールアドレスを入力してください。";
+    return;
+  }
 
-    const lessons = parseInt(form.querySelector("#calculator_entry_lessons").value) || 0;
-    const attendees = Math.min(parseInt(form.querySelector("#calculator_entry_attendees").value) || 0, 50);
-    const price = parseInt(form.querySelector("#calculator_entry_price").value) || 0;
+  const token = document.querySelector('meta[name="csrf-token"]').content;
 
-    const token = document.querySelector('meta[name="csrf-token"]').content;
-
-    const response = await fetch(form.action, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": token
-      },
-      body: JSON.stringify({ calculator_entry: { lessons, attendees, price } })
-    });
-
-    const data = await response.json();
-
-    // let resultText = `月間コミッション: ¥${data.commission.toLocaleString()}。 `;
-
-    let resultText = "";
-
-    if (data.status === "eligible") {
-      resultText += "おめでとうございます！対象です🎉メールアドレスを登録して、詳細をご案内します。";
-      resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
-    } else if (data.status === "negotiable") {
-      resultText += "⚖️ 条件は満たしていませんが、相談可能です。";
-      resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
+  fetch("/calculator/save_guest_info", { // make sure this route matches your Rails route
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": token
+    },
+    body: JSON.stringify({ name, email })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      result.innerText = "メールアドレスを登録しました。";
     } else {
-      resultText += "❌ 現在は対象外ですが、条件が変わった際にご案内できるよう、メールアドレスをご登録ください。";
-      resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
+      result.innerText = "エラーが発生しました。";
     }
-
-    resultDiv.innerText = resultText;
-
-    // Show guest info if commission > 15,000
-
-      document.getElementById("guest-info-section").style.display = "block";
-
+  })
+  .catch(() => {
+    result.innerText = "エラーが発生しました。";
   });
-  });
+  }
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("calculator-form");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const lessons = parseInt(form.querySelector("#calculator_entry_lessons").value) || 0;
+      const attendees = Math.min(parseInt(form.querySelector("#calculator_entry_attendees").value) || 0, 50);
+      const price = parseInt(form.querySelector("#calculator_entry_price").value) || 0;
+
+      const token = document.querySelector('meta[name="csrf-token"]').content;
+
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": token
+        },
+        body: JSON.stringify({ calculator_entry: { lessons, attendees, price } })
+      });
+
+      const data = await response.json();
+
+      // let resultText = `月間コミッション: ¥${data.commission.toLocaleString()}。 `;
+
+      let resultText = "";
+
+      if (data.status === "eligible") {
+        resultText += "おめでとうございます！対象です🎉メールアドレスを登録して、詳細をご案内します。";
+        resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
+      } else if (data.status === "negotiable") {
+        resultText += "⚖️ 条件は満たしていませんが、相談可能です。";
+        resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
+      } else {
+        resultText += "❌ 現在は対象外ですが、条件が変わった際にご案内できるよう、メールアドレスをご登録ください。";
+        resultDiv.setAttribute("style", "color: #292A5A; font-weight: 300; margin-top: 1rem;");
+      }
+
+      resultDiv.innerText = resultText;
+
+      if (data.commission > 15000) {
+  document.getElementById("guest-info-section").style.display = "block";
+  } else {
+  document.getElementById("guest-info-section").style.display = "none";
+  }
+
+    });
+    });
 </script>
