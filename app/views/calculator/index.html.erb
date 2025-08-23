@@ -59,6 +59,8 @@
 
     const data = await response.json();
 
+    // let resultText = `月間コミッション: ¥${data.commission.toLocaleString()}。 `;
+
     let resultText = "";
 
     if (data.status === "eligible") {
