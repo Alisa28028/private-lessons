@@ -110,7 +110,7 @@
   <table class="min-w-full border-collapse border border-gray-300 text-sm">
     <thead>
       <tr class="bg-gray-100">
-        <th class="border border-gray-300 px-3 py-2 text-left">Logged in?</th>
+        <th class="border border-gray-300 px-3 py-2 text-left">Token</th>
         <th class="border border-gray-300 px-3 py-2 text-left">Date</th>
         <th class="border border-gray-300 px-3 py-2 text-left">Logged-in user's email</th>
         <th class="border border-gray-300 px-3 py-2 text-left">Submitted email</th>
@@ -126,7 +126,7 @@
       <% @entries.each do |entry| %>
         <tr>
           <!-- Logged-in user? -->
-          <td><%= entry.user.present? ? "Yes" : "No" %></td>
+          <td class="border border-gray-300 px-3 py-2"><%= entry.session_token || "-" %></td>
           <!-- Created at -->
           <td class="border border-gray-300 px-3 py-2"><%= entry.created_at.strftime("%Y-%m-%d %H:%M") %></td>
           <!-- Logged-in user email -->
