@@ -111,7 +111,8 @@
     <thead>
       <tr class="bg-gray-100">
         <th class="border border-gray-300 px-3 py-2 text-left">Date</th>
-        <th class="border border-gray-300 px-3 py-2 text-left">User</th>
+        <th class="border border-gray-300 px-3 py-2 text-left">User's email</th>
+        <th class="border border-gray-300 px-3 py-2 text-left">Name</th>
         <th class="border border-gray-300 px-3 py-2 text-right">Lessons</th>
         <th class="border border-gray-300 px-3 py-2 text-right">Attendees</th>
         <th class="border border-gray-300 px-3 py-2 text-right">Price</th>
@@ -123,7 +124,16 @@
       <% @entries.each do |entry| %>
         <tr>
           <td class="border border-gray-300 px-3 py-2"><%= entry.created_at.strftime("%Y-%m-%d %H:%M") %></td>
-          <td class="border border-gray-300 px-3 py-2"><%= entry.user&.email || "Guest" %></td>
+          <td class="border border-gray-300 px-3 py-2">
+            <% if entry.user.present? %>
+              <%= entry.user.email %>
+            <% else %>
+              <%= entry.email.presence || "Guest" %>
+            <% end %>
+          </td>
+          <td class="border border-gray-300 px-3 py-2">
+            <%= entry.guest_name.presence || "-" %>
+          </td>
           <td class="border border-gray-300 px-3 py-2 text-right"><%= entry.lessons %></td>
           <td class="border border-gray-300 px-3 py-2 text-right"><%= entry.attendees %></td>
           <td class="border border-gray-300 px-3 py-2 text-right">¥<%= number_with_delimiter(entry.price) %></td>
